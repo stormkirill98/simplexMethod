@@ -1,5 +1,6 @@
 package dashboard;
 
+import dashboard.input.InputView;
 import dashboard.light.LightView;
 import java.net.URL;
 import java.time.LocalDate;
@@ -11,6 +12,8 @@ import javafx.scene.layout.Pane;
 import javax.inject.Inject;
 
 public class DashboardPresenter implements Initializable {
+
+    public Pane input;
 
     @FXML
     Label message;
@@ -33,6 +36,9 @@ public class DashboardPresenter implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         //fetched from dashboard.properties
         this.theVeryEnd = rb.getString("theEnd");
+
+        InputView inputView = new InputView();
+        inputView.getViewAsync(input.getChildren()::add);
     }
 
     public void createLights() {
