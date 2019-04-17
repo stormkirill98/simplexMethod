@@ -4,16 +4,21 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.AccessibleAttribute;
 import javafx.scene.Node;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TablePosition;
+import javafx.scene.control.*;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.text.Font;
 import logic.Equation;
 import logic.LinearSystem;
 
@@ -36,6 +41,9 @@ public class TablePresenter implements Initializable {
   private int m;
   private TableView<Equation> table;
 
+  private GridPane coefs;
+
+
   private LinearSystem system;
 
   private boolean pressCtrl = false;
@@ -49,101 +57,39 @@ public class TablePresenter implements Initializable {
     system = new LinearSystem();
 
     createTable();
-    //setOnClickTab(pane);
-    //setOnClickToCell();
-
-    getCell(0,0);
   }
 
   private void createTable() {
+    coefs = new GridPane();
 
-
-    table = new TableView();
-    final ObservableList<Equation> data = FXCollections.observableArrayList();
-
-    table.setEditable(true);
-    table.setPrefWidth(columnWidth * (n + 1) + 2);
-    table.setPrefHeight(rowHeight * (m + 1) - 2);
-
+    coefs.setHgap(3);
+    coefs.setVgap(3);
+    ColumnConstraints constraints = new ColumnConstraints();
+    constraints.setHalignment(HPos.CENTER);
+    coefs.getColumnConstraints().addAll(constraints, constraints);
+    
     for (int i = 0; i < n + 1; i++) {
-      String name = i != n ? "x" + (i + 1)
-              : "";
-      TableColumn column = new TableColumn(name);
-      column.setCellValueFactory(new PropertyValueFactory<Equation,Double>());
-      column.setPrefWidth(columnWidth);
-      column.setSortable(false);
+      for (int j = 0; j < m + 1; j++) {
+        if (i == 0) {
+          if (j == n) {
+            continue;
+          }
 
-      table.getColumns().add(column);
-    }
-
-    for (int i = 0; i < m; i++) {
-      Equation equation = new Equation();
-      equation.add(1.0);
-      equation.add(1.0);
-      equation.add(1.0);
-      data.add(equation);
-    }
-    table.setItems(data);
-
-    pane.getChildren().add(table);
-  }
-
-  private Node getCell(int i, int j) {
-    ObservableList list = table.getItems();
-    Object o = list.get(i);
-    return null;
-  }
-
-  private int[] getIndexActiveCell() {
-    for (int i = 0; i < n + 1; i++) {
-      for (int j = 0; j < m; j++) {
-        Node cell = getCell(i, j);
-        if (cell.isFocused()) {
-          return new int[]{i, j};
+          Label label = new Label("x" + (j + 1));
+          coefs.add(label, j, i);
+          continue;
         }
+
+        TextField textField = new TextField();
+        textField.setPadding(new Insets(5));
+        textField.setPrefWidth(columnWidth);
+        textField.setPrefHeight(rowHeight);
+        coefs.add(textField, j, i);
       }
     }
 
-    return new int[]{0, 0};
+    pane.getChildren().add(coefs);
   }
 
-  private void setOnClickToCell() {
-    for (int i = 0; i < n + 1; i++) {
-      for (int j = 0; j < m; j++) {
-        Node cell = getCell(i, j);
-        if (cell != null)
-          cell.setId("colorCell");
-      }
-    }
-  }
 
-  private void setOnClickTab(Node node) {
-    node.setOnKeyPressed(new EventHandler<KeyEvent>() {
-      @Override
-      public void handle(KeyEvent event) {
-        if (event.getCode() == KeyCode.LEFT) {
-          System.out.println("click w");
-
-          int[] indexes = getIndexActiveCell();
-          System.out.println(indexes[0] + " " + indexes[1]);
-        }
-        if (event.getCode() == KeyCode.CONTROL) {
-          System.out.println("click ctrl");
-
-          pressCtrl = true;
-        }
-      }
-    });
-
-    node.setOnKeyReleased(new EventHandler<KeyEvent>() {
-      @Override
-      public void handle(KeyEvent event) {
-        if (event.getCode() == KeyCode.CONTROL) {
-          pressCtrl = false;
-        }
-      }
-    });
-
-
-  }
 }

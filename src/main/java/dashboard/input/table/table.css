@@ -5,3 +5,10 @@
 #colorCell{
     -fx-background-color: red;
 }
+
+.label{
+    -fx-font-size: 25;
+}
+
+.text-field{
+}
