@@ -16,8 +16,8 @@
             </padding>
         </FlowPane>
         <Label fx:id="message" layoutY="33.0" prefHeight="39.0" prefWidth="347.0" text="A simplest possible afterburner.fx application" />
-        <Button fx:id="launch" layoutX="267.0" layoutY="40.0" mnemonicParsing="false" onAction="#launch" text="Launch" />
-        <Button layoutX="347.0" layoutY="40.0" mnemonicParsing="false" onAction="#createLights" text="Create 256 Views Asynchronously" />
+        <Button fx:id="launch" focusTraversable="false" layoutX="267.0" layoutY="40.0" mnemonicParsing="false" onAction="#launch" text="Launch" />
+        <Button focusTraversable="false" layoutX="347.0" layoutY="40.0" mnemonicParsing="false" onAction="#createLights" text="Create 256 Views Asynchronously" />
         <Pane fx:id="input" layoutX="14.0" layoutY="72.0" prefHeight="435.0" prefWidth="634.0" />
     </children>
 </AnchorPane>

@@ -9,83 +9,79 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="400.0" prefWidth="372.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="dashboard.input.InputPresenter">
+<AnchorPane prefHeight="400.0" prefWidth="372.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dashboard.input.InputPresenter">
     <children>
-        <VBox layoutX="14.0" layoutY="14.0" prefHeight="73.0" prefWidth="198.0"
-              style="-fx-border-color: black; -fx-border-radius: 5px;">
+        <VBox layoutX="14.0" layoutY="14.0" prefHeight="73.0" prefWidth="198.0" style="-fx-border-color: black; -fx-border-radius: 5px;">
             <children>
-                <Label alignment="CENTER" prefHeight="26.0" prefWidth="104.0" text="Размерность:"
-                       textAlignment="CENTER">
+                <Label alignment="CENTER" prefHeight="26.0" prefWidth="104.0" text="Размерность:" textAlignment="CENTER">
                     <font>
-                        <Font size="16.0"/>
+                        <Font size="16.0" />
                     </font>
                 </Label>
                 <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="193.0">
                     <children>
                         <Label alignment="CENTER" prefHeight="40.0" prefWidth="40.0" text="n =" textAlignment="CENTER">
                             <font>
-                                <Font size="25.0"/>
+                                <Font size="25.0" />
                             </font>
                         </Label>
-                        <TextField fx:id="n" prefWidth="40.0" text="3">
+                        <TextField fx:id="n" focusTraversable="false" prefWidth="40.0" text="3">
                             <font>
-                                <Font size="18.0"/>
+                                <Font size="18.0" />
                             </font>
                         </TextField>
                         <Label alignment="CENTER" prefHeight="40.0" prefWidth="72.0" text="m =" textAlignment="CENTER">
                             <font>
-                                <Font size="25.0"/>
+                                <Font size="25.0" />
                             </font>
                             <padding>
-                                <Insets left="25.0"/>
+                                <Insets left="25.0" />
                             </padding>
                         </Label>
-                        <TextField fx:id="m" prefWidth="40.0" text="3">
+                        <TextField fx:id="m" focusTraversable="false" prefWidth="40.0" text="3">
                             <font>
-                                <Font size="18.0"/>
+                                <Font size="18.0" />
                             </font>
                         </TextField>
                     </children>
                 </HBox>
             </children>
         </VBox>
-        <HBox fx:id="function" alignment="CENTER_LEFT" layoutX="16.0" layoutY="94.0" prefHeight="40.0"
-              prefWidth="346.0">
+        <HBox fx:id="function" alignment="CENTER_LEFT" layoutX="16.0" layoutY="94.0" prefHeight="40.0" prefWidth="346.0">
             <children>
-                <TextField prefWidth="40.0">
+                <TextField focusTraversable="false" prefWidth="40.0">
                     <font>
-                        <Font size="16.0"/>
+                        <Font size="16.0" />
                     </font>
                 </TextField>
                 <Label alignment="CENTER" prefHeight="40.0" prefWidth="54.0" text="*x1+" textAlignment="CENTER">
                     <font>
-                        <Font size="25.0"/>
+                        <Font size="25.0" />
                     </font>
                 </Label>
-                <TextField prefWidth="40.0">
+                <TextField focusTraversable="false" prefWidth="40.0">
                     <font>
-                        <Font size="16.0"/>
+                        <Font size="16.0" />
                     </font>
                 </TextField>
                 <Label alignment="CENTER" prefHeight="40.0" prefWidth="53.0" text="*x2+" textAlignment="CENTER">
                     <font>
-                        <Font size="25.0"/>
+                        <Font size="25.0" />
                     </font>
                 </Label>
-                <TextField prefWidth="40.0">
+                <TextField focusTraversable="false" prefWidth="40.0">
                     <font>
-                        <Font size="16.0"/>
+                        <Font size="16.0" />
                     </font>
                 </TextField>
                 <Label alignment="CENTER" prefHeight="40.0" prefWidth="72.0" text="*x3 -&gt;" textAlignment="CENTER">
                     <font>
-                        <Font size="25.0"/>
+                        <Font size="25.0" />
                     </font>
                 </Label>
-                <ChoiceBox fx:id="typeFunction" prefHeight="35.0" prefWidth="50.0"/>
+                <ChoiceBox fx:id="typeFunction" focusTraversable="false" prefHeight="35.0" prefWidth="50.0" />
             </children>
         </HBox>
-        <Pane fx:id="tablePane" layoutX="13.0" layoutY="144.0" prefHeight="247.0" prefWidth="346.0"/>
+        <Pane fx:id="tablePane" layoutX="13.0" layoutY="144.0" prefHeight="247.0" prefWidth="346.0" />
     </children>
 </AnchorPane>
