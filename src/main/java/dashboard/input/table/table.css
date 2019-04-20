@@ -2,10 +2,6 @@
     -fx-cell-size: 35px;
 }
 
-#colorCell{
-    -fx-background-color: red;
-}
-
 .label{
     -fx-font-size: 25;
 }
