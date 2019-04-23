@@ -55,12 +55,11 @@ public class TablePresenter implements Initializable {
       system.add(equation);
     }
 
-
-    createTable();
+    createTablePane();
     fillTable(system);
   }
 
-  private void createTable() {
+  private void createTablePane() {
     table = new GridPane();
 
     table.setHgap(n);

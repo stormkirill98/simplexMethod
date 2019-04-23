@@ -1,11 +1,9 @@
 package dashboard.input;
 
+import dashboard.input.function.FunctionView;
 import dashboard.input.table.TableView;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
 import java.net.URL;
@@ -19,14 +17,14 @@ public class InputPresenter implements Initializable {
   public TextField n;
   public TextField m;
 
-  public HBox function;
-  public ChoiceBox typeFunction;
-
   public Pane tablePane;
+  public Pane functionPane;
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    createTable(3, 3);
+    createFunctionPane(Integer.valueOf(m.getText()));
+    createTablePane(Integer.valueOf(n.getText()),
+            Integer.valueOf(m.getText()));
     initInputDimension();
   }
 
@@ -41,7 +39,7 @@ public class InputPresenter implements Initializable {
         newValue = "0";
       }
 
-      createTable(Integer.valueOf(newValue),
+      createTablePane(Integer.valueOf(newValue),
               Integer.valueOf(m.getText()));
 
     });
@@ -56,13 +54,14 @@ public class InputPresenter implements Initializable {
         newValue = "0";
       }
 
-      createTable(Integer.valueOf(n.getText()),
+      createFunctionPane(Integer.valueOf(newValue));
+      createTablePane(Integer.valueOf(n.getText()),
               Integer.valueOf(newValue));
 
     });
   }
 
-  private void createTable(int n, int m) {
+  private void createTablePane(int n, int m) {
     ArrayList<Integer> list = new ArrayList<>();
     list.add(n);
     list.add(m);
@@ -71,5 +70,11 @@ public class InputPresenter implements Initializable {
     TableView tableView = new TableView((f) -> list);
     tablePane.getChildren().clear();
     tableView.getViewAsync(tablePane.getChildren()::add);
+  }
+
+  private void createFunctionPane(int m) {
+    FunctionView functionView = new FunctionView((f) -> m);
+    functionPane.getChildren().clear();
+    functionView.getViewAsync(functionPane.getChildren()::add);
   }
 }
