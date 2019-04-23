@@ -1,0 +1,7 @@
+.table-row-cell {
+    -fx-cell-size: 35px;
+}
+
+.label{
+    -fx-font-size: 25;
+}

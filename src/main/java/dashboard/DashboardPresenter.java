@@ -1,6 +1,7 @@
 package dashboard;
 
 import dashboard.input.InputView;
+import dashboard.output.OutputView;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.Pane;
 
@@ -10,6 +11,7 @@ import java.util.ResourceBundle;
 public class DashboardPresenter implements Initializable {
 
   public Pane input;
+  public Pane output;
 
   private String theVeryEnd;
 
@@ -19,5 +21,8 @@ public class DashboardPresenter implements Initializable {
 
     InputView inputView = new InputView();
     inputView.getViewAsync(input.getChildren()::add);
+
+    OutputView outputView = new OutputView();
+    outputView.getViewAsync(output.getChildren()::add);
   }
 }
