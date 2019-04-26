@@ -9,11 +9,11 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="411.0" prefWidth="378.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dashboard.input.InputPresenter">
+<AnchorPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dashboard.input.InputPresenter">
     <children>
-      <VBox layoutX="-36.0" layoutY="57.0" prefHeight="266.0" prefWidth="309.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+      <VBox layoutX="-36.0" layoutY="57.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
          <children>
-              <VBox maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="72.0" prefWidth="200.0" style="-fx-border-color: black; -fx-border-radius: 5px;">
+              <VBox maxHeight="-Infinity" maxWidth="-Infinity" style="-fx-border-color: black; -fx-border-radius: 5px;">
                   <children>
                       <Label alignment="CENTER" prefHeight="26.0" prefWidth="104.0" text="Размерность:" textAlignment="CENTER">
                           <font>
@@ -27,7 +27,7 @@
                                       <Font size="25.0" />
                                   </font>
                               </Label>
-                              <TextField fx:id="n" focusTraversable="false" prefWidth="40.0" text="3">
+                              <TextField fx:id="n" prefWidth="40.0" text="3">
                                   <font>
                                       <Font size="18.0" />
                                   </font>
@@ -40,7 +40,7 @@
                                       <Insets left="25.0" />
                                   </padding>
                               </Label>
-                              <TextField fx:id="m" focusTraversable="false" prefWidth="40.0" text="3">
+                              <TextField fx:id="m" prefWidth="40.0" text="3">
                                   <font>
                                       <Font size="18.0" />
                                   </font>
@@ -51,9 +51,12 @@
                <VBox.margin>
                   <Insets bottom="10.0" />
                </VBox.margin>
+               <padding>
+                  <Insets bottom="4.0" left="4.0" right="4.0" />
+               </padding>
               </VBox>
       
-              <Pane fx:id="functionPane" prefWidth="350.0" />
+              <Pane fx:id="functionPane" />
               <Pane fx:id="tablePane" />
          </children>
       </VBox>

@@ -1,11 +1,15 @@
 import dashboard.DashboardView;
 import com.airhacks.afterburner.injection.Injector;
+
+import java.awt.*;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.application.Application;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class App extends Application {
@@ -26,12 +30,21 @@ public class App extends Application {
 
         System.setProperty("happyEnding", " Enjoy the flight!");
         DashboardView appView = new DashboardView();
+
         Scene scene = new Scene(appView.getView());
-        stage.setTitle("followme.fx");
+        stage.setTitle("Simplex Method");
         final String uri = getClass().getResource("app.css").toExternalForm();
         scene.getStylesheets().add(uri);
         stage.setScene(scene);
+
+        Screen screen = Screen.getPrimary();
+        Rectangle2D bounds = screen.getVisualBounds();
+        stage.setWidth(bounds.getWidth());
+        stage.setHeight(bounds.getHeight());
+
         stage.show();
+
+        stage.resizableProperty().setValue(Boolean.FALSE);
     }
 
     @Override
