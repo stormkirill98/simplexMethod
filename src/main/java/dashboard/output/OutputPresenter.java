@@ -18,9 +18,13 @@ public class OutputPresenter implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     Rectangle2D screen = Screen.getPrimary().getVisualBounds();
-    pane.setPrefViewportHeight(screen.getHeight() - 35);
+    double width = screen.getWidth();
+    double height = screen.getHeight() - 35;
+    pane.setPrefViewportHeight(height);
+    pane.setPrefViewportWidth(0.6 * width);
+
     HBox hBox = null;
-    for (int i = 0; i < 15; i++) {
+    for (int i = 0; i < 3; i++) {
       if (i % 3 == 0) {
         hBox = new HBox();
         vBox.getChildren().add(hBox);

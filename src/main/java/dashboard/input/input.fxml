@@ -57,7 +57,10 @@
               </VBox>
       
               <Pane fx:id="functionPane" />
-              <Pane fx:id="tablePane" />
+              <Pane fx:id="tablePane">
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin></Pane>
          </children>
       </VBox>
     </children>

@@ -6,6 +6,6 @@
 <AnchorPane id="AnchorPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dashboard.DashboardPresenter">
     <children>
         <Pane fx:id="input" layoutX="14.0" layoutY="10.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" />
-      <Pane fx:id="output" layoutX="24.0" layoutY="20.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="790.0" AnchorPane.topAnchor="5.0" />
+      <Pane fx:id="output" layoutX="24.0" layoutY="20.0" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
     </children>
 </AnchorPane>

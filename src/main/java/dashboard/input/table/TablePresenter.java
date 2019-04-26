@@ -5,11 +5,13 @@ import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Screen;
 import logic.Equation;
 import logic.LinearSystem;
 
@@ -25,6 +27,7 @@ public class TablePresenter implements Initializable {
   final private int cellHeight = 35;
 
   public AnchorPane pane;
+  public ScrollPane scrollPane;
 
   @Inject
   private ArrayList<Integer> dimension;
@@ -39,6 +42,13 @@ public class TablePresenter implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
+    Rectangle2D screen = Screen.getPrimary().getVisualBounds();
+    double width = screen.getWidth();
+    double height = screen.getHeight() - 35;
+    scrollPane.setPrefViewportHeight(0.778 * height);
+    scrollPane.setPrefViewportWidth(0.354 * width);
+
+
     n = dimension.get(0);
     m = dimension.get(1);
 
@@ -62,8 +72,8 @@ public class TablePresenter implements Initializable {
   private void createTablePane() {
     table = new GridPane();
 
-    table.setHgap(n);
-    table.setVgap(m);
+    table.setHgap(3);
+    table.setVgap(3);
     ColumnConstraints constraints = new ColumnConstraints();
     constraints.setHalignment(HPos.CENTER);
     table.getColumnConstraints().addAll(constraints, constraints);
@@ -85,7 +95,6 @@ public class TablePresenter implements Initializable {
 
         TextField textField = new TextField();
 
-        textField.setPadding(new Insets(5));
         textField.setPrefWidth(cellWidth);
         textField.setPrefHeight(cellHeight);
 

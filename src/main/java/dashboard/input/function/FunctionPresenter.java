@@ -3,10 +3,13 @@ package dashboard.input.function;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Screen;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -17,7 +20,8 @@ public class FunctionPresenter implements Initializable {
   final private int cellHeight = 35;
 
 
-  public VBox box;
+  public HBox box;
+  public ScrollPane scrollPane;
 
   @Inject
   private int n;
@@ -25,19 +29,16 @@ public class FunctionPresenter implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
+    Rectangle2D screen = Screen.getPrimary().getVisualBounds();
+    double width = screen.getWidth();
+    scrollPane.setPrefViewportWidth(0.365 * width);
+    scrollPane.setPrefViewportHeight(cellHeight);
+
     createFunctionPane();
   }
 
   private void createFunctionPane(){
-    HBox hbox = new HBox();
-    box.getChildren().add(hbox);
     for (int i = 0; i < n + 1; i++){
-      if (i == 9){
-        hbox = new HBox();
-        hbox.setPadding(new Insets(10,0,0,0));
-
-        box.getChildren().add(hbox);
-      }
       String labelName = "+x" + (i + 1);
       if (i == 0)
         labelName = "x" + (i + 1);
@@ -54,8 +55,8 @@ public class FunctionPresenter implements Initializable {
       textField.setPrefWidth(cellWidth);
       textField.setPrefHeight(cellHeight);
 
-      hbox.getChildren().add(label);
-      hbox.getChildren().add(textField);
+      box.getChildren().add(label);
+      box.getChildren().add(textField);
     }
   }
 }
