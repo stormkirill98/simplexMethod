@@ -14,5 +14,4 @@ public class SimplexView extends FXMLView {
   public Parent getView() {
     return super.getView();
   }
-
 }

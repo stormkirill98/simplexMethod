@@ -5,7 +5,7 @@ import javafx.event.EventHandler;
 
 public abstract class MyEventHandler implements EventHandler<MyEvent> {
 
-  public abstract void onChangeFunctionSizeEvent(double width, double height);
+  public abstract void onChangeFunctionSizeEvent(int width, int height);
 
   @Override
   public void handle(MyEvent event) {

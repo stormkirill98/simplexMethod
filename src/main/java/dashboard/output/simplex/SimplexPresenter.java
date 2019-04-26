@@ -13,6 +13,7 @@ import logic.Utilit;
 
 import javax.inject.Inject;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 @SuppressWarnings("Duplicates")
@@ -22,15 +23,21 @@ public class SimplexPresenter implements Initializable {
 
   public AnchorPane pane;
 
-  private int n = 3;
-  private int m = 3;
   @Inject
-  private int numberStep;
+  private ArrayList<Integer> inputData;
+
+  private int n = 0;
+  private int m = 0;
+  private int numberStep = 0;
 
   private GridPane table;
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
+    n = inputData.get(0);
+    m = inputData.get(1);
+    numberStep = inputData.get(2);
+
     createSimplexPane();
   }
 
@@ -38,8 +45,8 @@ public class SimplexPresenter implements Initializable {
   private void createSimplexPane() {
     table = new GridPane();
 
-    table.setHgap(n);
-    table.setVgap(m);
+    table.setHgap(3);
+    table.setVgap(3);
     ColumnConstraints constraints = new ColumnConstraints();
     constraints.setHalignment(HPos.CENTER);
     table.getColumnConstraints().addAll(constraints, constraints);
