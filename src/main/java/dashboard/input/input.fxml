@@ -15,24 +15,24 @@
          <children>
               <VBox maxHeight="-Infinity" maxWidth="-Infinity" style="-fx-border-color: black; -fx-border-radius: 5px;">
                   <children>
-                      <Label alignment="CENTER" prefHeight="26.0" prefWidth="104.0" text="Размерность:" textAlignment="CENTER">
+                      <Label alignment="CENTER" prefHeight="26.0" prefWidth="81.0" text="Dimension:" textAlignment="CENTER">
                           <font>
                               <Font size="16.0" />
                           </font>
                       </Label>
-                      <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="193.0">
+                      <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="470.0">
                           <children>
-                              <Label alignment="CENTER" prefHeight="40.0" prefWidth="40.0" text="n =" textAlignment="CENTER">
+                              <Label alignment="CENTER" prefHeight="40.0" prefWidth="168.0" text="Amount var = " textAlignment="CENTER">
                                   <font>
                                       <Font size="25.0" />
                                   </font>
                               </Label>
-                              <TextField fx:id="n" prefWidth="40.0" text="3">
+                              <TextField fx:id="amountVar" prefWidth="40.0" text="3">
                                   <font>
                                       <Font size="18.0" />
                                   </font>
                               </TextField>
-                              <Label alignment="CENTER" prefHeight="40.0" prefWidth="72.0" text="m =" textAlignment="CENTER">
+                              <Label alignment="CENTER" prefHeight="40.0" prefWidth="219.0" text="Amount limits =" textAlignment="CENTER">
                                   <font>
                                       <Font size="25.0" />
                                   </font>
@@ -40,7 +40,7 @@
                                       <Insets left="25.0" />
                                   </padding>
                               </Label>
-                              <TextField fx:id="m" prefWidth="40.0" text="3">
+                              <TextField fx:id="amountLimit" prefWidth="40.0" text="3">
                                   <font>
                                       <Font size="18.0" />
                                   </font>

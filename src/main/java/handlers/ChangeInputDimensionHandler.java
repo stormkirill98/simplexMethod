@@ -1,8 +1,11 @@
 package handlers;
 
-public class ChangeInputDimensionHandler extends MyEventHandler {
-  @Override
-  public void onChangeFunctionSizeEvent(int width, int height) {
+import events.ChangeInputDimensionEvent;
+import javafx.event.EventHandler;
 
+public class ChangeInputDimensionHandler implements EventHandler<ChangeInputDimensionEvent> {
+
+  @Override
+  public void handle(ChangeInputDimensionEvent event) {
   }
 }

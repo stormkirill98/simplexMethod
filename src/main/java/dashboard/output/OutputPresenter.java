@@ -1,6 +1,8 @@
 package dashboard.output;
 
+import dashboard.input.InputPresenter;
 import dashboard.output.simplex.SimplexView;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -11,7 +13,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 
-import javax.inject.Inject;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -31,6 +32,11 @@ public class OutputPresenter implements Initializable {
     pane.setPrefViewportHeight(height);
     pane.setPrefViewportWidth(width);
 
+    //fillSimplexesForTest(width);
+  }
+
+
+  private void fillSimplexesForTest(double width) {
     HBox hBox = new HBox();
     vBox.getChildren().add(hBox);
     int countSimplexInCurrentRow = 0;
@@ -42,7 +48,7 @@ public class OutputPresenter implements Initializable {
         Separator separator = new Separator();
         separator.setPrefWidth(width);
         separator.setOrientation(Orientation.HORIZONTAL);
-        separator.setPadding(new Insets(10,0,5,0));
+        separator.setPadding(new Insets(10, 0, 5, 0));
         vBox.getChildren().add(separator);
 
         hBox = new HBox();

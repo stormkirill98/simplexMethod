@@ -13,5 +13,4 @@ public abstract class MyEvent extends Event {
   }
 
   public abstract void invokeHandler(MyEventHandler handler);
-
 }

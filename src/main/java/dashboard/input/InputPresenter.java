@@ -14,24 +14,24 @@ import static logic.Utilit.isNatural;
 
 @SuppressWarnings("Duplicates")
 public class InputPresenter implements Initializable {
-  public TextField n;
-  public TextField m;
+  public TextField amountVar;
+  public TextField amountLimit;
 
   public Pane tablePane;
   public Pane functionPane;
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    createFunctionPane(Integer.valueOf(m.getText()));
-    createTablePane(Integer.valueOf(n.getText()),
-            Integer.valueOf(m.getText()));
+    createFunctionPane(Integer.valueOf(amountLimit.getText()));
+    createTablePane(Integer.valueOf(amountVar.getText()),
+            Integer.valueOf(amountLimit.getText()));
     initInputDimension();
   }
 
   private void initInputDimension() {
-    n.textProperty().addListener((observable, oldValue, newValue) -> {
+    amountVar.textProperty().addListener((observable, oldValue, newValue) -> {
       if (!isNatural(newValue)) {
-        n.setText(oldValue);
+        amountVar.setText(oldValue);
         return;
       }
 
@@ -40,13 +40,14 @@ public class InputPresenter implements Initializable {
       }
 
       createTablePane(Integer.valueOf(newValue),
-              Integer.valueOf(m.getText()));
+              Integer.valueOf(amountLimit.getText()));
+
 
     });
 
-    m.textProperty().addListener((observable, oldValue, newValue) -> {
+    amountLimit.textProperty().addListener((observable, oldValue, newValue) -> {
       if (!isNatural(newValue)) {
-        m.setText(oldValue);
+        amountLimit.setText(oldValue);
         return;
       }
 
@@ -55,25 +56,24 @@ public class InputPresenter implements Initializable {
       }
 
       createFunctionPane(Integer.valueOf(newValue));
-      createTablePane(Integer.valueOf(n.getText()),
+      createTablePane(Integer.valueOf(amountVar.getText()),
               Integer.valueOf(newValue));
 
     });
   }
 
-  private void createTablePane(int n, int m) {
+  private void createTablePane(int amountLimits, int amountVar) {
     ArrayList<Integer> list = new ArrayList<>();
-    list.add(n);
-    list.add(m);
-
+    list.add(amountLimits);
+    list.add(amountVar);
 
     TableView tableView = new TableView((f) -> list);
     tablePane.getChildren().clear();
     tableView.getViewAsync(tablePane.getChildren()::add);
   }
 
-  private void createFunctionPane(int m) {
-    FunctionView functionView = new FunctionView((f) -> m);
+  private void createFunctionPane(int amountVar) {
+    FunctionView functionView = new FunctionView((f) -> amountVar);
     functionPane.getChildren().clear();
     functionView.getViewAsync(functionPane.getChildren()::add);
   }

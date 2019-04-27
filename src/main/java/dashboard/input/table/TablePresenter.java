@@ -3,7 +3,6 @@ package dashboard.input.table;
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
@@ -12,8 +11,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Screen;
-import logic.Equation;
-import logic.LinearSystem;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -38,7 +35,6 @@ public class TablePresenter implements Initializable {
   private GridPane table;
 
 
-  private LinearSystem system;
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
@@ -52,21 +48,9 @@ public class TablePresenter implements Initializable {
     n = dimension.get(0);
     m = dimension.get(1);
 
-    system = new LinearSystem();
-    for (int i = 0; i < n; i++) {
-      Equation equation = new Equation();
-      Random r = new Random();
-      for (int j = 0; j < m + 1; j++) {
-        int rangeMin = -5;
-        int rangeMax = 5;
-        double randomValue = rangeMin + (rangeMax - rangeMin) * r.nextDouble();
-        equation.add(randomValue);
-      }
-      system.add(equation);
-    }
 
     createTablePane();
-    fillTable(system);
+    fillTable();
   }
 
   private void createTablePane() {
@@ -105,7 +89,7 @@ public class TablePresenter implements Initializable {
     pane.getChildren().add(table);
   }
 
-  public void fillTable(LinearSystem system){
+  public void fillTable(){
     ObservableList<Node> cells = table.getChildren();
     if (cells == null) {
       return;
@@ -113,9 +97,7 @@ public class TablePresenter implements Initializable {
 
     try {
       for (int i = 1; i < n + 1; i++) {
-        Equation equation = system.getEquation(i - 1);
         for (int j = 0; j < m + 1; j++) {
-          Double value = equation.get(j);
           TextField cell;
           try {
             cell = (TextField) cells.get(i * (m + 1) + j);
@@ -124,7 +106,7 @@ public class TablePresenter implements Initializable {
             continue;
           }
 
-          cell.setText(String.format("%.2f", value));
+          cell.setText(String.format("%.2f", 2.0));
         }
       }
     } catch (IndexOutOfBoundsException e){
