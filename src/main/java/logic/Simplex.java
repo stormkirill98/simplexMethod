@@ -1,5 +1,7 @@
 package logic;
 
+import logic.enums.End;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,9 +79,6 @@ public class Simplex {
   }
 
   public void subtractRow(int indexRow, int indexCol, double previousCoef){
-    System.out.println("indexRow " + indexRow);
-    System.out.println("indexCol " + indexCol);
-    System.out.println("coef " + previousCoef);
     Row subtractRow = rows.get(indexRow);
     for (int i = 0; i < rows.size(); i++){
       if (i == indexRow){
@@ -92,7 +91,7 @@ public class Simplex {
     }
   }
 
-  //return array of [i, j]
+  //return array [i, j]
   //i, j - индексы базового элемента
   public int[] searchBaseElement() {
     int countVar = indexesVarCol.size();
@@ -114,7 +113,6 @@ public class Simplex {
         break;
       }
     }
-
 
     //считаем отношения в столбце для выбора лучшего базового элемента
     double[] relations = new double[countRow];
@@ -138,7 +136,7 @@ public class Simplex {
     for (int i = 0; i < countRow; i++) {
       if (Utilit.isZero(relations[i])
               || relations[i] < 0
-              || !possibleRow[i]){
+              || !possibleRow[i]){//TODO: что-то делать когда переменные ушли вверх, но еще не конец
         continue;
       }
       if (relations[i] < min){
@@ -152,17 +150,42 @@ public class Simplex {
 
   //true - если весь столбец неположительные числа
   private boolean columnNoHavePositiveNumber(int index) {
-    boolean bool = false;
     for (int i = 0; i < rows.size(); i++) {
       Row row = rows.get(i);
       Double value = row.getValue(index);
-      bool = value < 0 || Utilit.isZero(value);
+      if (value > 0 || !Utilit.isZero(value)){
+        return true;
+      }
     }
 
-    return bool;
+    return false;
   }
 
-  public
+  //проверяем последнюю строку, все ли в ней нули
+  private boolean checkLastRow(){
+    Row lastRow = rows.get(rows.size() - 1);
+    for (int i = 0; i < lastRow.getSize(); i++){
+      if (!Utilit.isZero(lastRow.getValue(i))){
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  public End isEndArtBasis(){
+    if (checkLastRow()){
+      return End.SUCCESS;
+    }
+
+    for (int i = 0; i < rows.get(0).getSize(); i++){
+      if (columnNoHavePositiveNumber(i)){
+        return End.FAILURE;
+      }
+    }
+
+    return End.CONTINUE;
+  }
 
   @Override
   public String toString() {

@@ -1,5 +1,6 @@
 package logic;
 
+import logic.enums.End;
 import logic.enums.TypeProblem;
 
 import java.util.ArrayList;
@@ -34,9 +35,14 @@ public class Algorithm {
 
     System.out.println(simplex);
 
-    for (int i = 0; i < 2; i++) {
+    End end = End.CONTINUE;
+    while (end == End.CONTINUE) {
       //находим индексы базового элемента
       int[] indexes = simplex.searchBaseElement();
+      if (indexes[0] == -1 && indexes[1] == -1){
+        end = End.FAILURE;
+        break;
+      }
       System.out.println("indexes " + indexes[0] + " " + indexes[1]);
       simplex.swap(indexes[0], indexes[1]);
       System.out.println(simplex);
@@ -56,7 +62,12 @@ public class Algorithm {
       //удаляем столбец
       simplex.removeColumn(indexes[1]);
       System.out.println(simplex);
+
+      //исксственный базиз закончен?
+      end = simplex.isEndArtBasis();
     }
+
+    System.out.println(end);
   }
 
   //создаем искусственный базис
