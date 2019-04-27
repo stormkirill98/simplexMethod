@@ -34,24 +34,29 @@ public class Algorithm {
 
     System.out.println(simplex);
 
-    //находим индексы базового элемента
-    int[] indexes = simplex.searchBaseElement();
-    System.out.println("indexes " + indexes[0] + " " + indexes[1]);
-    simplex.swap(indexes[0], indexes[1]);
-    System.out.println(simplex);
+    for (int i = 0; i < 2; i++) {
+      //находим индексы базового элемента
+      int[] indexes = simplex.searchBaseElement();
+      System.out.println("indexes " + indexes[0] + " " + indexes[1]);
+      simplex.swap(indexes[0], indexes[1]);
+      System.out.println(simplex);
 
-    //умножаем строку и столбец и задаем значение в ячейку
-    double value = simplex.getValue(indexes[0], indexes[1]);
-    System.out.println("value = " + value);
-    simplex.multCol(indexes[1], (-1 / value));
-    simplex.multRow(indexes[0], (1 / value));
-    simplex.setValue(indexes[0], indexes[1], (1 / value));
-    System.out.println(simplex);
+      //умножаем строку и столбец и задаем значение в ячейку
+      double value = simplex.getValue(indexes[0], indexes[1]);
+      System.out.println("value = " + value);
+      simplex.multCol(indexes[1], (-1 / value));
+      simplex.multRow(indexes[0], (1 / value));
+      simplex.setValue(indexes[0], indexes[1], (1 / value));
+      System.out.println(simplex);
 
-    //удаляем столбец
-    simplex.removeColumn(indexes[1]);
-    System.out.println(simplex);
+      //считаем другие строки, вычитая из нее строку
+      simplex.subtractRow(indexes[0], indexes[1], -value);
+      System.out.println(simplex);
 
+      //удаляем столбец
+      simplex.removeColumn(indexes[1]);
+      System.out.println(simplex);
+    }
   }
 
   //создаем искусственный базис

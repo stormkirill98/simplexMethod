@@ -76,8 +76,20 @@ public class Simplex {
     }
   }
 
-  public void subtractRow(int indexRow, int indexCol){
-    
+  public void subtractRow(int indexRow, int indexCol, double previousCoef){
+    System.out.println("indexRow " + indexRow);
+    System.out.println("indexCol " + indexCol);
+    System.out.println("coef " + previousCoef);
+    Row subtractRow = rows.get(indexRow);
+    for (int i = 0; i < rows.size(); i++){
+      if (i == indexRow){
+        continue;
+      }
+
+      Row row = rows.get(i);
+      double coef = row.getValue(indexCol) * previousCoef;
+      row.subtract(subtractRow, indexCol, coef);
+    }
   }
 
   //return array of [i, j]
@@ -124,7 +136,9 @@ public class Simplex {
     int indexRow = -1;//TODO: что-то делать при -1
     double min = Double.MAX_VALUE;
     for (int i = 0; i < countRow; i++) {
-      if (Utilit.isZero(relations[i]) || relations[i] < 0){
+      if (Utilit.isZero(relations[i])
+              || relations[i] < 0
+              || !possibleRow[i]){
         continue;
       }
       if (relations[i] < min){
@@ -147,6 +161,8 @@ public class Simplex {
 
     return bool;
   }
+
+  public
 
   @Override
   public String toString() {
@@ -204,9 +220,13 @@ public class Simplex {
       }
     }
 
-    public void subtract(Row row){
+    public void subtract(Row row, int badIndex, double coef){
       for (int i = 0; i < getSize(); i++){
-        double newValue = this.row.get(i) - row.getValue(i);
+        if (i == badIndex){
+          continue;
+        }
+
+        double newValue = this.row.get(i) - coef * row.getValue(i);
         this.row.set(i, newValue);
       }
     }
