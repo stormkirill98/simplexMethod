@@ -37,37 +37,60 @@ public class Algorithm {
 
     End end = End.CONTINUE;
     while (end == End.CONTINUE) {
-      //находим индексы базового элемента
-      int[] indexes = simplex.searchBaseElement();
-      if (indexes[0] == -1 && indexes[1] == -1){
-        end = End.FAILURE;
-        break;
-      }
-      System.out.println("indexes " + indexes[0] + " " + indexes[1]);
-      simplex.swap(indexes[0], indexes[1]);
-      System.out.println(simplex);
+      end = makeStep(simplex);
+    }
+    if (end == End.FAILURE){
+      return;
+    }
+    System.out.println(end);
 
-      //умножаем строку и столбец и задаем значение в ячейку
-      double value = simplex.getValue(indexes[0], indexes[1]);
-      System.out.println("value = " + value);
-      simplex.multCol(indexes[1], (-1 / value));
-      simplex.multRow(indexes[0], (1 / value));
-      simplex.setValue(indexes[0], indexes[1], (1 / value));
-      System.out.println(simplex);
+    //simplex method
+    simplex.recountLastRow(function);
+    System.out.println(simplex);
 
-      //считаем другие строки, вычитая из нее строку
-      simplex.subtractRow(indexes[0], indexes[1], -value);
-      System.out.println(simplex);
+    end = simplex.end();
+    while (end == End.CONTINUE){
+      end = makeStep(simplex);
+    }
+    System.out.println(end);
 
-      //удаляем столбец
-      simplex.removeColumn(indexes[1]);
-      System.out.println(simplex);
-
-      //исксственный базиз закончен?
-      end = simplex.isEndArtBasis();
+    if (end == End.FAILURE){
+      return;
     }
 
-    System.out.println(end);
+    System.out.printf("Extr = %.2f\n", simplex.getFunctionExtr());
+    System.out.println("Point: " + simplex.getPointExtr());
+  }
+
+  private End makeStep(Simplex simplex){
+    //находим индексы базового элемента
+    int[] indexes = simplex.searchBaseElement();
+    if (indexes[0] == -1 && indexes[1] == -1){
+      return End.FAILURE;
+    }
+    System.out.println("indexes " + indexes[0] + " " + indexes[1]);
+    simplex.swap(indexes[0], indexes[1]);
+    System.out.println(simplex);
+
+
+    //умножаем строку и столбец и задаем значение в ячейку
+    double value = simplex.getValue(indexes[0], indexes[1]);
+    System.out.println("value = " + value);
+    simplex.multCol(indexes[1], (-1 / value));
+    simplex.multRow(indexes[0], (1 / value));
+    simplex.setValue(indexes[0], indexes[1], (1 / value));
+    System.out.println(simplex);
+
+    //считаем другие строки, вычитая из нее строку
+    simplex.subtractRow(indexes[0], indexes[1], -value);
+    System.out.println(simplex);
+
+    //удаляем столбец
+    simplex.removeColumn(indexes[1]);
+    System.out.println(simplex);
+
+    //исксственный базиз закончен?
+    return simplex.endArtBasis();
   }
 
   //создаем искусственный базис

@@ -1,5 +1,6 @@
 package dashboard.output.simplex;
 
+import com.sun.xml.internal.bind.v2.TODO;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -31,6 +32,8 @@ public class SimplexPresenter implements Initializable {
   private int numberStep = 0;
 
   private GridPane table;
+
+  //TODO: подсвечивать базовый элемент
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {

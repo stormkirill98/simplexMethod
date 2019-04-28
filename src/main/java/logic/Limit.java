@@ -66,16 +66,16 @@ public class Limit {
 
   @Override
   public String toString(){
-    String result = "";
+    StringBuilder result = new StringBuilder();
 
     for(int i = 0; i < coefficients.size() - 1; i++){
-      result += getCoefficient(i) + " + ";
+      result.append(getCoefficient(i)).append(" + ");
     }
 
-    result = result.substring(0, result.length() - 3);
+    result = new StringBuilder(result.substring(0, result.length() - 3));
 
-    result += " = " + getFreeCoef();
+    result.append(" = ").append(getFreeCoef());
 
-    return result;
+    return result.toString();
   }
 }

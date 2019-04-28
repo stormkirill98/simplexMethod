@@ -1,6 +1,7 @@
 package logic;
 
 import logic.enums.End;
+import logic.enums.Stage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,8 +11,14 @@ public class Simplex {
   private List<Integer> indexesVarCol = new ArrayList<>();
   private List<Row> rows = new ArrayList<>();
 
+  /*стадия алгоритма:
+  * ART_BASIS - искусственный базис
+  * SIMPLEX - симплекс-метод
+  * END - закончен*/
+  private Stage stage = Stage.ART_BASIS;
+
   //число переменных, которые были в задаче с самого начала, без тех которые добавили мы
-  private int countOurVar = 0;
+  private int countOurVar;
 
   public Simplex(List<Limit> limits) {
     //добавляем индексы переменных в столбцах(представляет верхнюю строку симплекс таблицы)
@@ -36,8 +43,7 @@ public class Simplex {
       }
 
       double value = 0.0;
-      for (int j = 0; j < limits.size(); j++) {
-        Limit limit = limits.get(j);
+      for (Limit limit : limits) {
         value -= limit.getCoefficient(i).getValue();
       }
       row.addValue(value);
@@ -60,8 +66,7 @@ public class Simplex {
   }
 
   public void multCol(int index, double value) {
-    for (int i = 0; i < rows.size(); i++) {
-      Row row = rows.get(i);
+    for (Row row : rows) {
       row.multValue(index, value);
     }
   }
@@ -96,15 +101,22 @@ public class Simplex {
   public int[] searchBaseElement() {
     int countVar = indexesVarCol.size();
     int countRow = rows.size() - 1;
-    boolean[] possibleRow = new boolean[countRow];
 
     //определяем в каких строках нам нужно избавляться от переменной
-    for (int i = 0; i < indexesVarRow.size(); i++) {
-      possibleRow[i] = indexesVarRow.get(i) > countOurVar;
+    boolean[] possibleRow = new boolean[countRow];
+    if (stage == Stage.ART_BASIS) {
+      for (int i = 0; i < indexesVarRow.size(); i++) {
+        possibleRow[i] = indexesVarRow.get(i) > countOurVar;
+      }
+    }
+    if (stage == Stage.SIMPLEX){
+      for (int i = 0; i < indexesVarRow.size(); i++) {
+        possibleRow[i] = true;
+      }
     }
 
-    int indexFirstPossibleCol = -1;//TODO: что-то делать при -1
     //определяем первый подходящий столбец
+    int indexFirstPossibleCol = -1;//TODO: что-то делать при -1
     Row lastRow = rows.get(rows.size() - 1);
     for (int i = 0; i < countVar; i++) {
       //последний элемент в столбце отрицательный?
@@ -136,7 +148,7 @@ public class Simplex {
     for (int i = 0; i < countRow; i++) {
       if (Utilit.isZero(relations[i])
               || relations[i] < 0
-              || !possibleRow[i]){//TODO: что-то делать когда переменные ушли вверх, но еще не конец
+              || !possibleRow[i]){//TODO: что-то делать когда переменные ушли вверх, но еще не конец искуственного базиса
         continue;
       }
       if (relations[i] < min){
@@ -150,12 +162,11 @@ public class Simplex {
 
   //true - если в столбце есть положительные числа
   private boolean columnHavePositiveNumber(int index) {
-    for (int i = 0; i < rows.size(); i++) {
-      Row row = rows.get(i);
+    for (Row row : rows) {
       Double value = row.getValue(index);
-      if (value > 0){
+      if (value > 0) {
         //проверка на ноль, т.к. может -0.0(проверка до -12 порядка)
-        if (Utilit.isZero(value)){
+        if (Utilit.isZero(value)) {
           continue;
         }
         return true;
@@ -166,7 +177,7 @@ public class Simplex {
   }
 
   //проверяем последнюю строку, все ли в ней нули
-  private boolean checkLastRow(){
+  private boolean lastRowIsZero(){
     Row lastRow = rows.get(rows.size() - 1);
     for (int i = 0; i < lastRow.getSize(); i++){
       if (!Utilit.isZero(lastRow.getValue(i))){
@@ -177,38 +188,147 @@ public class Simplex {
     return true;
   }
 
-  public End isEndArtBasis(){
-    if (checkLastRow()){
-      return End.SUCCESS;
+  //последняя строка не отрицательная
+  private boolean lastRowIsNoNegative(){
+    Row lastRow = rows.get(rows.size() - 1);
+    for (int i = 0; i < lastRow.getSize() - 1; i++){
+      double value = lastRow.getValue(i);
+      if (value < 0){
+        //проверка на ноль, т.к. может -0.0(проверка до -12 порядка)
+        if (Utilit.isZero(value)){
+          continue;
+        }
+        return false;
+      }
     }
 
+    return true;
+  }
+
+  private boolean failure(){
     for (int i = 0; i < rows.get(0).getSize(); i++){
       //если есть столбец, в котором все числа неположительные
       if (!columnHavePositiveNumber(i)){
-        return End.FAILURE;
+        return true;
       }
+    }
+
+    return false;
+  }
+
+  //проверяем закончился ли метод искуственнго базиса
+  public End endArtBasis(){
+    if (lastRowIsZero()){
+      stage = Stage.SIMPLEX;
+      return End.SUCCESS;
+    }
+
+    if (failure()){
+      return End.FAILURE;
     }
 
     return End.CONTINUE;
   }
 
+  //проверяем конец алгоритма
+  public End end(){
+    if (lastRowIsNoNegative()){
+      stage = Stage.END;
+      return End.SUCCESS;
+    }
+
+    if (failure()){
+      return End.FAILURE;
+    }
+
+    return End.CONTINUE;
+  }
+
+  public void recountLastRow(Function function){
+    Row lastRow = rows.get(rows.size() - 1);
+    for (int j = 0; j < lastRow.getSize() - 1; j++){
+      //индекс переменной через которую выражены другие(вверху симплекс таблицы перпеменные)
+      int indexVar = indexesVarCol.get(j);
+
+      double newValue = function.getCoefficients(indexVar - 1).getValue();
+      newValue = countNewValueLastRow(function, newValue, j);
+
+      lastRow.setValue(j, newValue);
+    }
+
+
+    //считаем значение функции(последняя йчейка в таблице)
+    int indexLastCol = lastRow.getSize() - 1;
+
+    double newValue = 0.0;
+    newValue = countNewValueLastRow(function, newValue, indexLastCol);
+
+    lastRow.setValue(indexLastCol, newValue );
+
+    rows.set(rows.size() - 1, lastRow);
+  }
+
+  private double countNewValueLastRow(Function function, double newValue, int indexCol){
+    for (int i = 0; i < rows.size() - 1; i++){
+      //индекс выражаемой переменной
+      int indexExpressVar = indexesVarRow.get(i);
+      Coefficient functionCoef = function.getCoefficients(indexExpressVar - 1);
+      newValue -= functionCoef.getValue() * rows.get(i).getValue(indexCol);
+    }
+
+    return newValue;
+  }
+
+  public Double getFunctionExtr(){
+    if (stage != Stage.END){
+      return null;
+    }
+
+    Row row = rows.get(rows.size() - 1);
+    return -row.getValue(row.getSize() - 1);
+  }
+
+  public List<Double> getPointExtr(){
+    if (stage != Stage.END) {
+      return null;
+    }
+
+    //ооздаем лист размером с кол-вом первоночальных переменных
+    List<Double> point = new ArrayList<>(countOurVar);
+
+    //инициализируем лист нулями
+    for (int i = 0; i < countOurVar; i++){
+      point.add(0.0);
+    }
+
+    //переменные которые не нулевые(находящиеся в строках симплекса)
+    for (int i = 0; i < rows.size() - 1; i++){
+      Row row = rows.get(i);
+      int indexVar = indexesVarRow.get(i)  - 1;
+      double value = row.getValue(row.getSize() - 1);
+      point.set(indexVar, value);
+    }
+
+    return point;
+  }
+
   @Override
   public String toString() {
-    String result = "     ";
+    StringBuilder result = new StringBuilder("     ");
     for (Integer index : indexesVarCol) {
-      result += "X" + index + "   ";
+      result.append("X").append(index).append("   ");
     }
-    result += "\n";
+    result.append("\n");
 
     for (int i = 0; i < rows.size(); i++) {
       String varRow = " ";
       if (i != rows.size() - 1) {
         varRow = "X" + indexesVarRow.get(i);
       }
-      result += varRow + " " + rows.get(i) + "\n";
+      result.append(varRow).append(" ").append(rows.get(i)).append("\n");
     }
 
-    return result;
+    return result.toString();
   }
 
   //представляет строку коэффициентов в симплекс таблице
@@ -273,13 +393,13 @@ public class Simplex {
 
     @Override
     public String toString() {
-      String result = "";
+      StringBuilder result = new StringBuilder();
 
       for (Double value : row) {
-        result += String.format("%.2f", value) + " ";
+        result.append(String.format("%.2f", value)).append(" ");
       }
 
-      return result;
+      return result.toString();
     }
   }
 }
