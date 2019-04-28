@@ -1,7 +1,10 @@
 package dashboard.input;
 
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import dashboard.input.function.FunctionView;
 import dashboard.input.table.TableView;
+import events.*;
 import javafx.event.EventType;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
@@ -21,12 +24,17 @@ public class InputPresenter implements Initializable {
   public Pane tablePane;
   public Pane functionPane;
 
+
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     createFunctionPane(Integer.valueOf(amountLimit.getText()));
     createTablePane(Integer.valueOf(amountVar.getText()),
             Integer.valueOf(amountLimit.getText()));
     initInputDimension();
+  }
+
+  public void onPaymentSuccessful () {
+    MyEventBus.post("safafsf");
   }
 
   private void initInputDimension() {
@@ -42,6 +50,8 @@ public class InputPresenter implements Initializable {
 
       createTablePane(Integer.valueOf(newValue),
               Integer.valueOf(amountLimit.getText()));
+
+      onPaymentSuccessful();
     });
 
     amountLimit.textProperty().addListener((observable, oldValue, newValue) -> {
