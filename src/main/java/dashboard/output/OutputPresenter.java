@@ -3,6 +3,8 @@ package dashboard.output;
 import com.google.common.eventbus.Subscribe;
 import dashboard.output.simplex.SimplexView;
 import events.MyEventBus;
+import events.domain.Dimension;
+import events.domain.TableLimits;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -22,16 +24,13 @@ public class OutputPresenter implements Initializable {
   public VBox vBox;
   public ScrollPane pane;
 
-  public Label label;
-
   private int n = 8;
   private int m = 7;
 
+  private double[][] tableLimits;
+
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    label = new Label("2222");
-    vBox.getChildren().add(label);
-
     Rectangle2D screen = Screen.getPrimary().getVisualBounds();
     double width = 0.6 * screen.getWidth();
     double height = screen.getHeight() - 35;
@@ -40,18 +39,19 @@ public class OutputPresenter implements Initializable {
 
     MyEventBus.register(this);
 
-
     //fillSimplexesForTest(width);
   }
 
   @Subscribe
-  public void sendRecieptToCustomer(String s) {
-    // Simulate sending reciept
-    System.out.println("Reciept sent to Customer");
-
-    label.setText("Reciept sent to Customer " + s);
+  public void getDimnsion(Dimension dimension) {
+    this.n = dimension.getN();
+    this.m = dimension.getM();
   }
 
+  @Subscribe
+  public void getTableLimits(TableLimits tableLimits) {
+    this.tableLimits = tableLimits.getTable();
+  }
 
   private void fillSimplexesForTest(double width) {
     HBox hBox = new HBox();

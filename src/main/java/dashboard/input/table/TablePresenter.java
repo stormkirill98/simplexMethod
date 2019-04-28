@@ -1,5 +1,8 @@
 package dashboard.input.table;
 
+import events.MyEventBus;
+import events.domain.Dimension;
+import events.domain.TableLimits;
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
@@ -15,8 +18,9 @@ import javafx.stage.Screen;
 import javax.inject.Inject;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.ResourceBundle;
+
+import static logic.Utilit.*;
 
 @SuppressWarnings("Duplicates")
 public class TablePresenter implements Initializable {
@@ -32,9 +36,9 @@ public class TablePresenter implements Initializable {
   private int n;
   private int m;
 
-  private GridPane table;
+  private GridPane tablePane;
 
-
+  private double[][] table;
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
@@ -44,23 +48,24 @@ public class TablePresenter implements Initializable {
     scrollPane.setPrefViewportWidth(0.365 * width);
     scrollPane.setPrefViewportHeight(0.778 * height);
 
-
     n = dimension.get(0);
     m = dimension.get(1);
 
+    table = new double[n][m + 1];
 
     createTablePane();
-    fillTable();
+    tableIsFilled();//для подсвечивания всех незаполненных полей красной подсветкой
   }
 
+  //TODO: при пересоздании таблицы, можно попробовать сохранить старые значения
   private void createTablePane() {
-    table = new GridPane();
+    tablePane = new GridPane();
 
-    table.setHgap(3);
-    table.setVgap(3);
+    tablePane.setHgap(3);
+    tablePane.setVgap(3);
     ColumnConstraints constraints = new ColumnConstraints();
     constraints.setHalignment(HPos.CENTER);
-    table.getColumnConstraints().addAll(constraints, constraints);
+    tablePane.getColumnConstraints().addAll(constraints, constraints);
 
     for (int i = 0; i < n + 1; i++) {
       for (int j = 0; j < m + 1; j++) {
@@ -73,24 +78,67 @@ public class TablePresenter implements Initializable {
           label.setPrefWidth(cellWidth);
           label.setPrefHeight(cellHeight);
 
-          table.add(label, j, i);
+          tablePane.add(label, j, i);
           continue;
         }
 
         TextField textField = new TextField();
 
+        int finalJ = j;
+        int finalI = i - 1;
+        textField.textProperty().addListener((observable, oldValue, newValue) -> {
+          if (!validateDouble(textField, oldValue, newValue)){
+            return;
+          }
+
+          Double value = strToDouble(newValue);
+          table[finalI][finalJ] = value;
+
+          if (tableIsFilled()){
+            MyEventBus.post(new TableLimits(table));
+          }
+        });
+
         textField.setPrefWidth(cellWidth);
         textField.setPrefHeight(cellHeight);
 
-        table.add(textField, j, i);
+
+
+        tablePane.add(textField, j, i);
       }
     }
 
-    pane.getChildren().add(table);
+    pane.getChildren().add(tablePane);
+  }
+
+
+
+  public boolean tableIsFilled(){
+    boolean filled = true;
+
+    ObservableList<Node> childrens = tablePane.getChildren();
+
+    for (Node node : childrens) {
+      TextField textField;
+      try {
+        textField = (TextField) node;
+      } catch (ClassCastException e){
+        continue;
+      }
+
+      if (textField.getText().isEmpty()){
+        if (filled) {
+          filled = false;
+        }
+        textField.setId("text-field-empty");
+      }
+    }
+
+    return filled;
   }
 
   public void fillTable(){
-    ObservableList<Node> cells = table.getChildren();
+    ObservableList<Node> cells = tablePane.getChildren();
     if (cells == null) {
       return;
     }
@@ -114,13 +162,13 @@ public class TablePresenter implements Initializable {
     }
   }
 
-  public Node getNodeByRowColumnIndex (int row, int column) {
-    ObservableList<Node> childrens = table.getChildren();
+  public TextField getNodeByRowColumnIndex (int row, int column) {
+    ObservableList<Node> childrens = tablePane.getChildren();
 
     for (Node node : childrens) {
       if(GridPane.getRowIndex(node) == row
               && GridPane.getColumnIndex(node) == column) {
-        return node;
+        return (TextField) node;
       }
     }
 

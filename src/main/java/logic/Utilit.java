@@ -1,5 +1,10 @@
 package logic;
 
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.control.TextField;
+import javafx.scene.text.Text;
+
 import java.text.DecimalFormat;
 
 public class Utilit {
@@ -108,5 +113,48 @@ public class Utilit {
     str = str.replaceAll("8", "⁸");
     str = str.replaceAll("9", "⁹");
     return str;
+  }
+
+  public static void changeSizeTextField(TextField textField) {
+    if (textField == null) {
+      return;
+    }
+
+    Text text = new Text(textField.getText());
+    text.setFont(textField.getFont());
+    new Scene(new Group(text));
+    text.applyCss();
+
+    double lengthText = text.getLayoutBounds().getWidth() + 20;
+
+    if (lengthText < textField.getMinWidth()) {
+      lengthText = textField.getMinWidth();
+    }
+
+    if (lengthText > textField.getMaxWidth()) {
+      lengthText = textField.getMaxWidth();
+    }
+
+    textField.setPrefWidth(lengthText);
+  }
+
+  public static boolean validateDouble(TextField textField, String oldValue, String newValue){
+    if (!isDouble(newValue)) {
+      textField.setText(oldValue);
+      return false;
+    }
+
+    if (newValue.equals(",") || newValue.equals(".")){
+      textField.setText(newValue);
+      return false;
+    }
+
+    if (newValue.isEmpty()){
+      textField.setId("text-field-empty");
+    } else {
+      textField.setId("");
+    }
+
+    return true;
   }
 }

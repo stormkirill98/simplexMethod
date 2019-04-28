@@ -7,4 +7,11 @@
 }
 
 .text-field{
+    -fx-border-radius: 2px;
+}
+
+#text-field-empty{
+    -fx-faint-focus-color: transparent;
+    -fx-border-color:rgba(255,0,0,0.3); /* here rgba (corrected) */
+    -fx-border-width: 2px;
 }

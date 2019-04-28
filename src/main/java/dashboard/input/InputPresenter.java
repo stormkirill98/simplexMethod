@@ -5,6 +5,7 @@ import com.google.common.eventbus.Subscribe;
 import dashboard.input.function.FunctionView;
 import dashboard.input.table.TableView;
 import events.*;
+import events.domain.Dimension;
 import javafx.event.EventType;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
@@ -33,10 +34,6 @@ public class InputPresenter implements Initializable {
     initInputDimension();
   }
 
-  public void onPaymentSuccessful () {
-    MyEventBus.post("safafsf");
-  }
-
   private void initInputDimension() {
     amountVar.textProperty().addListener((observable, oldValue, newValue) -> {
       if (!isNatural(newValue)) {
@@ -48,10 +45,12 @@ public class InputPresenter implements Initializable {
         newValue = "0";
       }
 
-      createTablePane(Integer.valueOf(newValue),
-              Integer.valueOf(amountLimit.getText()));
+      int n = Integer.valueOf(newValue);
+      int m = Integer.valueOf(amountLimit.getText());
 
-      onPaymentSuccessful();
+      createTablePane(n, m);
+
+      MyEventBus.post(new Dimension(n, m));
     });
 
     amountLimit.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -64,10 +63,13 @@ public class InputPresenter implements Initializable {
         newValue = "0";
       }
 
-      createFunctionPane(Integer.valueOf(newValue));
-      createTablePane(Integer.valueOf(amountVar.getText()),
-              Integer.valueOf(newValue));
+      int n = Integer.valueOf(amountVar.getText());
+      int m = Integer.valueOf(newValue);
 
+      createTablePane(n, m);
+      createFunctionPane(m);
+
+      MyEventBus.post(new Dimension(n, m));
     });
   }
 
