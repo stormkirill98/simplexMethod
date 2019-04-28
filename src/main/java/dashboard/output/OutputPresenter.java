@@ -4,6 +4,7 @@ import com.google.common.eventbus.Subscribe;
 import dashboard.output.simplex.SimplexView;
 import events.MyEventBus;
 import events.domain.Dimension;
+import events.domain.FunctionDao;
 import events.domain.TableLimits;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -15,6 +16,7 @@ import javafx.scene.control.Separator;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
+import logic.Function;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -28,6 +30,7 @@ public class OutputPresenter implements Initializable {
   private int m = 7;
 
   private double[][] tableLimits;
+  private FunctionDao functionDao;
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
@@ -51,6 +54,12 @@ public class OutputPresenter implements Initializable {
   @Subscribe
   public void getTableLimits(TableLimits tableLimits) {
     this.tableLimits = tableLimits.getTable();
+  }
+
+  @Subscribe
+  public void getFunction(FunctionDao functionDao) {
+    System.out.println(functionDao.getTypeProblem());
+    this.functionDao = functionDao;
   }
 
   private void fillSimplexesForTest(double width) {

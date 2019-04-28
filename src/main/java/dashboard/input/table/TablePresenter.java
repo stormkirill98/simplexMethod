@@ -1,7 +1,6 @@
 package dashboard.input.table;
 
 import events.MyEventBus;
-import events.domain.Dimension;
 import events.domain.TableLimits;
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
@@ -9,10 +8,13 @@ import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Screen;
 
 import javax.inject.Inject;
@@ -54,7 +56,7 @@ public class TablePresenter implements Initializable {
     table = new double[n][m + 1];
 
     createTablePane();
-    tableIsFilled();//для подсвечивания всех незаполненных полей красной подсветкой
+    isFilled(tablePane);//для подсвечивания всех незаполненных полей красной подсветкой
   }
 
   //TODO: при пересоздании таблицы, можно попробовать сохранить старые значения
@@ -70,7 +72,7 @@ public class TablePresenter implements Initializable {
     for (int i = 0; i < n + 1; i++) {
       for (int j = 0; j < m + 1; j++) {
         if (i == 0) {
-          String columnName = j == m ? "" : "x" + (j + 1);
+          String columnName = j == m ? "" : "x" + subscript(String.valueOf(j + 1));
 
           Label label = new Label(columnName);
 
@@ -87,21 +89,20 @@ public class TablePresenter implements Initializable {
         int finalJ = j;
         int finalI = i - 1;
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
-          if (!validateDouble(textField, oldValue, newValue)){
+          if (!validateDouble(textField, oldValue, newValue)) {
             return;
           }
 
           Double value = strToDouble(newValue);
           table[finalI][finalJ] = value;
 
-          if (tableIsFilled()){
+          if (isFilled(tablePane)) {
             MyEventBus.post(new TableLimits(table));
           }
         });
 
         textField.setPrefWidth(cellWidth);
         textField.setPrefHeight(cellHeight);
-
 
 
         tablePane.add(textField, j, i);
@@ -111,33 +112,7 @@ public class TablePresenter implements Initializable {
     pane.getChildren().add(tablePane);
   }
 
-
-
-  public boolean tableIsFilled(){
-    boolean filled = true;
-
-    ObservableList<Node> childrens = tablePane.getChildren();
-
-    for (Node node : childrens) {
-      TextField textField;
-      try {
-        textField = (TextField) node;
-      } catch (ClassCastException e){
-        continue;
-      }
-
-      if (textField.getText().isEmpty()){
-        if (filled) {
-          filled = false;
-        }
-        textField.setId("text-field-empty");
-      }
-    }
-
-    return filled;
-  }
-
-  public void fillTable(){
+  public void fillTable() {
     ObservableList<Node> cells = tablePane.getChildren();
     if (cells == null) {
       return;
@@ -157,16 +132,16 @@ public class TablePresenter implements Initializable {
           cell.setText(String.format("%.2f", 2.0));
         }
       }
-    } catch (IndexOutOfBoundsException e){
+    } catch (IndexOutOfBoundsException e) {
       e.printStackTrace();
     }
   }
 
-  public TextField getNodeByRowColumnIndex (int row, int column) {
+  public TextField getNodeByRowColumnIndex(int row, int column) {
     ObservableList<Node> childrens = tablePane.getChildren();
 
     for (Node node : childrens) {
-      if(GridPane.getRowIndex(node) == row
+      if (GridPane.getRowIndex(node) == row
               && GridPane.getColumnIndex(node) == column) {
         return (TextField) node;
       }

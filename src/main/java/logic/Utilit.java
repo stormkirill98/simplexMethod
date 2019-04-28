@@ -1,8 +1,11 @@
 package logic;
 
+import javafx.collections.ObservableList;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
 import java.text.DecimalFormat;
@@ -115,6 +118,21 @@ public class Utilit {
     return str;
   }
 
+  //переводит число в подстрочный вид
+  public static String subscript(String str) {
+    str = str.replaceAll("0", "₀");
+    str = str.replaceAll("1", "₁");
+    str = str.replaceAll("2", "₂");
+    str = str.replaceAll("3", "₃");
+    str = str.replaceAll("4", "₄");
+    str = str.replaceAll("5", "₅");
+    str = str.replaceAll("6", "₆");
+    str = str.replaceAll("7", "₇");
+    str = str.replaceAll("8", "₈");
+    str = str.replaceAll("9", "₉");
+    return str;
+  }
+
   public static void changeSizeTextField(TextField textField) {
     if (textField == null) {
       return;
@@ -156,5 +174,29 @@ public class Utilit {
     }
 
     return true;
+  }
+
+  public static boolean isFilled(Pane pane) {
+    boolean filled = true;
+
+    ObservableList<Node> childrens = pane.getChildren();
+
+    for (Node node : childrens) {
+      TextField textField;
+      try {
+        textField = (TextField) node;
+      } catch (ClassCastException e) {
+        continue;
+      }
+
+      if (textField.getText().isEmpty()) {
+        if (filled) {
+          filled = false;
+        }
+        textField.setId("text-field-empty");
+      }
+    }
+
+    return filled;
   }
 }
