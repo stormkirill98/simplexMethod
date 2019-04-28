@@ -27,7 +27,7 @@ public class Coefficient {
 
   @Override
   public String toString(){
-    if (index == 0){
+    if (index == -1){
       return String.format("%.2f", value);
     }
     return String.format("%.2f", value) + " * x" + index;

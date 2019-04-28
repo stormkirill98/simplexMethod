@@ -1,8 +1,6 @@
 package dashboard.output;
 
-import dashboard.input.InputPresenter;
 import dashboard.output.simplex.SimplexView;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;

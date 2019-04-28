@@ -2,6 +2,7 @@ package dashboard.input;
 
 import dashboard.input.function.FunctionView;
 import dashboard.input.table.TableView;
+import javafx.event.EventType;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
@@ -41,8 +42,6 @@ public class InputPresenter implements Initializable {
 
       createTablePane(Integer.valueOf(newValue),
               Integer.valueOf(amountLimit.getText()));
-
-
     });
 
     amountLimit.textProperty().addListener((observable, oldValue, newValue) -> {

@@ -125,6 +125,15 @@ public class Simplex {
         break;
       }
     }
+    /*
+    если не нашелся первый подходящий столбец, значит
+    осталась переменная, которая еще не ушла наверх,
+    но шагов уже нет.
+    возвращаем {-1, -1} для прекращения проги
+    */
+    if (indexFirstPossibleCol == -1){
+      return new int[]{indexFirstPossibleCol, -1};
+    }
 
     //считаем отношения в столбце для выбора лучшего базового элемента
     double[] relations = new double[countRow];
@@ -346,76 +355,76 @@ public class Simplex {
 
     return result.toString();
   }
+}
 
-  //представляет строку коэффициентов в симплекс таблице
-  private class Row {
-    List<Double> row = new ArrayList<>();
+//представляет строку коэффициентов в симплекс таблице
+class Row {
+  List<Double> row = new ArrayList<>();
 
-    public Row() {
-    }
+  public Row() {
+  }
 
-    public Row(Limit limit) {
-      for (int i = 0; i < limit.getCountCoefs(); i++) {
-        //пропускаем добавленные переменные
-        if (i == limit.getCountCoefs() - 2) {
-          continue;
-        }
-        Coefficient coef = limit.getCoefficient(i);
-        row.add(coef.getValue());
+  public Row(Limit limit) {
+    for (int i = 0; i < limit.getCountCoefs(); i++) {
+      //пропускаем добавленные переменные
+      if (i == limit.getCountCoefs() - 2) {
+        continue;
       }
+      Coefficient coef = limit.getCoefficient(i);
+      row.add(coef.getValue());
     }
+  }
 
-    public void addValue(Double value) {
-      row.add(value);
+  public void addValue(Double value) {
+    row.add(value);
+  }
+
+  public void setValue(int index, double value){
+    row.set(index, value);
+  }
+
+  public void multValue(int index, double value) {
+    double newValue = row.get(index) * value;
+    row.set(index, newValue);
+  }
+
+  public void mult(double value) {
+    for (int i = 0; i < row.size(); i++) {
+      multValue(i, value);
     }
+  }
 
-    public void setValue(int index, double value){
-      row.set(index, value);
-    }
-
-    public void multValue(int index, double value) {
-      double newValue = row.get(index) * value;
-      row.set(index, newValue);
-    }
-
-    public void mult(double value) {
-      for (int i = 0; i < row.size(); i++) {
-        multValue(i, value);
-      }
-    }
-
-    public void subtract(Row row, int badIndex, double coef){
-      for (int i = 0; i < getSize(); i++){
-        if (i == badIndex){
-          continue;
-        }
-
-        double newValue = this.row.get(i) - coef * row.getValue(i);
-        this.row.set(i, newValue);
-      }
-    }
-
-    public int getSize() {
-      return row.size();
-    }
-
-    public void removeValue(int index){
-      row.remove(index);
-    }
-
-    public double getValue(int index) {
-      return row.get(index);
-    }
-
-    @Override
-    public String toString() {
-      StringBuilder result = new StringBuilder();
-
-      for (Double value : row) {
-        result.append(String.format("%.2f", value)).append(" ");
+  public void subtract(Row row, int badIndex, double coef){
+    for (int i = 0; i < getSize(); i++){
+      if (i == badIndex){
+        continue;
       }
 
-      return result.toString();
+      double newValue = this.row.get(i) - coef * row.getValue(i);
+      this.row.set(i, newValue);
     }
+  }
+
+  public int getSize() {
+    return row.size();
+  }
+
+  public void removeValue(int index){
+    row.remove(index);
+  }
+
+  public double getValue(int index) {
+    return row.get(index);
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder result = new StringBuilder();
+
+    for (Double value : row) {
+      result.append(String.format("%.2f", value)).append(" ");
+    }
+
+    return result.toString();
   }
 }

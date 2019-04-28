@@ -66,6 +66,8 @@ public class Algorithm {
   private End makeStep(Simplex simplex, Stage stage){
     //находим индексы базового элемента
     int[] indexes = simplex.searchBaseElement();
+
+    //переменная слева не ушла, но шагов уже нет
     if (indexes[0] == -1 && indexes[1] == -1){
       return End.FAILURE;
     }
@@ -106,8 +108,9 @@ public class Algorithm {
   private void createArtBasis(){
     //создаем новую функцию
     addFunction = new Function(TypeProblem.MIN);
-    addFunction.addCoefficient(new Coefficient(1.0, function.getCountVar() + 1));
-    addFunction.addCoefficient(new Coefficient(1.0, function.getCountVar() + 2));
+    for (int i = 0; i < limits.size(); i++) {
+      addFunction.addCoefficient(new Coefficient(1.0, function.getCountVar() + i + 1));
+    }
 
     //добавляем в ограничения новые переменные
     for (int i = 0; i < limits.size(); i++){
