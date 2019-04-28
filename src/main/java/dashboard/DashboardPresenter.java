@@ -95,24 +95,36 @@ public class DashboardPresenter implements Initializable {
     Function function = new Function(TypeProblem.MIN);
     function.addCoefficient(new Coefficient( -1.0, 1));
     function.addCoefficient(new Coefficient( -1.0, 2));
-    function.addCoefficient(new Coefficient( -1.0, 3));
+    function.addCoefficient(new Coefficient( 1.0, 3));
     function.addCoefficient(new Coefficient( -1.0, 4));
+    function.addCoefficient(new Coefficient( 2.0, 5));
     algorithm.setFunction(function);
 
     Limit limit = new Limit();
-    limit.addCoefficient(new Coefficient( 1.0, 1));
-    limit.addCoefficient(new Coefficient( 3.0, 2));
-    limit.addCoefficient(new Coefficient( 7.0, 3));
-    limit.addCoefficient(new Coefficient( -1.0, 4));
-    limit.addCoefficient(new Coefficient( 6.0, -1));
+    limit.addCoefficient(new Coefficient( 8.0, 1));
+    limit.addCoefficient(new Coefficient( 1.0, 2));
+    limit.addCoefficient(new Coefficient( 1.0, 3));
+    limit.addCoefficient(new Coefficient( 1.0, 4));
+    limit.addCoefficient(new Coefficient( -2.0, 5));
+    limit.addCoefficient(new Coefficient( 10.0, -1));
     algorithm.addLimit(limit);
 
     limit = new Limit();
-    limit.addCoefficient(new Coefficient( 1.0, 1));
-    limit.addCoefficient(new Coefficient( -1.0, 2));
-    limit.addCoefficient(new Coefficient( -1.0, 3));
+    limit.addCoefficient(new Coefficient( 6.0, 1));
+    limit.addCoefficient(new Coefficient( 1.0, 2));
+    limit.addCoefficient(new Coefficient( 2.0, 3));
     limit.addCoefficient(new Coefficient( 3.0, 4));
-    limit.addCoefficient(new Coefficient( 2.0, -1));
+    limit.addCoefficient(new Coefficient( -4.0, 5));
+    limit.addCoefficient(new Coefficient( 20.0, -1));
+    algorithm.addLimit(limit);
+
+    limit = new Limit();
+    limit.addCoefficient(new Coefficient( 10.0, 1));
+    limit.addCoefficient(new Coefficient( 1.0, 2));
+    limit.addCoefficient(new Coefficient( 3.0, 3));
+    limit.addCoefficient(new Coefficient( 6.0, 4));
+    limit.addCoefficient(new Coefficient( -7.0, 5));
+    limit.addCoefficient(new Coefficient( 30.0, -1));
     algorithm.addLimit(limit);
 
     System.out.println(algorithm + "\n");

@@ -143,12 +143,28 @@ public class Simplex {
     }
 
     //выбираем лучшее отношение
-    int indexRow = -1;//TODO: что-то делать при -1
+    int indexRow = searchIndexRow(countRow, relations, possibleRow);
+
+    //если не нашлось базового элемента, при котором можно поменять переменную
+    if (indexRow == -1){
+      for (int i = 0; i < countRow; i++) {
+        possibleRow[i] = true;
+      }
+    }
+
+    indexRow = searchIndexRow(countRow, relations, possibleRow);
+
+    return new int[]{indexRow, indexFirstPossibleCol};
+  }
+
+  private int searchIndexRow(int countRow, double[] relations, boolean[] possibleRow){
+    int indexRow = -1;
+
     double min = Double.MAX_VALUE;
     for (int i = 0; i < countRow; i++) {
-      if (Utilit.isZero(relations[i])
-              || relations[i] < 0
-              || !possibleRow[i]){//TODO: что-то делать когда переменные ушли вверх, но еще не конец искуственного базиса
+      if ((!Utilit.isZero(relations[i])
+              && relations[i] < 0)
+              || !possibleRow[i]){
         continue;
       }
       if (relations[i] < min){
@@ -157,7 +173,7 @@ public class Simplex {
       }
     }
 
-    return new int[]{indexRow, indexFirstPossibleCol};
+    return indexRow;
   }
 
   //true - если в столбце есть положительные числа

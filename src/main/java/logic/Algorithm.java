@@ -1,6 +1,7 @@
 package logic;
 
 import logic.enums.End;
+import logic.enums.Stage;
 import logic.enums.TypeProblem;
 
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ public class Algorithm {
 
     End end = End.CONTINUE;
     while (end == End.CONTINUE) {
-      end = makeStep(simplex);
+      end = makeStep(simplex, Stage.ART_BASIS);
     }
     if (end == End.FAILURE){
       return;
@@ -50,7 +51,7 @@ public class Algorithm {
 
     end = simplex.end();
     while (end == End.CONTINUE){
-      end = makeStep(simplex);
+      end = makeStep(simplex, Stage.SIMPLEX);
     }
     System.out.println(end);
 
@@ -62,7 +63,7 @@ public class Algorithm {
     System.out.println("Point: " + simplex.getPointExtr());
   }
 
-  private End makeStep(Simplex simplex){
+  private End makeStep(Simplex simplex, Stage stage){
     //находим индексы базового элемента
     int[] indexes = simplex.searchBaseElement();
     if (indexes[0] == -1 && indexes[1] == -1){
@@ -85,12 +86,20 @@ public class Algorithm {
     simplex.subtractRow(indexes[0], indexes[1], -value);
     System.out.println(simplex);
 
-    //удаляем столбец
-    simplex.removeColumn(indexes[1]);
-    System.out.println(simplex);
+
+    //удаляем столбец, если это искственный базис
+    if(stage == Stage.ART_BASIS){
+      simplex.removeColumn(indexes[1]);
+      System.out.println(simplex);
+    }
 
     //исксственный базиз закончен?
-    return simplex.endArtBasis();
+    if (stage == Stage.ART_BASIS){
+      return simplex.endArtBasis();
+    }
+
+    //алгоритм закончился?
+    return simplex.end();
   }
 
   //создаем искусственный базис
