@@ -88,7 +88,7 @@ public class Algorithm {
   @Override
   public String toString() {
     StringBuilder result = new StringBuilder(function + "\n");
-    result.append(addFunction + "\n");
+    result.append(addFunction).append("\n");
 
     for (Limit limit : limits) {
       result.append(limit).append("\n");

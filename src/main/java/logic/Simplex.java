@@ -148,12 +148,16 @@ public class Simplex {
     return new int[]{indexRow, indexFirstPossibleCol};
   }
 
-  //true - если весь столбец неположительные числа
-  private boolean columnNoHavePositiveNumber(int index) {
+  //true - если в столбце есть положительные числа
+  private boolean columnHavePositiveNumber(int index) {
     for (int i = 0; i < rows.size(); i++) {
       Row row = rows.get(i);
       Double value = row.getValue(index);
-      if (value > 0 || !Utilit.isZero(value)){
+      if (value > 0){
+        //проверка на ноль, т.к. может -0.0(проверка до -12 порядка)
+        if (Utilit.isZero(value)){
+          continue;
+        }
         return true;
       }
     }
@@ -179,7 +183,8 @@ public class Simplex {
     }
 
     for (int i = 0; i < rows.get(0).getSize(); i++){
-      if (columnNoHavePositiveNumber(i)){
+      //если есть столбец, в котором все числа неположительные
+      if (!columnHavePositiveNumber(i)){
         return End.FAILURE;
       }
     }
