@@ -1,6 +1,5 @@
 package logic;
 
-import com.sun.org.apache.regexp.internal.RE;
 import logic.enums.TypeProblem;
 
 import java.util.ArrayList;
@@ -17,6 +16,13 @@ public class Function {
 
   public void addCoefficient(Coefficient coef){
     coefficients.add(coef);
+  }
+
+  public void setCoefficients(double[] coefs){
+    for (int i = 0; i < coefs.length; i++){
+      Coefficient coefficient = new Coefficient(coefs[i], i + 1);
+      coefficients.add(coefficient);
+    }
   }
 
   public Coefficient getCoefficients(int index){

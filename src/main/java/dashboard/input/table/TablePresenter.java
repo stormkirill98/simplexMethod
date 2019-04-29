@@ -57,6 +57,8 @@ public class TablePresenter implements Initializable {
 
     createTablePane();
     isFilled(tablePane);//для подсвечивания всех незаполненных полей красной подсветкой
+
+    fillTable();
   }
 
   //TODO: при пересоздании таблицы, можно попробовать сохранить старые значения

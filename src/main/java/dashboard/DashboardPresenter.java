@@ -26,7 +26,7 @@ public class DashboardPresenter implements Initializable {
     OutputView outputView = new OutputView();
     outputView.getViewAsync(output.getChildren()::add);
 
-    Algorithm algorithm = new Algorithm();
+    //Algorithm algorithm = new Algorithm();
 
     //FAILURE
     /*Function function = new Function(TypeProblem.MIN);
@@ -90,7 +90,7 @@ public class DashboardPresenter implements Initializable {
     limit.addCoefficient(new Coefficient( 0.0, 5));
     limit.addCoefficient(new Coefficient( 5.0, -1));
     algorithm.addLimit(limit);*/
-
+/*
     //SUCCESS
     Function function = new Function(TypeProblem.MIN);
     function.addCoefficient(new Coefficient( -1.0, 1));
@@ -135,6 +135,6 @@ public class DashboardPresenter implements Initializable {
 
     algorithm.searchStartVector();
 
-    System.out.println(algorithm + "\n");
+    System.out.println(algorithm + "\n");*/
   }
 }

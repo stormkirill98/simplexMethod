@@ -56,7 +56,7 @@ public class FunctionPresenter implements Initializable {
   private void createFunctionPane(){
     for (int i = 0; i < n; i++){
       String labelName = "x" + subscript(String.valueOf(i + 1)) + "+";
-      if (i == 0 || i == n -1)
+      if (i == n -1)
         labelName = "x" + subscript(String.valueOf(i + 1));
 
       Label label = new Label(labelName);
@@ -83,6 +83,9 @@ public class FunctionPresenter implements Initializable {
       textField.setPadding(new Insets(5));
       textField.setPrefWidth(cellWidth);
       textField.setPrefHeight(cellHeight);
+
+      //TODO:заполнение для теста, потом удалить
+      textField.setText(String.format("%.2f", 2.0));
 
       box.getChildren().add(textField);
       box.getChildren().add(label);

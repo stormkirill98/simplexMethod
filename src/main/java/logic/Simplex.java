@@ -19,6 +19,7 @@ public class Simplex {
 
   //число переменных, которые были в задаче с самого начала, без тех которые добавили мы
   private int countOurVar;
+  private int[] indexesBaseElement;
 
   public Simplex(List<Limit> limits) {
     //добавляем индексы переменных в столбцах(представляет верхнюю строку симплекс таблицы)
@@ -53,6 +54,26 @@ public class Simplex {
 
   public double getValue(int i, int j){
     return rows.get(i).getValue(j);
+  }
+
+  public List<Integer> getIndexesVarRow(){
+    return indexesVarRow;
+  }
+
+  public List<Integer> getIndexesVarCol(){
+    return indexesVarCol;
+  }
+
+  public int getCountRows(){
+    return rows.size();
+  }
+
+  public int getCountCols(){
+    return rows.get(0).getSize();
+  }
+
+  public int[] getIndexesBaseElement() {
+    return indexesBaseElement;
   }
 
   public void setValue(int i, int j, double value){
@@ -354,6 +375,10 @@ public class Simplex {
     }
 
     return result.toString();
+  }
+
+  public void setIndexesBaseElement(int[] indexesBaseElement) {
+    this.indexesBaseElement = indexesBaseElement;
   }
 }
 

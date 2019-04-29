@@ -1,16 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
-<ScrollPane fx:id="pane" hbarPolicy="NEVER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-            minWidth="-Infinity" vbarPolicy="ALWAYS" xmlns="http://javafx.com/javafx/8"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="dashboard.output.OutputPresenter">
-    <content>
-        <AnchorPane minHeight="0.0" minWidth="0.0">
-            <children>
-                <VBox fx:id="vBox"/>
-            </children>
-        </AnchorPane>
-    </content>
-</ScrollPane>
+<?import javafx.scene.text.Font?>
+<AnchorPane fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="dashboard.output.OutputPresenter">
+    <children>
+        <ScrollPane fx:id="scrollPane" layoutY="53.0" AnchorPane.topAnchor="58.0">
+            <content>
+                <AnchorPane>
+                    <children>
+                        <VBox fx:id="vBox"/>
+                    </children>
+                </AnchorPane>
+            </content>
+        </ScrollPane>
+        <Button fx:id="start" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" text="Start">
+            <font>
+                <Font size="15.0"/>
+            </font>
+        </Button>
+    </children>
+</AnchorPane>

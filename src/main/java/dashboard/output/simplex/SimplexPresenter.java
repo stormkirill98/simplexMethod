@@ -1,21 +1,26 @@
 package dashboard.output.simplex;
 
-import com.sun.xml.internal.bind.v2.TODO;
+import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import logic.Simplex;
 import logic.Utilit;
 
 import javax.inject.Inject;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
+
+import static logic.Utilit.subscript;
 
 @SuppressWarnings("Duplicates")
 public class SimplexPresenter implements Initializable {
@@ -25,23 +30,29 @@ public class SimplexPresenter implements Initializable {
   public AnchorPane pane;
 
   @Inject
-  private ArrayList<Integer> inputData;
+  private ArrayList<Object> inputData;
 
   private int n = 0;
   private int m = 0;
   private int numberStep = 0;
 
+  private Simplex simplex;
+
   private GridPane table;
 
   //TODO: подсвечивать базовый элемент
-
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    n = inputData.get(0);
-    m = inputData.get(1);
-    numberStep = inputData.get(2);
+    numberStep = (Integer) inputData.get(0);
+    simplex = (Simplex) inputData.get(1);
+
+    n = simplex.getCountRows();
+    m = simplex.getCountCols();
 
     createSimplexPane();
+
+    int[] indexesBaseElement = simplex.searchBaseElement();
+    setBaseElement(indexesBaseElement);
   }
 
   //create panel with view of simplex
@@ -54,16 +65,36 @@ public class SimplexPresenter implements Initializable {
     constraints.setHalignment(HPos.CENTER);
     table.getColumnConstraints().addAll(constraints, constraints);
 
-    //fill grid pane labels and fields
-    for (int i = 0; i < n + 2; i++) {
-      for (int j = 0; j < m + 2; j++) {
-        if (i == 0 || j == 0) {
-          Label label = createLabel(i, j, numberStep);
+
+    //fill grid scrollPane labels and fields
+    for (int i = 0; i < n + 1; i++) {
+      for (int j = 0; j < m + 1; j++) {
+        if (i == 0 && j == 0){
+          Label label = createLabel(numberStep);
+          table.add(label, j, i);
+          continue;
+        }
+        if (i == 0) {
+          if (j == m)
+            continue;
+
+          List<Integer> indexesVarCol = simplex.getIndexesVarCol();
+          Label label = createLabelCol(indexesVarCol.get(j - 1));
           table.add(label, j, i);
           continue;
         }
 
-        TextField textField = createTextField();
+        if (j == 0) {
+          if (i == n)
+            continue;
+
+          List<Integer> indexesVarRow = simplex.getIndexesVarRow();
+          Label label = createLabelRow(indexesVarRow.get(i - 1));
+          table.add(label, j, i);
+          continue;
+        }
+
+        TextField textField = createTextField(simplex.getValue(i - 1, j - 1));
         table.add(textField, j, i);
       }
     }
@@ -71,49 +102,80 @@ public class SimplexPresenter implements Initializable {
     pane.getChildren().add(table);
   }
 
-  private Label createLabel(int i, int j, int numberStep) {
+  private Label createLabel(int numberStep){
     Label label = new Label("");
 
     label.setAlignment(Pos.CENTER);
     label.setPrefWidth(cellWidth);
     label.setPrefHeight(cellHeight);
 
-    if (i == 0 && j == 0){
-      String name = "X̅" + Utilit.superscript(String.valueOf(numberStep));
+    String name = "X̅" + Utilit.superscript(String.valueOf(numberStep));
 
-      label.setText(name);
-
-      return label;
-
-    }
-    if (i == 0) {
-      String columnName = "x" + j;
-      if (j == m + 1) {
-        columnName = "";
-      }
-
-      label.setText(columnName);
-
-      return label;
-    }
-    if (j == 0) {
-      String rowName = i == n + 1 ? "" : "x" + i;
-
-      label.setText(rowName);
-
-      return label;
-    }
+    label.setText(name);
 
     return label;
   }
 
-  private TextField createTextField(){
-    TextField textField = new TextField();
+  private Label createLabelRow(int indexVarRow) {
+    Label label = new Label("");
+
+    label.setAlignment(Pos.CENTER);
+    label.setPrefWidth(cellWidth);
+    label.setPrefHeight(cellHeight);
+
+    String rowName = "x" + subscript(String.valueOf(indexVarRow));
+
+    label.setText(rowName);
+
+    return label;
+  }
+
+  private Label createLabelCol(int indexVarCol) {
+    Label label = new Label("");
+
+    label.setAlignment(Pos.CENTER);
+    label.setPrefWidth(cellWidth);
+    label.setPrefHeight(cellHeight);
+
+    String columnName = "x" + subscript(String.valueOf(indexVarCol));
+
+    label.setText(columnName);
+
+    return label;
+  }
+
+  private TextField createTextField(Double value){
+    TextField textField = new TextField(String.format("%.2f", value));
 
     textField.setPadding(new Insets(5));
     textField.setPrefWidth(cellWidth);
     textField.setPrefHeight(cellHeight);
 
     return textField;
+  }
+
+  private void setBaseElement(int[] indexes){
+    if (indexes == null){
+      return;
+    }
+    TextField base = getNodeByRowColumnIndex(indexes[0] + 1, indexes[1] + 1);
+    base.setId("base-element");
+  }
+
+  public TextField getNodeByRowColumnIndex(int row, int column) {
+    ObservableList<Node> childrens = table.getChildren();
+
+    try {
+      for (Node node : childrens) {
+        if (GridPane.getRowIndex(node) == row
+                && GridPane.getColumnIndex(node) == column) {
+          return (TextField) node;
+        }
+      }
+    } catch (ClassCastException e){
+      e.printStackTrace();
+    }
+
+    return null;
   }
 }

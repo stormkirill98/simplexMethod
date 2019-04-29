@@ -6,7 +6,20 @@ import java.util.List;
 public class Limit {
   private List<Coefficient> coefficients = new ArrayList<>();
 
+  public Limit(double[] coefs) {
+    for (int i = 0; i < coefs.length; i++) {
+      int index = i;
+      if (i == coefs.length - 1){
+        index = -1;
+      }
+
+      Coefficient coefficient = new Coefficient(coefs[i], index + 1);
+      coefficients.add(coefficient);
+    }
+  }
+
   public Limit() {
+
   }
 
   public void addCoefficient(Coefficient coef) {

@@ -12,11 +12,28 @@ public class Algorithm {
   private Function addFunction;
   private List<Limit> limits = new ArrayList<>();
 
+  private Stage stage = Stage.ART_BASIS;
+
+  private Simplex simplex;
+
+  public Algorithm(double[][] limits) {
+    for (int i = 0; i < limits.length; i++) {
+      Limit limit = new Limit(limits[i]);
+      this.limits.add(limit);
+    }
+    simplex = new Simplex(this.limits);
+  }
+
   public Algorithm() {
+
   }
 
   public void setFunction(Function function) {
     this.function = function;
+  }
+
+  public void setStage(Stage stage){
+    this.stage = stage;
   }
 
   public void addLimit(Limit limit){
@@ -30,28 +47,17 @@ public class Algorithm {
     }
   }
 
-  public void searchStartVector(){
-    createArtBasis();
-    Simplex simplex = new Simplex(limits);
 
-    System.out.println(simplex);
-
-    End end = End.CONTINUE;
-    while (end == End.CONTINUE) {
-      end = makeStep(simplex, Stage.ART_BASIS);
-    }
-    if (end == End.FAILURE){
-      return;
-    }
-    System.out.println(end);
-
+  public void simplex(){
     //simplex method
+    stage = Stage.SIMPLEX;
+
     simplex.recountLastRow(function);
     System.out.println(simplex);
 
-    end = simplex.end();
+    End end = simplex.end();
     while (end == End.CONTINUE){
-      end = makeStep(simplex, Stage.SIMPLEX);
+      end = makeStep();
     }
     System.out.println(end);
 
@@ -63,9 +69,22 @@ public class Algorithm {
     System.out.println("Point: " + simplex.getPointExtr());
   }
 
-  private End makeStep(Simplex simplex, Stage stage){
+  public void recountLastRow(){
+    simplex.recountLastRow(function);
+  }
+
+  public double getFunctionExtr(){
+    return simplex.getFunctionExtr();
+  }
+
+  public List<Double> getPointExtr(){
+    return simplex.getPointExtr();
+  }
+
+  public End makeStep(){
     //находим индексы базового элемента
-    int[] indexes = simplex.searchBaseElement();
+    int[] indexes = simplex.getIndexesBaseElement();
+    //simplex.setIndexesBaseElement(indexes);
 
     //переменная слева не ушла, но шагов уже нет
     if (indexes[0] == -1 && indexes[1] == -1){
@@ -105,7 +124,7 @@ public class Algorithm {
   }
 
   //создаем искусственный базис
-  private void createArtBasis(){
+  public void createArtBasis(){
     //создаем новую функцию
     addFunction = new Function(TypeProblem.MIN);
     for (int i = 0; i < limits.size(); i++) {
@@ -117,8 +136,13 @@ public class Algorithm {
       Limit limit = limits.get(i);
       limit.addCoefArtBasis(new Coefficient(1.0, function.getCountVar() + i + 1));
     }
+
+    simplex = new Simplex(limits);
   }
 
+  public Simplex getSimplex(){
+    return simplex;
+  }
 
   @Override
   public String toString() {

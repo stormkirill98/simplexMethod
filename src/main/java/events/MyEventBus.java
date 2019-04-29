@@ -11,7 +11,6 @@ public class MyEventBus {
   }
 
   protected MyEventBus() {
-
   }
 
   public static void register(Object o) {
