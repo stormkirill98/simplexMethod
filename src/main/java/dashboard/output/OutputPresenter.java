@@ -9,20 +9,22 @@ import events.domain.TableLimits;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Separator;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import logic.Algorithm;
 import logic.Function;
 import logic.Simplex;
 import logic.enums.End;
+import logic.enums.Error;
 import logic.enums.Stage;
+import logic.enums.TypeProblem;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -36,10 +38,12 @@ public class OutputPresenter implements Initializable {
 
   public Button start;
 
-
   public HBox hBox = new HBox();
+  public CheckBox stepByStep;
+  public Button next;
+  public Button prev;
 
-  private int countSimplexes = 0;
+  private int step = 0;
   int countSimplexInCurrentRow = 0;
   private double widthPane = 0;
 
@@ -52,44 +56,103 @@ public class OutputPresenter implements Initializable {
   private Algorithm algorithm;
   private Function function;
 
+  private End end = End.CONTINUE;
+  private Stage stage = Stage.ART_BASIS;
+  private boolean printAnswer = false;
+
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     Rectangle2D screen = Screen.getPrimary().getVisualBounds();
     widthPane = 0.6 * screen.getWidth();
-    double height = screen.getHeight() - 35;
+    double height = screen.getHeight() - 120;
     scrollPane.setPrefViewportHeight(height);
     scrollPane.setPrefViewportWidth(widthPane);
-
 
     MyEventBus.register(this);
 
     start.setOnAction(event -> {
-      clear();
-      countSimplexInCurrentRow = 0;
-      countSimplexes = 0;
-      vBox.getChildren().add(hBox);
+      onClickStart();
+    });
+    next.setOnAction(event -> {
+      onClickNext();
+    });
+    stepByStep.selectedProperty().addListener((observable, oldValue, newValue) -> changeStepByStep(newValue));
+  }
 
-      if (tableLimits == null) {
-        return;
-      }
-      algorithm = new Algorithm(tableLimits);
+  private void onClickStart() {
+    clear();
+    countSimplexInCurrentRow = 0;
+    step = 0;
+    end = End.CONTINUE;
 
-      if (functionDao == null) {
-        return;
-      }
-      function = new Function(functionDao.getTypeProblem());
-      function.setCoefficients(functionDao.getCoefs());
+    vBox.getChildren().add(hBox);
 
-      algorithm.setFunction(function);
+    if (tableLimits == null) {
+      return;
+    }
+    algorithm = new Algorithm(tableLimits);
+    if (algorithm.getStage() == Stage.END) {
+      printError(Error.BAD_INPUT);
+      return;
+    }
 
-      System.out.println(algorithm);
+    if (functionDao == null) {
+      return;
+    }
+    function = new Function(functionDao.getTypeProblem());
+    function.setCoefficients(functionDao.getCoefs());
+    if (function.getType() == TypeProblem.MAX) {
+      function.reverseType();
+    }
 
+
+    algorithm.setFunction(function);
+
+    System.out.println(algorithm);
+
+    if (stepByStep.isSelected()) {
+      algorithm.createArtBasis();
+      createSimplex(algorithm.getSimplex());
+    } else {
       try {
         goAlgorithm();
       } catch (InterruptedException e) {
         e.printStackTrace();
       }
-    });
+    }
+  }
+
+  public void onClickNext() {
+    if (end == End.FAILURE) {
+      printError(Error.NOT_LIMITED);
+      return;
+    }
+    if (end == End.SUCCESS_ALL) {
+      printAnswer();
+      return;
+    }
+    if (end == End.SUCCESS_ART_BASIS) {
+      algorithm.setStage(Stage.SIMPLEX);
+      step = 0;
+
+      algorithm.recountLastRow();
+      createSimplex(algorithm.getSimplex());
+      end = algorithm.getSimplex().end();
+      return;
+    }
+
+    end = algorithm.makeStep();
+    createSimplex(algorithm.getSimplex());
+  }
+
+  public void changeStepByStep(boolean newValue) {
+    if (newValue) {
+      next.setDisable(false);
+      prev.setDisable(false);
+    } else {
+      next.setDisable(true);
+      prev.setDisable(true);
+    }
   }
 
   private void goAlgorithm() throws InterruptedException {
@@ -97,8 +160,7 @@ public class OutputPresenter implements Initializable {
     createSimplex(algorithm.getSimplex());
     Thread.sleep(150);
 
-    End end = End.CONTINUE;
-
+    end = End.CONTINUE;
     //искусственный базис
     while (end == End.CONTINUE) {
       end = algorithm.makeStep();
@@ -107,9 +169,9 @@ public class OutputPresenter implements Initializable {
       Thread.sleep(150);
     }
     if (end == End.FAILURE) {
+      printError(Error.NOT_LIMITED);
       return;
     }
-
 
     //simplex-method
     algorithm.setStage(Stage.SIMPLEX);
@@ -128,6 +190,7 @@ public class OutputPresenter implements Initializable {
     }
 
     if (end == End.FAILURE) {
+      printError(Error.NOT_LIMITED);
       return;
     }
   }
@@ -137,7 +200,7 @@ public class OutputPresenter implements Initializable {
       return;
     }
     ArrayList<Object> dataTo = new ArrayList<>();
-    dataTo.add(countSimplexes++);
+    dataTo.add(step++);
     dataTo.add(simplex);
 
     makeNewRow(simplex.getCountCols());
@@ -152,16 +215,20 @@ public class OutputPresenter implements Initializable {
 
     //is it possible to add simplex in this row
     if (simplexWidth * (countSimplexInCurrentRow + 1) > widthPane) {
-      Separator separator = new Separator();
-      separator.setPrefWidth(widthPane);
-      separator.setOrientation(Orientation.HORIZONTAL);
-      separator.setPadding(new Insets(10, 0, 5, 0));
-      vBox.getChildren().add(separator);
+      addSeparator();
 
       hBox = new HBox();
       vBox.getChildren().add(hBox);
       countSimplexInCurrentRow = 0;
     }
+  }
+
+  private void addSeparator() {
+    Separator separator = new Separator();//TODO: не на всю ширину
+    separator.setPrefWidth(widthPane);
+    separator.setOrientation(Orientation.HORIZONTAL);
+    separator.setPadding(new Insets(10, 0, 5, 0));
+    vBox.getChildren().add(separator);
   }
 
   private void clear() {
@@ -174,6 +241,60 @@ public class OutputPresenter implements Initializable {
     }
 
     vBox.getChildren().clear();
+  }
+
+  private void printError(Error error) {
+    addSeparator();
+
+    HBox hBox = new HBox();
+
+    String text = error == Error.NOT_LIMITED ? "Not limited" : "Check input";
+
+    Label label = new Label(text);
+    label.setFont(new Font(40));
+
+    hBox.getChildren().add(label);
+    vBox.getChildren().add(hBox);
+
+    addSeparator();
+  }
+
+  private void printAnswer() {
+    if (printAnswer) {
+      return;
+    }
+
+    addSeparator();
+
+    VBox vBox = new VBox();
+
+    Font font = new Font(30);
+
+    String type = "";
+    if (function.isReverse()) {
+      type = function.getType() == TypeProblem.MIN ? "max" : "min";
+    } else {
+      type = function.getType().toString().toLowerCase();
+    }
+    Label point = new Label();
+    String str = "Point " + type + " = " + algorithm.getPointExtr();
+    point.setText(str);
+    point.setFont(font);
+    point.setAlignment(Pos.CENTER);
+
+    Label value = new Label();
+    String functionValue = type == "min" ? String.format("%.4f", -algorithm.getFunctionExtr())
+                                         : String.format("%.4f", algorithm.getFunctionExtr());
+    str = "Function " + type + " value = " + functionValue;
+    value.setText(str);
+    value.setFont(font);
+    value.setAlignment(Pos.CENTER);
+
+    vBox.getChildren().add(point);
+    vBox.getChildren().add(value);
+    this.vBox.getChildren().add(vBox);
+
+    addSeparator();
   }
 
   @Subscribe

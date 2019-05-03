@@ -8,6 +8,7 @@ import java.util.List;
 public class Function {
   private List<Coefficient> coefficients = new ArrayList<>();
   private TypeProblem type;
+  private boolean reverse = false;
 
   //class presents function which extr need to find
   public Function(TypeProblem type){
@@ -53,6 +54,8 @@ public class Function {
     }
 
     coefficients.forEach(coef -> coef.setValue(coef.getValue() * -1));
+
+    reverse = true;
   }
 
   @Override
@@ -68,5 +71,9 @@ public class Function {
     result += "->" + getType();
 
     return result;
+  }
+
+  public boolean isReverse() {
+    return reverse;
   }
 }

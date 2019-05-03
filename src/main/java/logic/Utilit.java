@@ -156,18 +156,18 @@ public class Utilit {
     textField.setPrefWidth(lengthText);
   }
 
-  public static boolean validateDouble(TextField textField, String oldValue, String newValue){
+  public static boolean validateDouble(TextField textField, String oldValue, String newValue) {
     if (!isDouble(newValue)) {
       textField.setText(oldValue);
       return false;
     }
 
-    if (newValue.equals(",") || newValue.equals(".")){
+    if (newValue.equals(",") || newValue.equals(".")) {
       textField.setText(newValue);
       return false;
     }
 
-    if (newValue.isEmpty()){
+    if (newValue.isEmpty()) {
       textField.setId("text-field-empty");
     } else {
       textField.setId("");
@@ -198,5 +198,96 @@ public class Utilit {
     }
 
     return filled;
+  }
+
+  static void swap(double mat[][],
+                   int row1, int row2, int col) {
+    for (int i = 0; i < col; i++) {
+      double temp = mat[row1][i];
+      mat[row1][i] = mat[row2][i];
+      mat[row2][i] = temp;
+    }
+  }
+
+  static double[][] toSquare(double mat[][]) {
+    int n = mat.length;
+    int m = mat[0].length;
+    if (n == m) {
+      return mat;
+    }
+
+    if (n < m) {
+      double[][] newMat = new double[m][m];
+      copyMatrix(mat, newMat);
+      for (int i = n; i < m; i++) {
+        for (int j = 0; j < m; j++) {
+          newMat[i][j] = 0;
+        }
+      }
+
+      return newMat;
+    } else {
+      double[][] newMat = new double[n][n];
+      copyMatrix(mat, newMat);
+      for (int j = m; j < n - m; j++) {
+        for (int i = 0; i < m; i++) {
+          newMat[i][j] = 0;
+        }
+      }
+
+      return newMat;
+    }
+  }
+
+  static void copyMatrix(double from[][], double to[][]) {
+    for (int i = 0; i < from.length; i++) {
+      for (int j = 0; j < from[0].length; j++) {
+        to[i][j] = from[i][j];
+      }
+    }
+  }
+
+  static int rankOfMatrix(double mat[][]) {
+    mat = toSquare(mat);
+
+    int rank = mat.length;
+
+    for (int row = 0; row < rank; row++) {
+      if (mat[row][row] != 0) {
+        for (int col = 0; col < mat[0].length; col++) {
+          if (col != row) {
+            double mult =
+                    mat[col][row] /
+                            mat[row][row];
+
+            for (int i = 0; i < rank; i++)
+
+              mat[col][i] -= mult
+                      * mat[row][i];
+          }
+        }
+      } else {
+        boolean reduce = true;
+
+        for (int i = row + 1; i < mat[0].length; i++) {
+          if (mat[i][row] != 0) {
+            swap(mat, row, i, rank);
+            reduce = false;
+            break;
+          }
+        }
+
+        if (reduce) {
+          rank--;
+
+          for (int i = 0; i < mat[0].length; i++)
+            mat[i][row] = mat[i][rank];
+        }
+
+        row--;
+      }
+    }
+
+    return rank;
   }
 }

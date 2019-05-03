@@ -32,9 +32,6 @@ public class InputPresenter implements Initializable {
     createTablePane(Integer.valueOf(amountVar.getText()),
             Integer.valueOf(amountLimit.getText()));
     initInputDimension();
-
-    //TODO:не забыть удалить
-    amountVar.setText("4");
   }
 
   private void initInputDimension() {

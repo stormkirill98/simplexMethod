@@ -22,7 +22,7 @@
                       </Label>
                       <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="470.0">
                           <children>
-                              <Label alignment="CENTER" prefHeight="40.0" prefWidth="168.0" text="Amount var = " textAlignment="CENTER">
+                              <Label alignment="CENTER" prefHeight="40.0" prefWidth="194.0" text="Amount limits = " textAlignment="CENTER">
                                   <font>
                                       <Font size="25.0" />
                                   </font>
@@ -32,7 +32,7 @@
                                       <Font size="18.0" />
                                   </font>
                               </TextField>
-                              <Label alignment="CENTER" prefHeight="40.0" prefWidth="219.0" text="Amount limits =" textAlignment="CENTER">
+                              <Label alignment="CENTER" prefHeight="40.0" prefWidth="184.0" text="Amount var =" textAlignment="CENTER">
                                   <font>
                                       <Font size="25.0" />
                                   </font>

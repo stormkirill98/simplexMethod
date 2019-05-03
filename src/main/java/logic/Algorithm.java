@@ -16,16 +16,20 @@ public class Algorithm {
 
   private Simplex simplex;
 
+  //TODO: проверить на вычеркивание всех переменных сверху
   public Algorithm(double[][] limits) {
+    if (!checkRank(limits)){
+      stage = Stage.END;
+      return;
+    }
+
     for (int i = 0; i < limits.length; i++) {
       Limit limit = new Limit(limits[i]);
       this.limits.add(limit);
     }
     simplex = new Simplex(this.limits);
-  }
 
-  public Algorithm() {
-
+    makeValid();
   }
 
   public void setFunction(Function function) {
@@ -48,27 +52,6 @@ public class Algorithm {
   }
 
 
-  public void simplex(){
-    //simplex method
-    stage = Stage.SIMPLEX;
-
-    simplex.recountLastRow(function);
-    System.out.println(simplex);
-
-    End end = simplex.end();
-    while (end == End.CONTINUE){
-      end = makeStep();
-    }
-    System.out.println(end);
-
-    if (end == End.FAILURE){
-      return;
-    }
-
-    System.out.printf("Extr = %.2f\n", simplex.getFunctionExtr());
-    System.out.println("Point: " + simplex.getPointExtr());
-  }
-
   public void recountLastRow(){
     simplex.recountLastRow(function);
   }
@@ -81,14 +64,22 @@ public class Algorithm {
     return simplex.getPointExtr();
   }
 
+  public Stage getStage() {
+    return stage;
+  }
+
+  //TODO:если с самого начала плохой симплекс искуственного базиса, то делается лишний шаг ничего не меняющий
   public End makeStep(){
     //находим индексы базового элемента
-    int[] indexes = simplex.getIndexesBaseElement();
+    int[] indexes = simplex.searchBaseElement();
     //simplex.setIndexesBaseElement(indexes);
 
     //переменная слева не ушла, но шагов уже нет
     if (indexes[0] == -1 && indexes[1] == -1){
-      return End.FAILURE;
+      if (stage == Stage.ART_BASIS){
+        return simplex.endArtBasis();
+      }
+      return simplex.end();
     }
     System.out.println("indexes " + indexes[0] + " " + indexes[1]);
     simplex.swap(indexes[0], indexes[1]);
@@ -116,6 +107,8 @@ public class Algorithm {
 
     //исксственный базиз закончен?
     if (stage == Stage.ART_BASIS){
+      //TODO: можно избавиться от двух внешних циклов и перейти тут сразу к симплекс методу
+
       return simplex.endArtBasis();
     }
 
@@ -142,6 +135,20 @@ public class Algorithm {
 
   public Simplex getSimplex(){
     return simplex;
+  }
+
+  public boolean checkRank(double[][] array){
+    if (array == null){
+      return false;
+    }
+
+    int rank = Utilit.rankOfMatrix(array);
+    System.out.println("rank " + rank);
+    if (rank == array.length && rank <= array[0].length){
+      return true;
+    }
+
+    return false;
   }
 
   @Override

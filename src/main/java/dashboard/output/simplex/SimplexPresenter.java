@@ -11,8 +11,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import logic.Simplex;
 import logic.Utilit;
+import logic.enums.End;
+import logic.enums.Stage;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -40,7 +44,6 @@ public class SimplexPresenter implements Initializable {
 
   private GridPane table;
 
-  //TODO: подсвечивать базовый элемент
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     numberStep = (Integer) inputData.get(0);
@@ -50,6 +53,37 @@ public class SimplexPresenter implements Initializable {
     m = simplex.getCountCols();
 
     createSimplexPane();
+
+    int indexNoPositiveColumn = simplex.getIndexNoPositiveColumn();
+    if (indexNoPositiveColumn >= 0){
+      highlightBadColumn(indexNoPositiveColumn);
+      return;
+    }
+
+    Stage stage = simplex.getStage();
+    if (stage == Stage.ART_BASIS && simplex.endArtBasis() == End.FAILURE){
+      highlightLastRow(End.FAILURE);
+      return;
+    } else if (simplex.end() == End.FAILURE){
+      highlightLastRow(End.FAILURE);
+      return;
+    }
+
+    if (stage == Stage.ART_BASIS && simplex.endArtBasis() == End.SUCCESS_ART_BASIS){
+      highlightLastRow(End.SUCCESS_ART_BASIS);
+      return;
+    } else if (simplex.end() == End.SUCCESS_ALL){
+      highlightLastRow(End.SUCCESS_ALL);
+      return;
+    }
+
+
+
+    /*if (simplex.endArtBasis() == End.FAILURE ||
+        simplex.end() == End.FAILURE){
+      highlightLastRow(End.FAILURE);
+      return;
+    }*/
 
     int[] indexesBaseElement = simplex.searchBaseElement();
     setBaseElement(indexesBaseElement);
@@ -113,6 +147,8 @@ public class SimplexPresenter implements Initializable {
 
     label.setText(name);
 
+
+
     return label;
   }
 
@@ -158,8 +194,34 @@ public class SimplexPresenter implements Initializable {
     if (indexes == null){
       return;
     }
+    if (indexes[0] == -1 || indexes[1] == -1){
+      return;
+    }
     TextField base = getNodeByRowColumnIndex(indexes[0] + 1, indexes[1] + 1);
     base.setId("base-element");
+  }
+
+  private void highlightLastRow(End end){
+    String id = end == End.SUCCESS_ALL || end == End.SUCCESS_ART_BASIS
+            ? "success-last-row"
+            : "failure-last-row";
+    for (int j = 0; j < m; j++){
+      TextField field = getNodeByRowColumnIndex(n, j + 1);
+      if (field == null){
+        continue;
+      }
+      field.setId(id);
+    }
+  }
+
+  private void highlightBadColumn(int index){
+    for (int i = 0; i < n; i++){
+      TextField field = getNodeByRowColumnIndex(i + 1, index + 1);
+      if (field == null){
+        continue;
+      }
+      field.setId("failure-column");
+    }
   }
 
   public TextField getNodeByRowColumnIndex(int row, int column) {
@@ -172,9 +234,7 @@ public class SimplexPresenter implements Initializable {
           return (TextField) node;
         }
       }
-    } catch (ClassCastException e){
-      e.printStackTrace();
-    }
+    } catch (ClassCastException ignored){ }
 
     return null;
   }

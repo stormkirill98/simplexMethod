@@ -6,6 +6,8 @@ import logic.enums.Stage;
 import java.util.ArrayList;
 import java.util.List;
 
+import static logic.Utilit.isZero;
+
 public class Simplex {
   private List<Integer> indexesVarRow = new ArrayList<>();
   private List<Integer> indexesVarCol = new ArrayList<>();
@@ -20,6 +22,8 @@ public class Simplex {
   //число переменных, которые были в задаче с самого начала, без тех которые добавили мы
   private int countOurVar;
   private int[] indexesBaseElement;
+
+  private int indexNoPositiveColumn = -1;
 
   public Simplex(List<Limit> limits) {
     //добавляем индексы переменных в столбцах(представляет верхнюю строку симплекс таблицы)
@@ -70,6 +74,10 @@ public class Simplex {
 
   public int getCountCols(){
     return rows.get(0).getSize();
+  }
+
+  public Stage getStage() {
+    return stage;
   }
 
   public int[] getIndexesBaseElement() {
@@ -137,7 +145,7 @@ public class Simplex {
     }
 
     //определяем первый подходящий столбец
-    int indexFirstPossibleCol = -1;//TODO: что-то делать при -1
+    int indexFirstPossibleCol = -1;
     Row lastRow = rows.get(rows.size() - 1);
     for (int i = 0; i < countVar; i++) {
       //последний элемент в столбце отрицательный?
@@ -150,7 +158,7 @@ public class Simplex {
     если не нашелся первый подходящий столбец, значит
     осталась переменная, которая еще не ушла наверх,
     но шагов уже нет.
-    возвращаем {-1, -1} для прекращения проги
+    возвращаем {-1, -1} для прекращения алгоритма
     */
     if (indexFirstPossibleCol == -1){
       return new int[]{indexFirstPossibleCol, -1};
@@ -165,7 +173,7 @@ public class Simplex {
 
         double value = rows.get(i).getValue(indexFirstPossibleCol);
         double freeValue = rows.get(i).getValue(countVar);//свободное значение в таблице(самое последнее в строке)
-        if (Utilit.isZero(value)) {
+        if (isZero(value)) {
           relations[i] = Double.MAX_VALUE;
         }
 
@@ -192,7 +200,7 @@ public class Simplex {
 
     double min = Double.MAX_VALUE;
     for (int i = 0; i < countRow; i++) {
-      if ((!Utilit.isZero(relations[i])
+      if ((!isZero(relations[i])
               && relations[i] < 0)
               || !possibleRow[i]){
         continue;
@@ -212,7 +220,7 @@ public class Simplex {
       Double value = row.getValue(index);
       if (value > 0) {
         //проверка на ноль, т.к. может -0.0(проверка до -12 порядка)
-        if (Utilit.isZero(value)) {
+        if (isZero(value)) {
           continue;
         }
         return true;
@@ -226,7 +234,7 @@ public class Simplex {
   private boolean lastRowIsZero(){
     Row lastRow = rows.get(rows.size() - 1);
     for (int i = 0; i < lastRow.getSize(); i++){
-      if (!Utilit.isZero(lastRow.getValue(i))){
+      if (!isZero(lastRow.getValue(i))){
         return false;
       }
     }
@@ -241,9 +249,10 @@ public class Simplex {
       double value = lastRow.getValue(i);
       if (value < 0){
         //проверка на ноль, т.к. может -0.0(проверка до -12 порядка)
-        if (Utilit.isZero(value)){
+        if (isZero(value)){
           continue;
         }
+
         return false;
       }
     }
@@ -255,6 +264,7 @@ public class Simplex {
     for (int i = 0; i < rows.get(0).getSize(); i++){
       //если есть столбец, в котором все числа неположительные
       if (!columnHavePositiveNumber(i)){
+        indexNoPositiveColumn = i;
         return true;
       }
     }
@@ -262,11 +272,29 @@ public class Simplex {
     return false;
   }
 
+  private boolean fPositive(){
+    Row row = rows.get(rows.size() - 1);
+    double fValue = row.getValue(row.getSize() - 1);
+    if (fValue > 0 && !isZero(fValue)){
+      return true;
+    }
+
+    return false;
+  }
+
   //проверяем закончился ли метод искуственнго базиса
   public End endArtBasis(){
+    if (fPositive()){
+      return End.FAILURE;
+    }
+
     if (lastRowIsZero()){
       stage = Stage.SIMPLEX;
-      return End.SUCCESS;
+      return End.SUCCESS_ART_BASIS;
+    }
+
+    if (lastRowIsNoNegative()){
+      return End.FAILURE;
     }
 
     if (failure()){
@@ -280,7 +308,7 @@ public class Simplex {
   public End end(){
     if (lastRowIsNoNegative()){
       stage = Stage.END;
-      return End.SUCCESS;
+      return End.SUCCESS_ALL;
     }
 
     if (failure()){
@@ -379,6 +407,10 @@ public class Simplex {
 
   public void setIndexesBaseElement(int[] indexesBaseElement) {
     this.indexesBaseElement = indexesBaseElement;
+  }
+
+  public int getIndexNoPositiveColumn() {
+    return indexNoPositiveColumn;
   }
 }
 

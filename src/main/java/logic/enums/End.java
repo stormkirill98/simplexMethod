@@ -1,5 +1,5 @@
 package logic.enums;
 
 public enum End {
-  SUCCESS, CONTINUE, FAILURE
+  SUCCESS_ART_BASIS, SUCCESS_ALL, CONTINUE, FAILURE
 }
