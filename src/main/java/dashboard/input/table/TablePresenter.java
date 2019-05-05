@@ -33,7 +33,7 @@ public class TablePresenter implements Initializable {
   public ScrollPane scrollPane;
 
   @Inject
-  private ArrayList<Integer> dimension;
+  private ArrayList<Object> inputData;
 
   private int n;
   private int m;
@@ -50,15 +50,16 @@ public class TablePresenter implements Initializable {
     scrollPane.setPrefViewportWidth(0.365 * width);
     scrollPane.setPrefViewportHeight(0.778 * height);
 
-    n = dimension.get(0);
-    m = dimension.get(1);
+    n = (int) inputData.get(0);
+    m = (int) inputData.get(1);
+    double[][] limits = (double[][]) inputData.get(2);
 
     table = new double[n][m + 1];
 
     createTablePane();
     isFilled(tablePane);//для подсвечивания всех незаполненных полей красной подсветкой
 
-    fillTable();
+    fillTable(limits);
   }
 
   //TODO: при пересоздании таблицы, можно попробовать сохранить старые значения
@@ -114,7 +115,11 @@ public class TablePresenter implements Initializable {
     pane.getChildren().add(tablePane);
   }
 
-  public void fillTable() {
+  public void fillTable(double[][] limits) {
+    if (limits == null){
+      return;
+    }
+
     ObservableList<Node> cells = tablePane.getChildren();
     if (cells == null) {
       return;
@@ -131,7 +136,7 @@ public class TablePresenter implements Initializable {
             continue;
           }
 
-          cell.setText(String.format("%.2f", 2.0));
+          cell.setText(String.format("%.2f", limits[i - 1][j]));
         }
       }
     } catch (IndexOutOfBoundsException e) {

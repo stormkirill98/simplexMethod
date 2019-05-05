@@ -3,9 +3,11 @@ package dashboard.input;
 import com.airhacks.afterburner.views.FXMLView;
 import javafx.scene.Parent;
 
+import java.util.function.Function;
+
 public class InputView extends FXMLView {
-  public InputView() {
-    super();
+  public InputView(Function<String, Object> injectionContext) {
+    super(injectionContext);
   }
 
   @Override

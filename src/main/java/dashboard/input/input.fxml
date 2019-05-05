@@ -27,7 +27,7 @@
                                       <Font size="25.0" />
                                   </font>
                               </Label>
-                              <TextField fx:id="amountVar" prefWidth="40.0" text="3">
+                              <TextField fx:id="amountLimits" prefWidth="40.0" text="3">
                                   <font>
                                       <Font size="18.0" />
                                   </font>
@@ -40,7 +40,7 @@
                                       <Insets left="25.0" />
                                   </padding>
                               </Label>
-                              <TextField fx:id="amountLimit" prefWidth="40.0" text="3">
+                              <TextField fx:id="amountVar" prefWidth="40.0" text="3">
                                   <font>
                                       <Font size="18.0" />
                                   </font>

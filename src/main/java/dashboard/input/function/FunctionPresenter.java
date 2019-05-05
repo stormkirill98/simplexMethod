@@ -2,7 +2,6 @@ package dashboard.input.function;
 
 import events.MyEventBus;
 import events.domain.FunctionDao;
-import events.domain.TableLimits;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -16,12 +15,14 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
+import logic.Function;
 import logic.enums.TypeProblem;
 
 import javax.inject.Inject;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import static logic.Utilit.*;
@@ -35,7 +36,10 @@ public class FunctionPresenter implements Initializable {
   public ScrollPane scrollPane;
 
   @Inject
-  private int n;
+  private ArrayList<Object> inputData;
+
+  private List<TextField> fields =  new ArrayList<>();
+  private ToggleButton inputType;
 
   private double[] funcCoefs;
   private TypeProblem typeProblem = TypeProblem.MIN;
@@ -47,13 +51,36 @@ public class FunctionPresenter implements Initializable {
     scrollPane.setPrefViewportWidth(0.365 * width);
     scrollPane.setPrefViewportHeight(cellHeight);
 
+    int n = (int) inputData.get(0);
+    Function function = (Function) inputData.get(1);
+    if (function != null){
+      n = function.getCountVar();
+    }
+
     funcCoefs = new double[n];
 
-    createFunctionPane();
+    createFunctionPane(n);
+
+    if (function != null){
+      fillFields(function);
+    }
+
     isFilled(box);
   }
 
-  private void createFunctionPane(){
+  private void fillFields(Function function) {
+    if (function.getType() == TypeProblem.MIN){
+      inputType.setSelected(false);
+    } else {
+      inputType.setSelected(true);
+    }
+
+    for (int i = 0; i < fields.size(); i++) {
+      fields.get(i).setText(function.getCoefficients(i).getValue().toString());
+    }
+  }
+
+  private void createFunctionPane(int n){
     for (int i = 0; i < n; i++){
       String labelName = "x" + subscript(String.valueOf(i + 1)) + "+";
       if (i == n -1)
@@ -88,6 +115,7 @@ public class FunctionPresenter implements Initializable {
       textField.setText(String.format("%.2f", 2.0));
 
       box.getChildren().add(textField);
+      fields.add(textField);
       box.getChildren().add(label);
     }
 
@@ -119,6 +147,7 @@ public class FunctionPresenter implements Initializable {
       }
     });
     box.getChildren().add(toggleButton);
+    inputType = toggleButton;
   }
 
 

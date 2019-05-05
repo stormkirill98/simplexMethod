@@ -72,7 +72,6 @@ public class Algorithm {
   public End makeStep(){
     //находим индексы базового элемента
     int[] indexes = simplex.searchBaseElement();
-    //simplex.setIndexesBaseElement(indexes);
 
     //переменная слева не ушла, но шагов уже нет
     if (indexes[0] == -1 && indexes[1] == -1){

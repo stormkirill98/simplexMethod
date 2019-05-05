@@ -2,15 +2,24 @@ package dashboard;
 
 import dashboard.input.InputView;
 import dashboard.output.OutputView;
+import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.Pane;
-import logic.Algorithm;
-import logic.Coefficient;
+import javafx.stage.FileChooser;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 import logic.Function;
-import logic.Limit;
 import logic.enums.TypeProblem;
 
+import javax.inject.Inject;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class DashboardPresenter implements Initializable {
@@ -18,123 +27,104 @@ public class DashboardPresenter implements Initializable {
   public Pane input;
   public Pane output;
 
+  @Inject
+  private Stage primaryStage;
+
+  private FileChooser fileChooser = new FileChooser();
+
+  private Function function = null;
+  private double[][] limits = null;
+
   @Override
   public void initialize(URL url, ResourceBundle rb) {
-    InputView inputView = new InputView();
+    List<Object> toInput = new ArrayList<>();
+    toInput.add(null);
+    toInput.add(null);
+
+    InputView inputView = new InputView((f) -> toInput);
     inputView.getViewAsync(input.getChildren()::add);
 
     OutputView outputView = new OutputView();
     outputView.getViewAsync(output.getChildren()::add);
+  }
 
-    //Algorithm algorithm = new Algorithm();
+  public void openFile(ActionEvent event) throws IOException {
+    File file = fileChooser.showOpenDialog(primaryStage);
+    if (file == null){
+      return;
+    }
 
-    //FAILURE
-    /*Function function = new Function(TypeProblem.MIN);
-    function.addCoefficient(new Coefficient( -1.0, 1));
-    function.addCoefficient(new Coefficient( -10.0, 2));
-    function.addCoefficient(new Coefficient( 1.0, 3));
-    function.addCoefficient(new Coefficient( -5.0, 4));
-    //function.addCoefficient(new Coefficient( 3.0, 5));
-    algorithm.setFunction(function);
+    String[] strings = Files.lines(Paths.get(file.getAbsolutePath())).toArray(String[]::new);
+    //убираем лишние пробелы
+    for (int i = 0; i < strings.length; i++) {
+      String str = strings[i];
+      //TODO: удалять пустые строки
 
-    Limit limit = new Limit();
-    limit.addCoefficient(new Coefficient( 1.0, 1));
-    limit.addCoefficient(new Coefficient( 2.0, 2));
-    limit.addCoefficient(new Coefficient( -1.0, 3));
-    limit.addCoefficient(new Coefficient( -1.0, 4));
-    //limit.addCoefficient(new Coefficient( 2.0, 5));
-    limit.addCoefficient(new Coefficient( 1.0, -1));
-    algorithm.addLimit(limit);
+      str = str.replaceAll("  ", " ");
+      if (str.substring(str.length() - 1).equals(" ")){
+        str = str.substring(0, str.length() - 1);
+      }
 
-    limit = new Limit();
-    limit.addCoefficient(new Coefficient( -1.0, 1));
-    limit.addCoefficient(new Coefficient( 2.0, 2));
-    limit.addCoefficient(new Coefficient( 3.0, 3));
-    limit.addCoefficient(new Coefficient( 1.0, 4));
-    //limit.addCoefficient(new Coefficient( 0.0, 5));
-    limit.addCoefficient(new Coefficient( 2.0, -1));
-    algorithm.addLimit(limit);
+      strings[i] = str;
+    }
 
-    limit = new Limit();
-    limit.addCoefficient(new Coefficient( 1.0, 1));
-    limit.addCoefficient(new Coefficient( 5.0, 2));
-    limit.addCoefficient(new Coefficient( 1.0, 3));
-    limit.addCoefficient(new Coefficient( -1.0, 4));
-    //limit.addCoefficient(new Coefficient( 0.0, 5));
-    limit.addCoefficient(new Coefficient( 5.0, -1));
-    algorithm.addLimit(limit);*/
+    int countLimits = Integer.valueOf(strings[0].split("x")[0]);
+    int countVar = Integer.valueOf(strings[0].split("x")[1]);
 
-    /*//SUCCESS
-    Function function = new Function(TypeProblem.MIN);
-    function.addCoefficient(new Coefficient( -1.0, 1));
-    function.addCoefficient(new Coefficient( -4.0, 2));
-    function.addCoefficient(new Coefficient( -5.0, 3));
-    function.addCoefficient(new Coefficient( -9.0, 4));
-    function.addCoefficient(new Coefficient( 3.0, 5));
-    algorithm.setFunction(function);
+    String functionString = strings[1];
+    this.function = readFunction(functionString, countVar);
 
-    Limit limit = new Limit();
-    limit.addCoefficient(new Coefficient( -1.0, 1));
-    limit.addCoefficient(new Coefficient( 1.0, 2));
-    limit.addCoefficient(new Coefficient( 0.0, 3));
-    limit.addCoefficient(new Coefficient( 1.0, 4));
-    limit.addCoefficient(new Coefficient( 2.0, 5));
-    limit.addCoefficient(new Coefficient( 1.0, -1));
-    algorithm.addLimit(limit);
+    this.limits = readLimits(strings, countLimits, countVar);
 
-    limit = new Limit();
-    limit.addCoefficient(new Coefficient( 1.0, 1));
-    limit.addCoefficient(new Coefficient( 1.0, 2));
-    limit.addCoefficient(new Coefficient( 2.0, 3));
-    limit.addCoefficient(new Coefficient( 3.0, 4));
-    limit.addCoefficient(new Coefficient( 0.0, 5));
-    limit.addCoefficient(new Coefficient( 5.0, -1));
-    algorithm.addLimit(limit);*/
-/*
-    //SUCCESS
-    Function function = new Function(TypeProblem.MIN);
-    function.addCoefficient(new Coefficient( -1.0, 1));
-    function.addCoefficient(new Coefficient( 0.0, 2));
-    function.addCoefficient(new Coefficient( -1.0, 3));
-    function.addCoefficient(new Coefficient( 0.0, 4));
-    function.addCoefficient(new Coefficient( 0.0, 5));
-    function.addCoefficient(new Coefficient( -1.0, 6));
-    algorithm.setFunction(function);
+    List<Object> toInput = new ArrayList<>();
+    toInput.add(function);
+    toInput.add(limits);
+    input.getChildren().clear();
+    InputView inputView = new InputView((f) -> toInput);
+    inputView.getViewAsync(input.getChildren()::add);
+  }
 
-    Limit limit = new Limit();
-    limit.addCoefficient(new Coefficient( 1.0, 1));
-    limit.addCoefficient(new Coefficient( 4.0, 2));
-    limit.addCoefficient(new Coefficient( 1.0, 3));
-    limit.addCoefficient(new Coefficient( 3.0, 4));
-    limit.addCoefficient(new Coefficient( -2.0, 5));
-    limit.addCoefficient(new Coefficient( 1.0, 6));
-    limit.addCoefficient(new Coefficient( 15.0, -1));
-    algorithm.addLimit(limit);
+  public Function readFunction(String str, int countVar){
+    if (str == null || str.isEmpty()){
+      return null;
+    }
 
-    limit = new Limit();
-    limit.addCoefficient(new Coefficient( 1.0, 1));
-    limit.addCoefficient(new Coefficient( 4.0, 2));
-    limit.addCoefficient(new Coefficient( -1.0, 3));
-    limit.addCoefficient(new Coefficient( -1.0, 4));
-    limit.addCoefficient(new Coefficient( 0.0, 5));
-    limit.addCoefficient(new Coefficient( 1.0, 6));
-    limit.addCoefficient(new Coefficient( 5.0, -1));
-    algorithm.addLimit(limit);
+    double[] coefs = new double[countVar];
 
-    limit = new Limit();
-    limit.addCoefficient(new Coefficient( 2.0, 1));
-    limit.addCoefficient(new Coefficient( 6.0, 2));
-    limit.addCoefficient(new Coefficient( 1.0, 3));
-    limit.addCoefficient(new Coefficient( 4.0, 4));
-    limit.addCoefficient(new Coefficient( -2.0, 5));
-    limit.addCoefficient(new Coefficient( 1.0, 6));
-    limit.addCoefficient(new Coefficient( 22.0, -1));
-    algorithm.addLimit(limit);
+    String coefsStr = str.split("->")[0];
 
-    System.out.println(algorithm + "\n");
+    String type = str.split("->")[1];
+    type = type.toLowerCase();
 
-    algorithm.searchStartVector();
+    TypeProblem typeProblem = type.contains("max") ? TypeProblem.MAX : TypeProblem.MIN;
+    Function function = new Function(typeProblem);
 
-    System.out.println(algorithm + "\n");*/
+    int i = 0;
+    for (String s : coefsStr.split(" ")) {
+      coefs[i++] = Double.valueOf(s);
+    }
+
+    function.setCoefficients(coefs);
+
+    return function;
+  }
+
+  public double[][] readLimits(String[] strings, int countLimits,  int countVar){
+    double[][] limits = new double[countLimits][countVar + 1];
+
+    for (int i = 2; i < strings.length; i++){
+      String str = strings[i];
+
+      int j = 0;
+      for (String num : str.split(" ")) {
+        limits[i - 2][j++] = Double.valueOf(num);
+      }
+    }
+
+    return limits;
+  }
+
+  public void save(ActionEvent event) {
+
   }
 }
