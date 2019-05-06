@@ -111,9 +111,6 @@ public class FunctionPresenter implements Initializable {
       textField.setPrefWidth(cellWidth);
       textField.setPrefHeight(cellHeight);
 
-      //TODO:заполнение для теста, потом удалить
-      textField.setText(String.format("%.2f", 2.0));
-
       box.getChildren().add(textField);
       fields.add(textField);
       box.getChildren().add(label);
@@ -149,6 +146,4 @@ public class FunctionPresenter implements Initializable {
     box.getChildren().add(toggleButton);
     inputType = toggleButton;
   }
-
-
 }

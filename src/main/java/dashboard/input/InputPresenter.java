@@ -65,7 +65,7 @@ public class InputPresenter implements Initializable {
 
       createTablePane(n, m, null);
 
-      MyEventBus.post(new Dimension(n, m));
+      MyEventBus.post(new Dimension(n, m));//TODO: проверить на заполненность если это конечно нужно
     });
 
     amountVar.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -88,7 +88,7 @@ public class InputPresenter implements Initializable {
       toFunctionPane.add(null);
       createFunctionPane(toFunctionPane);
 
-      MyEventBus.post(new Dimension(n, m));
+      MyEventBus.post(new Dimension(n, m));//TODO: проверить на заполненность если это конечно нужно
     });
   }
 

@@ -123,6 +123,9 @@ public class OutputPresenter implements Initializable {
   }
 
   public void onClickNext() {
+    if (algorithm == null){
+      return;
+    }
     if (end == End.FAILURE) {
       printError(Error.NOT_LIMITED);
       return;
