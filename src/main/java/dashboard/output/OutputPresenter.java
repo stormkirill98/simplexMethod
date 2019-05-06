@@ -177,13 +177,14 @@ public class OutputPresenter implements Initializable {
 
     //simplex-method
     algorithm.setStage(Stage.SIMPLEX);
+    step = 0;
 
-    algorithm.recountLastRow();//вывести симплекс
+    algorithm.recountLastRow();
     createSimplex(algorithm.getSimplex());
+    end = algorithm.getSimplex().end();
 
     Thread.sleep(150);
 
-    end = End.CONTINUE;
     while (end == End.CONTINUE) {
       end = algorithm.makeStep();
       createSimplex(algorithm.getSimplex());
