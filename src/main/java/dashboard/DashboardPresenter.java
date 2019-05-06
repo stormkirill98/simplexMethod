@@ -68,6 +68,7 @@ public class DashboardPresenter implements Initializable {
 
     String[] strings = Files.lines(Paths.get(file.getAbsolutePath())).toArray(String[]::new);
     //убираем лишние пробелы
+    //заменяем запятые на точки
     for (int i = 0; i < strings.length; i++) {
       String str = strings[i];
       //TODO: удалять пустые строки
@@ -76,6 +77,8 @@ public class DashboardPresenter implements Initializable {
       if (str.substring(str.length() - 1).equals(" ")) {
         str = str.substring(0, str.length() - 1);
       }
+
+      str = str.replaceAll(",", ".");
 
       strings[i] = str;
     }
