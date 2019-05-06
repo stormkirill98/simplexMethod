@@ -175,6 +175,7 @@ public class Simplex {
         double freeValue = rows.get(i).getValue(countVar);//свободное значение в таблице(самое последнее в строке)
         if (isZero(value) || value < 0) {
           relations[i] = Double.MAX_VALUE;
+          continue;
         }
 
         relations[i] = freeValue / value;
