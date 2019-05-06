@@ -196,6 +196,8 @@ public class OutputPresenter implements Initializable {
       printError(Error.NOT_LIMITED);
       return;
     }
+
+    printAnswer();
   }
 
   private void createSimplex(Simplex simplex) {
