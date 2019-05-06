@@ -173,7 +173,7 @@ public class Simplex {
 
         double value = rows.get(i).getValue(indexFirstPossibleCol);
         double freeValue = rows.get(i).getValue(countVar);//свободное значение в таблице(самое последнее в строке)
-        if (isZero(value)) {
+        if (isZero(value) || value < 0) {
           relations[i] = Double.MAX_VALUE;
         }
 
