@@ -66,12 +66,17 @@ public class DashboardPresenter implements Initializable {
       return;
     }
 
-    String[] strings = Files.lines(Paths.get(file.getAbsolutePath())).toArray(String[]::new);
+    String[] inputData = Files.lines(Paths.get(file.getAbsolutePath())).toArray(String[]::new);
+
+    //удалить пустые стркои
+    List<String> strs = new ArrayList<>(Arrays.asList(inputData));
+    strs.removeIf(s -> s.equals(""));
+    String[] strings = strs.toArray(new String[strs.size()]);
+
     //убираем лишние пробелы
     //заменяем запятые на точки
     for (int i = 0; i < strings.length; i++) {
       String str = strings[i];
-      //TODO: удалять пустые строки
 
       str = str.replaceAll("  ", " ");
       if (str.substring(str.length() - 1).equals(" ")) {
