@@ -22,10 +22,7 @@ import java.io.PrintWriter;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class DashboardPresenter implements Initializable {
 
@@ -55,6 +52,44 @@ public class DashboardPresenter implements Initializable {
 
     FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
     fileChooser.getExtensionFilters().add(extFilter);
+
+    initUserDirectory(fileChooser);
+  }
+
+  public void initUserDirectory(FileChooser fileChooser) {
+    String userDirectoryString;
+    userDirectoryString = System.getProperty("directory");
+
+    if (userDirectoryString == null) {
+      userDirectoryString = "C:\\";
+      addNewProperty();
+    }
+
+    File userDirectory = new File(userDirectoryString);
+    if (!userDirectory.canRead()) {
+      userDirectory = new File("C:\\");
+    }
+    fileChooser.setInitialDirectory(userDirectory);
+  }
+
+  public void addNewProperty() {
+    Properties properties = System.getProperties();
+
+    properties.put("directory", "C:\\");
+
+    System.setProperties(properties);
+  }
+
+  public void setUserDirectory(String filePath){
+    String directory = filePath.substring(0, filePath.lastIndexOf("\\"));
+
+    System.setProperty("directory", directory);
+
+    File userDirectory = new File(directory);
+    if (!userDirectory.canRead()) {
+      userDirectory = new File("C:\\");
+    }
+    fileChooser.setInitialDirectory(userDirectory);
   }
 
   public void openFile(ActionEvent event) throws IOException {
@@ -62,6 +97,8 @@ public class DashboardPresenter implements Initializable {
     if (file == null) {
       return;
     }
+
+    setUserDirectory(file.getPath());
 
     String[] inputData = Files.lines(Paths.get(file.getAbsolutePath())).toArray(String[]::new);
 
@@ -150,6 +187,8 @@ public class DashboardPresenter implements Initializable {
     if (file == null) {
       return;
     }
+
+    setUserDirectory(file.getPath());
 
     try {
       PrintWriter writer;

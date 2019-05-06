@@ -28,7 +28,6 @@ public class App extends Application {
          */
         Injector.setConfigurationSource(customProperties::get);
 
-        System.setProperty("happyEnding", " Enjoy the flight!");
         DashboardView appView = new DashboardView((f) -> stage);
 
         Scene scene = new Scene(appView.getView());
