@@ -47,8 +47,8 @@ public class OutputPresenter implements Initializable {
   int countSimplexInCurrentRow = 0;
   private double widthPane = 0;
 
-  private int n = 0;
-  private int m = 0;
+  private int n = 3;
+  private int m = 3;
 
   private double[][] tableLimits;
   private FunctionDao functionDao;

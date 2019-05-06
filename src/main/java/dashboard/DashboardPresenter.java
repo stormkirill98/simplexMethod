@@ -37,9 +37,6 @@ public class DashboardPresenter implements Initializable {
 
   private FileChooser fileChooser = new FileChooser();
 
-  private Function function = null;
-  private double[][] limits = null;
-
   String[] saveToFile = null;
 
   @Override
@@ -92,9 +89,9 @@ public class DashboardPresenter implements Initializable {
     int countVar = Integer.valueOf(strings[0].split("x")[1]);
 
     String functionString = strings[1];
-    this.function = readFunction(functionString, countVar);
+    Function function = readFunction(functionString, countVar);
 
-    this.limits = readLimits(strings, countLimits, countVar);
+    double[][] limits = readLimits(strings, countLimits, countVar);
 
     List<Object> toInput = new ArrayList<>();
     toInput.add(function);
@@ -145,12 +142,12 @@ public class DashboardPresenter implements Initializable {
   }
 
   public void save(ActionEvent event) {
-    if (saveToFile == null){
+    if (saveToFile == null) {
       return;
     }
 
     File file = fileChooser.showSaveDialog(primaryStage);
-    if (file == null){
+    if (file == null) {
       return;
     }
 
@@ -161,7 +158,8 @@ public class DashboardPresenter implements Initializable {
         writer.println(s);
       }
       writer.close();
-    } catch (IOException ignored) { }
+    } catch (IOException ignored) {
+    }
   }
 
   @Subscribe

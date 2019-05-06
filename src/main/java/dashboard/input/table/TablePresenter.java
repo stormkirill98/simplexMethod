@@ -48,7 +48,7 @@ public class TablePresenter implements Initializable {
     double width = screen.getWidth();
     double height = screen.getHeight() - 35;
     scrollPane.setPrefViewportWidth(0.365 * width);
-    scrollPane.setPrefViewportHeight(0.778 * height);
+    scrollPane.setPrefViewportHeight(0.735 * height);
 
     n = (int) inputData.get(0);
     m = (int) inputData.get(1);
