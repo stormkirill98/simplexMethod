@@ -47,7 +47,7 @@ public class TablePresenter implements Initializable {
     Rectangle2D screen = Screen.getPrimary().getVisualBounds();
     double width = screen.getWidth();
     double height = screen.getHeight() - 35;
-    scrollPane.setPrefViewportWidth(0.365 * width);
+    scrollPane.setPrefViewportWidth(0.355 * width);
     scrollPane.setPrefViewportHeight(0.735 * height);
 
     n = (int) inputData.get(0);

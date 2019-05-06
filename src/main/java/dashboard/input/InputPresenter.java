@@ -5,8 +5,11 @@ import dashboard.input.table.TableView;
 import events.*;
 import events.domain.Dimension;
 import javafx.fxml.Initializable;
+import javafx.scene.Group;
+import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
 import logic.Function;
 
 import javax.inject.Inject;
@@ -64,6 +67,7 @@ public class InputPresenter implements Initializable {
       int m = Integer.valueOf(amountVar.getText());
 
       createTablePane(n, m, null);
+      changeSizeTextField(amountLimits);
 
       MyEventBus.post(new Dimension(n, m));//TODO: проверить на заполненность если это конечно нужно
     });
@@ -88,6 +92,8 @@ public class InputPresenter implements Initializable {
       toFunctionPane.add(null);
       createFunctionPane(toFunctionPane);
 
+      changeSizeTextField(amountVar);
+
       MyEventBus.post(new Dimension(n, m));//TODO: проверить на заполненность если это конечно нужно
     });
   }
@@ -107,5 +113,28 @@ public class InputPresenter implements Initializable {
     FunctionView functionView = new FunctionView((f) -> data);
     functionPane.getChildren().clear();
     functionView.getViewAsync(functionPane.getChildren()::add);
+  }
+
+  private void changeSizeTextField(TextField textField) {
+    if (textField == null) {
+      return;
+    }
+
+    Text text = new Text(textField.getText());
+    text.setFont(textField.getFont());
+    new Scene(new Group(text));
+    text.applyCss();
+
+    double lengthText = text.getLayoutBounds().getWidth() + 21;
+
+    if (lengthText < textField.getMinWidth()) {
+      lengthText = textField.getMinWidth();
+    }
+
+    if (lengthText > textField.getMaxWidth()) {
+      lengthText = textField.getMaxWidth();
+    }
+
+    textField.setPrefWidth(lengthText);
   }
 }

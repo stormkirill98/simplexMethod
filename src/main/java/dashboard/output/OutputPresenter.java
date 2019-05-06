@@ -105,7 +105,6 @@ public class OutputPresenter implements Initializable {
       function.reverseType();
     }
 
-
     algorithm.setFunction(function);
 
     System.out.println(algorithm);

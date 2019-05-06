@@ -28,9 +28,8 @@ import java.util.ResourceBundle;
 import static logic.Utilit.*;
 
 public class FunctionPresenter implements Initializable {
-  final private int cellWidth = 40;
+  final private int cellWidth = 50;
   final private int cellHeight = 35;
-
 
   public HBox box;
   public ScrollPane scrollPane;
