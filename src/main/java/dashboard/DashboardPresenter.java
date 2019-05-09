@@ -92,12 +92,16 @@ public class DashboardPresenter implements Initializable {
     fileChooser.setInitialDirectory(userDirectory);
   }
 
-  //TODO: after open file clear output
   public void openFile(ActionEvent event) throws IOException {
     File file = fileChooser.showOpenDialog(primaryStage);
     if (file == null) {
       return;
     }
+
+    //очищаем вывод
+    output.getChildren().clear();
+    OutputView outputView = new OutputView();
+    outputView.getViewAsync(output.getChildren()::add);
 
     setUserDirectory(file.getPath());
 
