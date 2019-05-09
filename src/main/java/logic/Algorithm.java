@@ -9,7 +9,6 @@ import java.util.List;
 
 public class Algorithm {
   private Function function;
-  private Function addFunction;
   private List<Limit> limits = new ArrayList<>();
 
   private int step = 0;
@@ -117,12 +116,6 @@ public class Algorithm {
 
   //создаем искусственный базис
   public void createArtBasis(){
-    //создаем новую функцию
-    addFunction = new Function(TypeProblem.MIN);
-    for (int i = 0; i < limits.size(); i++) {
-      addFunction.addCoefficient(new Coefficient(1.0, function.getCountVar() + i + 1));
-    }
-
     //добавляем в ограничения новые переменные
     for (int i = 0; i < limits.size(); i++){
       Limit limit = limits.get(i);
@@ -152,7 +145,6 @@ public class Algorithm {
   @Override
   public String toString() {
     StringBuilder result = new StringBuilder(function + "\n");
-    result.append(addFunction).append("\n");
 
     for (Limit limit : limits) {
       result.append(limit).append("\n");

@@ -76,6 +76,7 @@ public class OutputPresenter implements Initializable {
     next.setOnAction(event -> {
       onClickNext();
     });
+
     stepByStep.selectedProperty().addListener((observable, oldValue, newValue) -> changeStepByStep(newValue));
   }
 
