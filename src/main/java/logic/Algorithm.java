@@ -2,7 +2,6 @@ package logic;
 
 import logic.enums.End;
 import logic.enums.Stage;
-import logic.enums.TypeProblem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,9 +16,10 @@ public class Algorithm {
 
   private Simplex simplex;
 
-  //TODO: проверить на вычеркивание всех переменных сверху
+  private List<Simplex> steps = new ArrayList<>();
+
   public Algorithm(double[][] limits) {
-    if (!checkRank(limits)){
+    if (!checkRank(limits)) {
       stage = Stage.END;
       return;
     }
@@ -37,30 +37,28 @@ public class Algorithm {
     this.function = function;
   }
 
-  public void setStage(Stage stage){
+  public void setStage(Stage stage) {
     this.stage = stage;
   }
 
-  public void addLimit(Limit limit){
-    limits.add(limit);
-  }
-
   //check Bi and make valid their
-  public void makeValid(){
-    for (Limit limit : limits){
+  public void makeValid() {
+    for (Limit limit : limits) {
       limit.makeValid();
     }
   }
 
-  public void recountLastRow(){
+  public void recountLastRow() {
+    steps.add(simplex.clone());
+
     simplex.recountLastRow(function);
   }
 
-  public double getFunctionExtr(){
+  public double getFunctionExtr() {
     return simplex.getFunctionExtr();
   }
 
-  public List<Double> getPointExtr(){
+  public List<Double> getPointExtr() {
     return simplex.getPointExtr();
   }
 
@@ -69,18 +67,21 @@ public class Algorithm {
   }
 
   //TODO:если с самого начала плохой симплекс искуственного базиса, то делается лишний шаг ничего не меняющий
-  public End makeStep(){
+  public End makeStep() {
+    //делаем копию для возвращения назад
+    steps.add(simplex.clone());
+
     //находим индексы базового элемента или берем заданные вручную
     int[] indexes;
-    if (simplex.isManuallySetBaseElement()){
+    if (simplex.isManuallySetBaseElement()) {
       indexes = simplex.getIndexesBaseElement();
     } else {
       indexes = simplex.searchBaseElement();
     }
 
     //переменная слева не ушла, но шагов уже нет
-    if (indexes[0] == -1 && indexes[1] == -1){
-      if (stage == Stage.ART_BASIS){
+    if (indexes[0] == -1 && indexes[1] == -1) {
+      if (stage == Stage.ART_BASIS) {
         return simplex.endArtBasis();
       }
       return simplex.end();
@@ -97,8 +98,8 @@ public class Algorithm {
     simplex.subtractRow(indexes[0], indexes[1], -value);
 
     //удаляем столбец, если это искственный базис
-    if(stage == Stage.ART_BASIS){
-      //TODO: првоерить удаляемую переменную
+    if (stage == Stage.ART_BASIS) {
+      //TODO: проверить удаляемую переменную
       simplex.removeColumn(indexes[1]);
     }
 
@@ -106,7 +107,7 @@ public class Algorithm {
     simplex.setStep(step);
 
     //исксственный базиз закончен?
-    if (stage == Stage.ART_BASIS){
+    if (stage == Stage.ART_BASIS) {
       return simplex.endArtBasis();
     }
 
@@ -114,10 +115,17 @@ public class Algorithm {
     return simplex.end();
   }
 
+  public void backStep(){
+    step--;
+    simplex = steps.get(steps.size() - 1);
+    steps.remove(steps.size() - 1);
+    stage = simplex.getStage();
+  }
+
   //создаем искусственный базис
-  public void createArtBasis(){
+  public void createArtBasis() {
     //добавляем в ограничения новые переменные
-    for (int i = 0; i < limits.size(); i++){
+    for (int i = 0; i < limits.size(); i++) {
       Limit limit = limits.get(i);
       limit.addCoefArtBasis(new Coefficient(1.0, function.getCountVar() + i + 1));
     }
@@ -125,17 +133,17 @@ public class Algorithm {
     simplex = new Simplex(limits);
   }
 
-  public Simplex getSimplex(){
+  public Simplex getSimplex() {
     return simplex;
   }
 
-  public boolean checkRank(double[][] array){
-    if (array == null){
+  public boolean checkRank(double[][] array) {
+    if (array == null) {
       return false;
     }
 
     int rank = Utilit.rankOfMatrix(array);
-    if (rank == array.length && rank <= array[0].length){
+    if (rank == array.length && rank <= array[0].length) {
       return true;
     }
 

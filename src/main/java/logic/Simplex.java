@@ -8,15 +8,15 @@ import java.util.List;
 
 import static logic.Utilit.isZero;
 
-public class Simplex {
+public class Simplex implements Cloneable {
   private List<Integer> indexesVarRow = new ArrayList<>();
   private List<Integer> indexesVarCol = new ArrayList<>();
   private List<Row> rows = new ArrayList<>();
 
   /*стадия алгоритма:
-  * ART_BASIS - искусственный базис
-  * SIMPLEX - симплекс-метод
-  * END - закончен*/
+   * ART_BASIS - искусственный базис
+   * SIMPLEX - симплекс-метод
+   * END - закончен*/
   private Stage stage = Stage.ART_BASIS;
   private int step = 0;
 
@@ -59,23 +59,23 @@ public class Simplex {
     rows.add(row);
   }
 
-  public double getValue(int i, int j){
+  public double getValue(int i, int j) {
     return rows.get(i).get(j);
   }
 
-  public List<Integer> getIndexesVarRow(){
+  public List<Integer> getIndexesVarRow() {
     return indexesVarRow;
   }
 
-  public List<Integer> getIndexesVarCol(){
+  public List<Integer> getIndexesVarCol() {
     return indexesVarCol;
   }
 
-  public int getCountRows(){
+  public int getCountRows() {
     return rows.size();
   }
 
-  public int getCountCols(){
+  public int getCountCols() {
     return rows.get(0).getSize();
   }
 
@@ -87,7 +87,7 @@ public class Simplex {
     return indexesBaseElement;
   }
 
-  public void setValue(int i, int j, double value){
+  public void setValue(int i, int j, double value) {
     rows.get(i).setValue(j, value);
   }
 
@@ -108,17 +108,17 @@ public class Simplex {
     row.mult(value);
   }
 
-  public void removeColumn(int index){
+  public void removeColumn(int index) {
     indexesVarCol.remove(index);
-    for (Row row : rows){
+    for (Row row : rows) {
       row.removeValue(index);
     }
   }
 
-  public void subtractRow(int indexRow, int indexCol, double previousCoef){
+  public void subtractRow(int indexRow, int indexCol, double previousCoef) {
     Row subtractRow = rows.get(indexRow);
-    for (int i = 0; i < rows.size(); i++){
-      if (i == indexRow){
+    for (int i = 0; i < rows.size(); i++) {
+      if (i == indexRow) {
         continue;
       }
 
@@ -141,7 +141,7 @@ public class Simplex {
     //определяем первый подходящий столбец
     int indexFirstPossibleCol = -1;
     for (int i = 0; i < countVar; i++) {
-      if (columnIsPossible(i)){
+      if (columnIsPossible(i)) {
         indexFirstPossibleCol = i;
         break;
       }
@@ -153,7 +153,7 @@ public class Simplex {
     но шагов уже нет.
     возвращаем {-1, -1} для прекращения алгоритма
     */
-    if (indexFirstPossibleCol == -1){
+    if (indexFirstPossibleCol == -1) {
       return new int[]{indexFirstPossibleCol, -1};
     }
 
@@ -166,7 +166,7 @@ public class Simplex {
     //если не нашлось базового элемента, при котором можно поменять переменную
     //делаем какой-то случайный шаг
     //TODO:скорее всего вычеркнется не нужная переменная, нужно это проверять
-    if (indexRow == -1){
+    if (indexRow == -1) {
       for (int i = 0; i < countRow; i++) {
         possibleRow[i] = true;
       }
@@ -177,7 +177,7 @@ public class Simplex {
     return new int[]{indexRow, indexFirstPossibleCol};
   }
 
-  private boolean[] getPossibleRows(){
+  private boolean[] getPossibleRows() {
     int countRow = rows.size() - 1;
 
     boolean[] possibleRow = new boolean[countRow];
@@ -186,7 +186,7 @@ public class Simplex {
         possibleRow[i] = indexesVarRow.get(i) > countOurVar;
       }
     }
-    if (stage == Stage.SIMPLEX){
+    if (stage == Stage.SIMPLEX) {
       for (int i = 0; i < indexesVarRow.size(); i++) {
         possibleRow[i] = true;
       }
@@ -195,20 +195,20 @@ public class Simplex {
     return possibleRow;
   }
 
-  private boolean columnIsPossible(int index){
+  private boolean columnIsPossible(int index) {
     Row lastRow = rows.get(rows.size() - 1);
 
     //последний элемент в столбце отрицательный?
     return lastRow.get(index) < 0;
   }
 
-  private double[] countRelationsInColumn(int indexColumn, boolean[] possibleRow){
+  private double[] countRelationsInColumn(int indexColumn, boolean[] possibleRow) {
     int countVar = indexesVarCol.size();
     int countRow = rows.size() - 1;
 
     double[] relations = new double[countRow];
     for (int i = 0; i < countRow; i++) {
-      if (!possibleRow[i]){
+      if (!possibleRow[i]) {
         relations[i] = Double.MAX_VALUE;
       }
 
@@ -225,17 +225,17 @@ public class Simplex {
     return relations;
   }
 
-  private int searchIndexRow(int countRow, double[] relations, boolean[] possibleRow){
+  private int searchIndexRow(int countRow, double[] relations, boolean[] possibleRow) {
     int indexRow = -1;
 
     double min = Double.MAX_VALUE;
     for (int i = 0; i < countRow; i++) {
       if ((!isZero(relations[i])
               && relations[i] < 0)
-              || !possibleRow[i]){
+              || !possibleRow[i]) {
         continue;
       }
-      if (relations[i] < min){
+      if (relations[i] < min) {
         min = relations[i];
         indexRow = i;
       }
@@ -261,10 +261,10 @@ public class Simplex {
   }
 
   //проверяем последнюю строку, все ли в ней нули
-  private boolean lastRowIsZero(){
+  private boolean lastRowIsZero() {
     Row lastRow = rows.get(rows.size() - 1);
-    for (int i = 0; i < lastRow.getSize(); i++){
-      if (!isZero(lastRow.get(i))){
+    for (int i = 0; i < lastRow.getSize(); i++) {
+      if (!isZero(lastRow.get(i))) {
         return false;
       }
     }
@@ -273,13 +273,13 @@ public class Simplex {
   }
 
   //последняя строка не отрицательная
-  private boolean lastRowIsNoNegative(){
+  private boolean lastRowIsNoNegative() {
     Row lastRow = rows.get(rows.size() - 1);
-    for (int i = 0; i < lastRow.getSize() - 1; i++){
+    for (int i = 0; i < lastRow.getSize() - 1; i++) {
       double value = lastRow.get(i);
-      if (value < 0){
+      if (value < 0) {
         //проверка на ноль, т.к. может -0.0(проверка до -12 порядка)
-        if (isZero(value)){
+        if (isZero(value)) {
           continue;
         }
 
@@ -290,10 +290,10 @@ public class Simplex {
     return true;
   }
 
-  private boolean failure(){
-    for (int i = 0; i < rows.get(0).getSize(); i++){
+  private boolean failure() {
+    for (int i = 0; i < rows.get(0).getSize(); i++) {
       //если есть столбец, в котором все числа неположительные
-      if (!columnHavePositiveNumber(i)){
+      if (!columnHavePositiveNumber(i)) {
         indexNoPositiveColumn = i;
         return true;
       }
@@ -302,10 +302,10 @@ public class Simplex {
     return false;
   }
 
-  private boolean fPositive(){
+  private boolean fPositive() {
     Row row = rows.get(rows.size() - 1);
     double fValue = row.get(row.getSize() - 1);
-    if (fValue > 0 && !isZero(fValue)){
+    if (fValue > 0 && !isZero(fValue)) {
       return true;
     }
 
@@ -313,21 +313,21 @@ public class Simplex {
   }
 
   //проверяем закончился ли метод искуственнго базиса
-  public End endArtBasis(){
-    if (fPositive()){
+  public End endArtBasis() {
+    if (fPositive()) {
       return End.FAILURE;
     }
 
-    if (lastRowIsZero()){
+    if (lastRowIsZero()) {
       stage = Stage.SIMPLEX;
       return End.SUCCESS_ART_BASIS;
     }
 
-    if (lastRowIsNoNegative()){
+    if (lastRowIsNoNegative()) {
       return End.FAILURE;
     }
 
-    if (failure()){
+    if (failure()) {
       return End.FAILURE;
     }
 
@@ -335,22 +335,22 @@ public class Simplex {
   }
 
   //проверяем конец алгоритма
-  public End end(){
-    if (lastRowIsNoNegative()){
+  public End end() {
+    if (lastRowIsNoNegative()) {
       stage = Stage.END;
       return End.SUCCESS_ALL;
     }
 
-    if (failure()){
+    if (failure()) {
       return End.FAILURE;
     }
 
     return End.CONTINUE;
   }
 
-  public void recountLastRow(Function function){
+  public void recountLastRow(Function function) {
     Row lastRow = rows.get(rows.size() - 1);
-    for (int j = 0; j < lastRow.getSize() - 1; j++){
+    for (int j = 0; j < lastRow.getSize() - 1; j++) {
       //индекс переменной через которую выражены другие(вверху симплекс таблицы перпеменные)
       int indexVar = indexesVarCol.get(j);
 
@@ -367,13 +367,13 @@ public class Simplex {
     double newValue = 0.0;
     newValue = countNewValueLastRow(function, newValue, indexLastCol);
 
-    lastRow.setValue(indexLastCol, newValue );
+    lastRow.setValue(indexLastCol, newValue);
 
     rows.set(rows.size() - 1, lastRow);
   }
 
-  private double countNewValueLastRow(Function function, double newValue, int indexCol){
-    for (int i = 0; i < rows.size() - 1; i++){
+  private double countNewValueLastRow(Function function, double newValue, int indexCol) {
+    for (int i = 0; i < rows.size() - 1; i++) {
       //индекс выражаемой переменной
       int indexExpressVar = indexesVarRow.get(i);
       Coefficient functionCoef = function.getCoefficients(indexExpressVar - 1);
@@ -383,8 +383,8 @@ public class Simplex {
     return newValue;
   }
 
-  public Double getFunctionExtr(){
-    if (stage != Stage.END){
+  public Double getFunctionExtr() {
+    if (stage != Stage.END) {
       return null;
     }
 
@@ -392,7 +392,7 @@ public class Simplex {
     return -row.get(row.getSize() - 1);
   }
 
-  public List<Double> getPointExtr(){
+  public List<Double> getPointExtr() {
     if (stage != Stage.END) {
       return null;
     }
@@ -401,14 +401,14 @@ public class Simplex {
     List<Double> point = new ArrayList<>(countOurVar);
 
     //инициализируем лист нулями
-    for (int i = 0; i < countOurVar; i++){
+    for (int i = 0; i < countOurVar; i++) {
       point.add(0.0);
     }
 
     //переменные которые не нулевые(находящиеся в строках симплекса)
-    for (int i = 0; i < rows.size() - 1; i++){
+    for (int i = 0; i < rows.size() - 1; i++) {
       Row row = rows.get(i);
-      int indexVar = indexesVarRow.get(i)  - 1;
+      int indexVar = indexesVarRow.get(i) - 1;
       double value = row.get(row.getSize() - 1);
       point.set(indexVar, value);
     }
@@ -416,8 +416,8 @@ public class Simplex {
     return point;
   }
 
-  public boolean canBaseElement(int i, int j){
-    if (i == rows.size() - 1 || j == rows.get(0).getSize() - 1){
+  public boolean canBaseElement(int i, int j) {
+    if (i == rows.size() - 1 || j == rows.get(0).getSize() - 1) {
       return false;
     }
 
@@ -427,15 +427,15 @@ public class Simplex {
     }
 
     boolean[] possibleRows = getPossibleRows();
-    if (!possibleRows[i]){
+    if (!possibleRows[i]) {
       return false;
     }
 
-    if (!columnIsPossible(j)){
+    if (!columnIsPossible(j)) {
       return false;
     }
 
-    if (!isMinInColumn(i, j, possibleRows)){
+    if (!isMinInColumn(i, j, possibleRows)) {
       return false;
     }
 
@@ -443,15 +443,15 @@ public class Simplex {
     return true;
   }
 
-  private boolean isMinInColumn(int i, int j, boolean[] possibleRows){
+  private boolean isMinInColumn(int i, int j, boolean[] possibleRows) {
     double[] relations = countRelationsInColumn(j, possibleRows);
     double relation = relations[i];
 
     for (int index = 0; index < relations.length; index++) {
-      if (index == i){
+      if (index == i) {
         continue;
       }
-      if (relations[index] < relation){
+      if (relations[index] < relation) {
         return false;
       }
     }
@@ -502,10 +502,32 @@ public class Simplex {
 
     return result.toString();
   }
+
+  @Override
+  protected Simplex clone() {
+    Simplex simplex = null;
+
+    try {
+      simplex = (Simplex) super.clone();
+
+      simplex.indexesVarRow = new ArrayList<>(this.indexesVarRow);
+      simplex.indexesVarCol = new ArrayList<>(this.indexesVarCol);
+
+      simplex.rows = new ArrayList<>(rows.size());
+      for (Row row : this.rows) {
+        simplex.rows.add(row.clone());
+      }
+
+    } catch (CloneNotSupportedException e) {
+      e.printStackTrace();
+    }
+
+    return simplex;
+  }
 }
 
 //представляет строку коэффициентов в симплекс таблице
-class Row {
+class Row implements Cloneable {
   List<Double> row = new ArrayList<>();
 
   public Row() {
@@ -526,7 +548,7 @@ class Row {
     row.add(value);
   }
 
-  public void setValue(int index, double value){
+  public void setValue(int index, double value) {
     row.set(index, value);
   }
 
@@ -541,9 +563,9 @@ class Row {
     }
   }
 
-  public void subtract(Row row, int badIndex, double coef){
-    for (int i = 0; i < getSize(); i++){
-      if (i == badIndex){
+  public void subtract(Row row, int badIndex, double coef) {
+    for (int i = 0; i < getSize(); i++) {
+      if (i == badIndex) {
         continue;
       }
 
@@ -556,12 +578,20 @@ class Row {
     return row.size();
   }
 
-  public void removeValue(int index){
+  public void removeValue(int index) {
     row.remove(index);
   }
 
   public double get(int index) {
     return row.get(index);
+  }
+
+  @Override
+  protected Row clone() throws CloneNotSupportedException {
+    Row row = (Row) super.clone();
+    row.row = new ArrayList<>(this.row);
+
+    return row;
   }
 
   @Override

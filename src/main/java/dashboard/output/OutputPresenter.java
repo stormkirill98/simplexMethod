@@ -6,14 +6,16 @@ import events.MyEventBus;
 import events.domain.Dimension;
 import events.domain.FunctionDao;
 import events.domain.TableLimits;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -32,16 +34,15 @@ import java.util.ResourceBundle;
 
 @SuppressWarnings("ALL")
 public class OutputPresenter implements Initializable {
-  public AnchorPane pane;
-  public VBox vBox;
   public ScrollPane scrollPane;
 
-  public Button start;
+  public VBox simplexesVBox;
+  public HBox simplexesRow = new HBox();
 
-  public HBox hBox = new HBox();
+  public Button start;
   public CheckBox stepByStep;
   public Button next;
-  public Button prev;
+  public Button back;
 
   private int step = 0;
   int countSimplexInCurrentRow = 0;
@@ -86,7 +87,7 @@ public class OutputPresenter implements Initializable {
     step = 0;
     end = End.CONTINUE;
 
-    vBox.getChildren().add(hBox);
+    simplexesVBox.getChildren().add(simplexesRow);
 
     if (tableLimits == null) {
       return;
@@ -136,7 +137,9 @@ public class OutputPresenter implements Initializable {
       algorithm.setStage(Stage.SIMPLEX);
       step = 0;
 
+
       algorithm.recountLastRow();
+
       createSimplex(algorithm.getSimplex());
       end = algorithm.getSimplex().end();
       return;
@@ -146,13 +149,80 @@ public class OutputPresenter implements Initializable {
     createSimplex(algorithm.getSimplex());
   }
 
+  public void onClickBack(ActionEvent event) {
+    if (algorithm == null){
+      return;
+    }
+
+    ObservableList<Node> rowsSimplexes = simplexesVBox.getChildren();
+    if (rowsSimplexes == null || rowsSimplexes.size() == 0){
+      return;
+    }
+
+    HBox lastRow = null;
+    try {
+      lastRow = (HBox) rowsSimplexes.get(rowsSimplexes.size() - 1);
+    } catch (ClassCastException e){
+      //удалить вывод ошибки или ответа вместе с 2 разделителями
+      for (int i = 0; i < 3; i++) {
+        rowsSimplexes.remove(rowsSimplexes.size() - 1);
+      }
+    }
+    if (lastRow == null) {
+      return;
+    }
+
+    ObservableList<Node> simplexesInLastRow = lastRow.getChildren();
+    if (simplexesInLastRow == null){
+      return;
+    }
+
+    if (simplexesInLastRow.size() == 1){
+      //если осталась одна строка в которой только первоначальный симплекс
+      if (rowsSimplexes.size() == 1){
+        return;
+      }
+      //удаляем последнию строку, в которой один симплекс, и разделитель перед ней
+      rowsSimplexes.remove(rowsSimplexes.size() - 1);
+      rowsSimplexes.remove(rowsSimplexes.size() - 1);
+      //и текущей стркое приваиваем предыдущую
+      simplexesRow = (HBox) rowsSimplexes.get(rowsSimplexes.size() - 1);
+      countSimplexInCurrentRow = simplexesRow.getChildren().size();
+    } else {
+      simplexesInLastRow.remove(simplexesInLastRow.size() - 1);
+      countSimplexInCurrentRow--;
+    }
+
+    algorithm.backStep();
+    step--;//TODO: с индексом косяк и двойной раз назад и вперед
+    stage = algorithm.getStage();
+
+    if (stage == Stage.ART_BASIS){
+      end = algorithm.getSimplex().endArtBasis();
+      return;
+    }
+
+    if (stage == Stage.SIMPLEX){
+      end = algorithm.getSimplex().end();
+      return;
+    }
+
+    end = algorithm.getSimplex().endArtBasis();
+    if (end == End.SUCCESS_ART_BASIS){
+      return;
+    } else {
+      end = algorithm.getSimplex().end();
+    }
+
+  }
+
   public void changeStepByStep(boolean newValue) {
     if (newValue) {
       next.setDisable(false);
-      prev.setDisable(false);
+      back.setDisable(false);
     } else {
       next.setDisable(true);
-      prev.setDisable(true);
+      back.setDisable(true);
     }
   }
 
@@ -209,7 +279,7 @@ public class OutputPresenter implements Initializable {
 
     makeNewRow(simplex.getCountCols());
     SimplexView simplexView = new SimplexView((f) -> dataTo);
-    simplexView.getViewAsync(hBox.getChildren()::add);
+    simplexView.getViewAsync(simplexesRow.getChildren()::add);
 
     countSimplexInCurrentRow++;
   }
@@ -221,8 +291,8 @@ public class OutputPresenter implements Initializable {
     if (simplexWidth * (countSimplexInCurrentRow + 1) > widthPane) {
       addSeparator();
 
-      hBox = new HBox();
-      vBox.getChildren().add(hBox);
+      simplexesRow = new HBox();
+      simplexesVBox.getChildren().add(simplexesRow);
       countSimplexInCurrentRow = 0;
     }
   }
@@ -232,11 +302,11 @@ public class OutputPresenter implements Initializable {
     separator.setPrefWidth(widthPane);
     separator.setOrientation(Orientation.HORIZONTAL);
     separator.setPadding(new Insets(10, 0, 5, 0));
-    vBox.getChildren().add(separator);
+    simplexesVBox.getChildren().add(separator);
   }
 
   private void clear() {
-    for (Node node : vBox.getChildren()) {
+    for (Node node : simplexesVBox.getChildren()) {
       try {
         HBox hBox = (HBox) node;
         hBox.getChildren().clear();
@@ -244,7 +314,7 @@ public class OutputPresenter implements Initializable {
       }
     }
 
-    vBox.getChildren().clear();
+    simplexesVBox.getChildren().clear();
   }
 
   private void printError(Error error) {
@@ -258,7 +328,7 @@ public class OutputPresenter implements Initializable {
     label.setFont(new Font(40));
 
     hBox.getChildren().add(label);
-    vBox.getChildren().add(hBox);
+    simplexesVBox.getChildren().add(hBox);
 
     addSeparator();
   }
@@ -296,7 +366,7 @@ public class OutputPresenter implements Initializable {
 
     vBox.getChildren().add(point);
     vBox.getChildren().add(value);
-    this.vBox.getChildren().add(vBox);
+    this.simplexesVBox.getChildren().add(vBox);
 
     addSeparator();
   }
@@ -319,4 +389,6 @@ public class OutputPresenter implements Initializable {
     System.out.println("get function");
     this.functionDao = functionDao;
   }
+
+
 }

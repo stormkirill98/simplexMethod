@@ -213,6 +213,7 @@ public class SimplexPresenter implements Initializable {
     textField.focusedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        //TODO: добавить кнопку для сбрасывания базового элемента на автоматический
         if (step != simplex.getStep()){
           return;
         }
