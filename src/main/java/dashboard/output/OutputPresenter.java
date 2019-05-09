@@ -107,8 +107,6 @@ public class OutputPresenter implements Initializable {
 
     algorithm.setFunction(function);
 
-    System.out.println(algorithm);
-
     if (stepByStep.isSelected()) {
       algorithm.createArtBasis();
       createSimplex(algorithm.getSimplex());

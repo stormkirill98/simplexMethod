@@ -6,26 +6,32 @@
     -fx-font-size: 25;
 }
 
+.text-field {
+    -fx-focus-color: transparent;
+}
+
 #base-element{
-    -fx-faint-focus-color: transparent;
     -fx-border-color: rgba(0, 2, 105, 0.81); /* here rgba (corrected) */
     -fx-border-width: 3px;
 }
 
+#bad-base-element{
+    -fx-focus-color: transparent;
+    -fx-border-color: rgb(255, 0, 0); /* here rgba (corrected) */
+    -fx-border-width: 3px;
+}
+
 #success-last-row{
-    -fx-faint-focus-color: transparent;
     -fx-border-color: rgba(0, 157, 22, 0.76); /* here rgba (corrected) */
     -fx-border-width: 3px;
 }
 
 #failure-column{
-    -fx-faint-focus-color: transparent;
     -fx-border-color:rgba(255,0,0,0.3); /* here rgba (corrected) */
     -fx-border-width: 3px;
 }
 
 #failure-last-row{
-    -fx-faint-focus-color: transparent;
     -fx-border-color:rgba(255,0,0,0.3); /* here rgba (corrected) */
     -fx-border-width: 3px;
 }

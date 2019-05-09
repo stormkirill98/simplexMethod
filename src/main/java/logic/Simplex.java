@@ -18,10 +18,13 @@ public class Simplex {
   * SIMPLEX - симплекс-метод
   * END - закончен*/
   private Stage stage = Stage.ART_BASIS;
+  private int step = 0;
 
   //число переменных, которые были в задаче с самого начала, без тех которые добавили мы
   private int countOurVar;
+
   private int[] indexesBaseElement;
+  private boolean manuallySetBaseElement = false;
 
   private int indexNoPositiveColumn = -1;
 
@@ -57,7 +60,7 @@ public class Simplex {
   }
 
   public double getValue(int i, int j){
-    return rows.get(i).getValue(j);
+    return rows.get(i).get(j);
   }
 
   public List<Integer> getIndexesVarRow(){
@@ -120,7 +123,7 @@ public class Simplex {
       }
 
       Row row = rows.get(i);
-      double coef = row.getValue(indexCol) * previousCoef;
+      double coef = row.get(indexCol) * previousCoef;
       row.subtract(subtractRow, indexCol, coef);
     }
   }
@@ -130,8 +133,53 @@ public class Simplex {
   public int[] searchBaseElement() {
     int countVar = indexesVarCol.size();
     int countRow = rows.size() - 1;
+    this.manuallySetBaseElement = false;
 
     //определяем в каких строках нам нужно избавляться от переменной
+    boolean[] possibleRow = getPossibleRows();
+
+    //определяем первый подходящий столбец
+    int indexFirstPossibleCol = -1;
+    for (int i = 0; i < countVar; i++) {
+      if (columnIsPossible(i)){
+        indexFirstPossibleCol = i;
+        break;
+      }
+    }
+
+    /*
+    если не нашелся первый подходящий столбец, значит
+    осталась переменная, которая еще не ушла наверх,
+    но шагов уже нет.
+    возвращаем {-1, -1} для прекращения алгоритма
+    */
+    if (indexFirstPossibleCol == -1){
+      return new int[]{indexFirstPossibleCol, -1};
+    }
+
+    //считаем отношения в столбце для выбора лучшего базового элемента
+    double[] relations = countRelationsInColumn(indexFirstPossibleCol, possibleRow);
+
+    //выбираем лучшее отношение
+    int indexRow = searchIndexRow(countRow, relations, possibleRow);
+
+    //если не нашлось базового элемента, при котором можно поменять переменную
+    //делаем какой-то случайный шаг
+    //TODO:скорее всего вычеркнется не нужная переменная, нужно это проверять
+    if (indexRow == -1){
+      for (int i = 0; i < countRow; i++) {
+        possibleRow[i] = true;
+      }
+    }
+
+    indexRow = searchIndexRow(countRow, relations, possibleRow);
+
+    return new int[]{indexRow, indexFirstPossibleCol};
+  }
+
+  private boolean[] getPossibleRows(){
+    int countRow = rows.size() - 1;
+
     boolean[] possibleRow = new boolean[countRow];
     if (stage == Stage.ART_BASIS) {
       for (int i = 0; i < indexesVarRow.size(); i++) {
@@ -144,56 +192,37 @@ public class Simplex {
       }
     }
 
-    //определяем первый подходящий столбец
-    int indexFirstPossibleCol = -1;
-    Row lastRow = rows.get(rows.size() - 1);
-    for (int i = 0; i < countVar; i++) {
-      //последний элемент в столбце отрицательный?
-      if (lastRow.getValue(i) < 0) {
-        indexFirstPossibleCol = i;
-        break;
-      }
-    }
-    /*
-    если не нашелся первый подходящий столбец, значит
-    осталась переменная, которая еще не ушла наверх,
-    но шагов уже нет.
-    возвращаем {-1, -1} для прекращения алгоритма
-    */
-    if (indexFirstPossibleCol == -1){
-      return new int[]{indexFirstPossibleCol, -1};
-    }
+    return possibleRow;
+  }
 
-    //считаем отношения в столбце для выбора лучшего базового элемента
+  private boolean columnIsPossible(int index){
+    Row lastRow = rows.get(rows.size() - 1);
+
+    //последний элемент в столбце отрицательный?
+    return lastRow.get(index) < 0;
+  }
+
+  private double[] countRelationsInColumn(int indexColumn, boolean[] possibleRow){
+    int countVar = indexesVarCol.size();
+    int countRow = rows.size() - 1;
+
     double[] relations = new double[countRow];
     for (int i = 0; i < countRow; i++) {
-        if (!possibleRow[i]){
-          relations[i] = Double.MAX_VALUE;
-        }
-
-        double value = rows.get(i).getValue(indexFirstPossibleCol);
-        double freeValue = rows.get(i).getValue(countVar);//свободное значение в таблице(самое последнее в строке)
-        if (isZero(value) || value < 0) {
-          relations[i] = Double.MAX_VALUE;
-          continue;
-        }
-
-        relations[i] = freeValue / value;
-    }
-
-    //выбираем лучшее отношение
-    int indexRow = searchIndexRow(countRow, relations, possibleRow);
-
-    //если не нашлось базового элемента, при котором можно поменять переменную
-    if (indexRow == -1){
-      for (int i = 0; i < countRow; i++) {
-        possibleRow[i] = true;
+      if (!possibleRow[i]){
+        relations[i] = Double.MAX_VALUE;
       }
+
+      double value = rows.get(i).get(indexColumn);
+      double freeValue = rows.get(i).get(countVar);//свободное значение в таблице(самое последнее в строке)
+      if (isZero(value) || value < 0) {
+        relations[i] = Double.MAX_VALUE;
+        continue;
+      }
+
+      relations[i] = freeValue / value;
     }
 
-    indexRow = searchIndexRow(countRow, relations, possibleRow);
-
-    return new int[]{indexRow, indexFirstPossibleCol};
+    return relations;
   }
 
   private int searchIndexRow(int countRow, double[] relations, boolean[] possibleRow){
@@ -218,7 +247,7 @@ public class Simplex {
   //true - если в столбце есть положительные числа
   private boolean columnHavePositiveNumber(int index) {
     for (Row row : rows) {
-      Double value = row.getValue(index);
+      Double value = row.get(index);
       if (value > 0) {
         //проверка на ноль, т.к. может -0.0(проверка до -12 порядка)
         if (isZero(value)) {
@@ -235,7 +264,7 @@ public class Simplex {
   private boolean lastRowIsZero(){
     Row lastRow = rows.get(rows.size() - 1);
     for (int i = 0; i < lastRow.getSize(); i++){
-      if (!isZero(lastRow.getValue(i))){
+      if (!isZero(lastRow.get(i))){
         return false;
       }
     }
@@ -247,7 +276,7 @@ public class Simplex {
   private boolean lastRowIsNoNegative(){
     Row lastRow = rows.get(rows.size() - 1);
     for (int i = 0; i < lastRow.getSize() - 1; i++){
-      double value = lastRow.getValue(i);
+      double value = lastRow.get(i);
       if (value < 0){
         //проверка на ноль, т.к. может -0.0(проверка до -12 порядка)
         if (isZero(value)){
@@ -275,7 +304,7 @@ public class Simplex {
 
   private boolean fPositive(){
     Row row = rows.get(rows.size() - 1);
-    double fValue = row.getValue(row.getSize() - 1);
+    double fValue = row.get(row.getSize() - 1);
     if (fValue > 0 && !isZero(fValue)){
       return true;
     }
@@ -348,7 +377,7 @@ public class Simplex {
       //индекс выражаемой переменной
       int indexExpressVar = indexesVarRow.get(i);
       Coefficient functionCoef = function.getCoefficients(indexExpressVar - 1);
-      newValue -= functionCoef.getValue() * rows.get(i).getValue(indexCol);
+      newValue -= functionCoef.getValue() * rows.get(i).get(indexCol);
     }
 
     return newValue;
@@ -360,7 +389,7 @@ public class Simplex {
     }
 
     Row row = rows.get(rows.size() - 1);
-    return -row.getValue(row.getSize() - 1);
+    return -row.get(row.getSize() - 1);
   }
 
   public List<Double> getPointExtr(){
@@ -380,11 +409,79 @@ public class Simplex {
     for (int i = 0; i < rows.size() - 1; i++){
       Row row = rows.get(i);
       int indexVar = indexesVarRow.get(i)  - 1;
-      double value = row.getValue(row.getSize() - 1);
+      double value = row.get(row.getSize() - 1);
       point.set(indexVar, value);
     }
 
     return point;
+  }
+
+  public boolean canBaseElement(int i, int j){
+    if (i == rows.size() - 1 || j == rows.get(0).getSize() - 1){
+      return false;
+    }
+
+    double value = rows.get(i).get(j);
+    if (value < 0 || isZero(value)) {
+      return false;
+    }
+
+    boolean[] possibleRows = getPossibleRows();
+    if (!possibleRows[i]){
+      return false;
+    }
+
+    if (!columnIsPossible(j)){
+      return false;
+    }
+
+    if (!isMinInColumn(i, j, possibleRows)){
+      return false;
+    }
+
+
+    return true;
+  }
+
+  private boolean isMinInColumn(int i, int j, boolean[] possibleRows){
+    double[] relations = countRelationsInColumn(j, possibleRows);
+    double relation = relations[i];
+
+    for (int index = 0; index < relations.length; index++) {
+      if (index == i){
+        continue;
+      }
+      if (relations[index] < relation){
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  public void setIndexesBaseElement(int[] indexesBaseElement) {
+    this.indexesBaseElement = indexesBaseElement;
+    this.manuallySetBaseElement = true;
+  }
+
+  public int getIndexNoPositiveColumn() {
+    return indexNoPositiveColumn;
+  }
+
+  public boolean isManuallySetBaseElement() {
+    return manuallySetBaseElement;
+  }
+
+  public void setManuallySetBaseElement(boolean manuallySetBaseElement) {
+    this.manuallySetBaseElement = manuallySetBaseElement;
+  }
+
+  public int getStep() {
+    return step;
+  }
+
+  public void setStep(int step) {
+    this.step = step;
   }
 
   @Override
@@ -404,14 +501,6 @@ public class Simplex {
     }
 
     return result.toString();
-  }
-
-  public void setIndexesBaseElement(int[] indexesBaseElement) {
-    this.indexesBaseElement = indexesBaseElement;
-  }
-
-  public int getIndexNoPositiveColumn() {
-    return indexNoPositiveColumn;
   }
 }
 
@@ -458,7 +547,7 @@ class Row {
         continue;
       }
 
-      double newValue = this.row.get(i) - coef * row.getValue(i);
+      double newValue = this.row.get(i) - coef * row.get(i);
       this.row.set(i, newValue);
     }
   }
@@ -471,7 +560,7 @@ class Row {
     row.remove(index);
   }
 
-  public double getValue(int index) {
+  public double get(int index) {
     return row.get(index);
   }
 

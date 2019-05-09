@@ -92,6 +92,7 @@ public class DashboardPresenter implements Initializable {
     fileChooser.setInitialDirectory(userDirectory);
   }
 
+  //TODO: after open file clear output
   public void openFile(ActionEvent event) throws IOException {
     File file = fileChooser.showOpenDialog(primaryStage);
     if (file == null) {
@@ -125,6 +126,7 @@ public class DashboardPresenter implements Initializable {
     int countLimits = Integer.valueOf(strings[0].split("x")[0]);
     int countVar = Integer.valueOf(strings[0].split("x")[1]);
 
+    //TODO: иногда почему-то не считывается функция
     String functionString = strings[1];
     Function function = readFunction(functionString, countVar);
 

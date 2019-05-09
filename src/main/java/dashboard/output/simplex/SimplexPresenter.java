@@ -1,5 +1,8 @@
 package dashboard.output.simplex;
 
+import javafx.animation.AnimationTimer;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
@@ -11,8 +14,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import logic.Simplex;
 import logic.Utilit;
 import logic.enums.End;
@@ -38,16 +39,45 @@ public class SimplexPresenter implements Initializable {
 
   private int n = 0;
   private int m = 0;
+
   private int numberStep = 0;
 
   private Simplex simplex;
+  private int step = 0;
 
   private GridPane table;
+
+
+  //анимация выбора неподходящего элемента
+  int countBlinking = 0;
+  int[] indexesBadBaseElement = new int[]{-1, -1};
+  protected AnimationTimer animationBlinkBaseEl = new AnimationTimer(){
+    private long lastUpdate = 0 ;
+
+    @Override
+    public void handle(long now) {
+      if (now - lastUpdate <= 100_000_000) {
+        return;
+      }
+      if (countBlinking > 5){
+        countBlinking  = 0;
+        animationBlinkBaseEl.stop();
+        return;
+      }
+
+      blinkBadBaseElement(indexesBadBaseElement[0],
+                          indexesBadBaseElement[1]);
+
+      lastUpdate = now ;
+      countBlinking++;
+    }
+  };
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     numberStep = (Integer) inputData.get(0);
     simplex = (Simplex) inputData.get(1);
+    step = simplex.getStep();
 
     n = simplex.getCountRows();
     m = simplex.getCountCols();
@@ -76,14 +106,6 @@ public class SimplexPresenter implements Initializable {
       highlightLastRow(End.SUCCESS_ALL);
       return;
     }
-
-
-
-    /*if (simplex.endArtBasis() == End.FAILURE ||
-        simplex.end() == End.FAILURE){
-      highlightLastRow(End.FAILURE);
-      return;
-    }*/
 
     int[] indexesBaseElement = simplex.searchBaseElement();
     setBaseElement(indexesBaseElement);
@@ -147,8 +169,6 @@ public class SimplexPresenter implements Initializable {
 
     label.setText(name);
 
-
-
     return label;
   }
 
@@ -186,8 +206,99 @@ public class SimplexPresenter implements Initializable {
     textField.setPadding(new Insets(5));
     textField.setPrefWidth(cellWidth);
     textField.setPrefHeight(cellHeight);
+    textField.setFocusTraversable(false);
+
+    listenerToFields(textField);
+
+    textField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if (step != simplex.getStep()){
+          return;
+        }
+
+        if (simplex.getStage() == Stage.END){
+          return;
+        }
+
+        if (simplex.getStage() == Stage.ART_BASIS){
+          if (simplex.endArtBasis() == End.SUCCESS_ART_BASIS
+                  || simplex.endArtBasis() == End.FAILURE){
+            return;
+          }
+        } else {
+          if (simplex.end() == End.SUCCESS_ALL
+                  || simplex.end() == End.FAILURE){
+            return;
+          }
+        }
+
+        if (newValue){
+          int[] indexes = getIndexField(textField);
+
+          if (elementCanBase(textField)){
+            clearBaseElement();
+            textField.setId("base-element");
+
+            simplex.setIndexesBaseElement(indexes);
+          } else {
+            TextField field = getCellByRowColumnIndex(indexesBadBaseElement[0] + 1,
+                                                    indexesBadBaseElement[1] + 1);
+            if (field != null) {
+              field.setId("");
+            }
+
+            indexesBadBaseElement = indexes;
+            countBlinking = 0;
+            animationBlinkBaseEl.start();
+          }
+        }
+      }
+    });
 
     return textField;
+  }
+
+  private void blinkBadBaseElement(int i, int j){
+    TextField textField = getCellByRowColumnIndex(i + 1, j + 1);
+    if (textField == null){
+      return;
+    }
+
+    String id = textField.getId();
+    if (id == null || id.equals("")){
+      textField.setId("bad-base-element");
+    } else {
+      textField.setId("");
+    }
+  }
+
+  private void clearBaseElement(){
+    for (int i = 1; i < n + 1; i++) {
+      for (int j = 1; j < m + 1; j++) {
+        TextField field = getCellByRowColumnIndex(i, j);
+        field.setId("");
+      }
+    }
+  }
+
+  private int[] getIndexField(TextField field){
+    for (int i = 1; i < n + 1; i++) {
+      for (int j = 1; j < m + 1; j++) {
+        TextField textField = getCellByRowColumnIndex(i, j);
+        if (textField.equals(field)){
+          return new int[]{i - 1, j - 1};
+        }
+      }
+    }
+
+    return new int[] {-1, -1};
+  }
+
+  private boolean elementCanBase(TextField textField){
+    int[] indexes = getIndexField(textField);
+
+    return simplex.canBaseElement(indexes[0], indexes[1]);
   }
 
   private void setBaseElement(int[] indexes){
@@ -197,7 +308,7 @@ public class SimplexPresenter implements Initializable {
     if (indexes[0] == -1 || indexes[1] == -1){
       return;
     }
-    TextField base = getNodeByRowColumnIndex(indexes[0] + 1, indexes[1] + 1);
+    TextField base = getCellByRowColumnIndex(indexes[0] + 1, indexes[1] + 1);
     base.setId("base-element");
   }
 
@@ -206,7 +317,7 @@ public class SimplexPresenter implements Initializable {
             ? "success-last-row"
             : "failure-last-row";
     for (int j = 0; j < m; j++){
-      TextField field = getNodeByRowColumnIndex(n, j + 1);
+      TextField field = getCellByRowColumnIndex(n, j + 1);
       if (field == null){
         continue;
       }
@@ -216,7 +327,7 @@ public class SimplexPresenter implements Initializable {
 
   private void highlightBadColumn(int index){
     for (int i = 0; i < n; i++){
-      TextField field = getNodeByRowColumnIndex(i + 1, index + 1);
+      TextField field = getCellByRowColumnIndex(i + 1, index + 1);
       if (field == null){
         continue;
       }
@@ -224,7 +335,7 @@ public class SimplexPresenter implements Initializable {
     }
   }
 
-  public TextField getNodeByRowColumnIndex(int row, int column) {
+  public TextField getCellByRowColumnIndex(int row, int column) {
     ObservableList<Node> childrens = table.getChildren();
 
     try {
@@ -237,5 +348,19 @@ public class SimplexPresenter implements Initializable {
     } catch (ClassCastException ignored){ }
 
     return null;
+  }
+
+  private void listenerToFields(TextField field){
+    final String[] buf = new String[1];
+    buf[0] = "";
+    //не изменять значения в выводе
+    field.textProperty().addListener((observable, oldValue, newValue) -> {
+      //TODO: KoctyLb
+      if (buf[0].equals(oldValue)){
+        return;
+      }
+      buf[0] = newValue;
+      field.setText(oldValue);
+    });
   }
 }

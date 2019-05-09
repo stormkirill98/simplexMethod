@@ -52,6 +52,7 @@ public class InputPresenter implements Initializable {
             limits);
   }
 
+  //TODO:лагает при отменненных изменениях
   private void initInputDimension() {
     amountLimits.textProperty().addListener((observable, oldValue, newValue) -> {
       if (!isNatural(newValue)) {

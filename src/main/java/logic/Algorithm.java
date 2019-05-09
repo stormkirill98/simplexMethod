@@ -12,6 +12,8 @@ public class Algorithm {
   private Function addFunction;
   private List<Limit> limits = new ArrayList<>();
 
+  private int step = 0;
+
   private Stage stage = Stage.ART_BASIS;
 
   private Simplex simplex;
@@ -51,7 +53,6 @@ public class Algorithm {
     }
   }
 
-
   public void recountLastRow(){
     simplex.recountLastRow(function);
   }
@@ -70,8 +71,13 @@ public class Algorithm {
 
   //TODO:если с самого начала плохой симплекс искуственного базиса, то делается лишний шаг ничего не меняющий
   public End makeStep(){
-    //находим индексы базового элемента
-    int[] indexes = simplex.searchBaseElement();
+    //находим индексы базового элемента или берем заданные вручную
+    int[] indexes;
+    if (simplex.isManuallySetBaseElement()){
+      indexes = simplex.getIndexesBaseElement();
+    } else {
+      indexes = simplex.searchBaseElement();
+    }
 
     //переменная слева не ушла, но шагов уже нет
     if (indexes[0] == -1 && indexes[1] == -1){
@@ -80,34 +86,28 @@ public class Algorithm {
       }
       return simplex.end();
     }
-    System.out.println("indexes " + indexes[0] + " " + indexes[1]);
     simplex.swap(indexes[0], indexes[1]);
-    System.out.println(simplex);
-
 
     //умножаем строку и столбец и задаем значение в ячейку
     double value = simplex.getValue(indexes[0], indexes[1]);
-    System.out.println("value = " + value);
     simplex.multCol(indexes[1], (-1 / value));
     simplex.multRow(indexes[0], (1 / value));
     simplex.setValue(indexes[0], indexes[1], (1 / value));
-    System.out.println(simplex);
 
     //считаем другие строки, вычитая из нее строку
     simplex.subtractRow(indexes[0], indexes[1], -value);
-    System.out.println(simplex);
-
 
     //удаляем столбец, если это искственный базис
     if(stage == Stage.ART_BASIS){
+      //TODO: првоерить удаляемую переменную
       simplex.removeColumn(indexes[1]);
-      System.out.println(simplex);
     }
+
+    step++;
+    simplex.setStep(step);
 
     //исксственный базиз закончен?
     if (stage == Stage.ART_BASIS){
-      //TODO: можно избавиться от двух внешних циклов и перейти тут сразу к симплекс методу
-
       return simplex.endArtBasis();
     }
 
@@ -142,7 +142,6 @@ public class Algorithm {
     }
 
     int rank = Utilit.rankOfMatrix(array);
-    System.out.println("rank " + rank);
     if (rank == array.length && rank <= array[0].length){
       return true;
     }
