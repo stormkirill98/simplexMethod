@@ -71,6 +71,8 @@ public class InputPresenter implements Initializable {
   }
 
   private void initInputBasisElement(){
+    basisElement.getChildren().clear();
+
     String str = amountVar.getText();
     int countVar = str.isEmpty() ? 0 : Integer.valueOf(str);
 
@@ -107,7 +109,6 @@ public class InputPresenter implements Initializable {
       int m = Integer.valueOf(amountVar.getText());
 
       createTablePane(n, m, null);
-      changeSizeTextField(amountLimits);
 
       MyEventBus.post(new Dimension(n, m));//TODO: проверить на заполненность если это конечно нужно
     });
@@ -133,8 +134,6 @@ public class InputPresenter implements Initializable {
       toFunctionPane.add(null);
       createFunctionPane(toFunctionPane);
 
-      changeSizeTextField(amountVar);
-
       MyEventBus.post(new Dimension(n, m));//TODO: проверить на заполненность если это конечно нужно
     });
   }
@@ -157,26 +156,4 @@ public class InputPresenter implements Initializable {
   }
 
   //TODO:удалить изменение размера и ограничить размерность, чтобы не зависала программа
-  private void changeSizeTextField(TextField textField) {
-    if (textField == null) {
-      return;
-    }
-
-    Text text = new Text(textField.getText());
-    text.setFont(textField.getFont());
-    new Scene(new Group(text));
-    text.applyCss();
-
-    double lengthText = text.getLayoutBounds().getWidth() + 21;
-
-    if (lengthText < textField.getMinWidth()) {
-      lengthText = textField.getMinWidth();
-    }
-
-    if (lengthText > textField.getMaxWidth()) {
-      lengthText = textField.getMaxWidth();
-    }
-
-    textField.setPrefWidth(lengthText);
-  }
 }

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
-<AnchorPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="dashboard.input.InputPresenter">
+
+<AnchorPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dashboard.input.InputPresenter">
     <children>
-        <VBox layoutX="-36.0" layoutY="57.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0"
-              AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+        <VBox layoutX="-36.0" layoutY="57.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
             <children>
                 <HBox>
                     <children>
@@ -18,65 +18,64 @@
                                     <children>
                                         <Label alignment="CENTER" text="Amount limits = " textAlignment="CENTER">
                                             <font>
-                                                <Font size="25.0"/>
+                                                <Font size="25.0" />
                                             </font>
                                         </Label>
                                         <TextField fx:id="amountLimits" prefWidth="60.0" text="3">
                                             <font>
-                                                <Font size="18.0"/>
+                                                <Font size="18.0" />
                                             </font>
                                         </TextField>
                                     </children>
                                     <VBox.margin>
-                                        <Insets/>
+                                        <Insets />
                                     </VBox.margin>
                                 </HBox>
                                 <HBox alignment="CENTER_LEFT">
                                     <children>
-                                        <Label alignment="CENTER" prefHeight="39.0" prefWidth="161.0"
-                                               text="Amount var =" textAlignment="CENTER">
+                                        <Label alignment="CENTER" prefHeight="39.0" prefWidth="161.0" text="Amount var =" textAlignment="CENTER">
                                             <font>
-                                                <Font size="25.0"/>
+                                                <Font size="25.0" />
                                             </font>
                                         </Label>
                                         <TextField fx:id="amountVar" prefWidth="60.0" text="3">
                                             <font>
-                                                <Font size="18.0"/>
+                                                <Font size="18.0" />
                                             </font>
                                         </TextField>
                                     </children>
                                     <opaqueInsets>
-                                        <Insets top="10.0"/>
+                                        <Insets />
                                     </opaqueInsets>
                                 </HBox>
                             </children>
                             <padding>
-                                <Insets bottom="3.0" left="3.0" right="3.0" top="3.0"/>
+                                <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                             </padding>
                         </VBox>
                         <VBox spacing="5.0" style="-fx-border-color: black; -fx-border-radius: 5px;">
                             <children>
                                 <CheckBox fx:id="setBasisElement" mnemonicParsing="false" text="Set basis element">
                                     <font>
-                                        <Font size="20.0"/>
+                                        <Font size="20.0" />
                                     </font>
                                 </CheckBox>
-                                <HBox fx:id="basisElement" disable="true"/>
+                                <HBox fx:id="basisElement" disable="true" />
                             </children>
                             <HBox.margin>
-                                <Insets left="10.0"/>
+                                <Insets left="10.0" />
                             </HBox.margin>
                             <padding>
-                                <Insets bottom="3.0" left="3.0" right="3.0" top="3.0"/>
+                                <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                             </padding>
                         </VBox>
                     </children>
                 </HBox>
 
-                <Pane fx:id="functionPane"/>
+                <Pane fx:id="functionPane" />
                 <Pane fx:id="tablePane">
                     <VBox.margin>
-                        <Insets top="10.0"/>
+                        <Insets top="10.0" />
                     </VBox.margin>
                 </Pane>
             </children>
