@@ -4,10 +4,15 @@ import dashboard.input.function.FunctionView;
 import dashboard.input.table.TableView;
 import events.*;
 import events.domain.Dimension;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import logic.Function;
@@ -27,6 +32,9 @@ public class InputPresenter implements Initializable {
 
   public Pane tablePane;
   public Pane functionPane;
+
+  public CheckBox setBasisElement;
+  public HBox basisElement;
 
   @Inject
   private ArrayList<Object> inputData;
@@ -50,6 +58,37 @@ public class InputPresenter implements Initializable {
     createTablePane(Integer.valueOf(amountLimits.getText()),
             Integer.valueOf(amountVar.getText()),
             limits);
+
+    initInputBasisElement();
+
+    setBasisElement.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      if (newValue){
+        basisElement.setDisable(false);
+      } else {
+        basisElement.setDisable(true);
+      }
+    });
+  }
+
+  private void initInputBasisElement(){
+    String str = amountVar.getText();
+    int countVar = str.isEmpty() ? 0 : Integer.valueOf(str);
+
+    Label startBkt = new Label("(");
+    basisElement.getChildren().add(startBkt);
+    for (int i = 0; i < countVar; i++) {
+      TextField field = new TextField();
+      field.setPrefWidth(50);
+      basisElement.getChildren().add(field);
+
+      if (i != countVar - 1){
+        Label separator = new Label("; ");
+        basisElement.getChildren().add(separator);
+      }
+    }
+
+    Label endBkt = new Label(")");
+    basisElement.getChildren().add(endBkt);
   }
 
   //TODO:лагает при отменненных изменениях
@@ -87,6 +126,7 @@ public class InputPresenter implements Initializable {
       int m = Integer.valueOf(newValue);
 
       createTablePane(n, m, null);
+      initInputBasisElement();
 
       List<Object> toFunctionPane = new ArrayList<>();
       toFunctionPane.add(Integer.valueOf(amountVar.getText()));
@@ -116,6 +156,7 @@ public class InputPresenter implements Initializable {
     functionView.getViewAsync(functionPane.getChildren()::add);
   }
 
+  //TODO:удалить изменение размера и ограничить размерность, чтобы не зависала программа
   private void changeSizeTextField(TextField textField) {
     if (textField == null) {
       return;
