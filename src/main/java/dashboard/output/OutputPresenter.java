@@ -194,7 +194,11 @@ public class OutputPresenter implements Initializable {
     }
 
     algorithm.backStep();
-    step--;//TODO: с индексом косяк и двойной раз назад и вперед
+    step--;//TODO: двойной раз назад и вперед(не повторяется)
+    //если вернулись к искуственному симплексу
+    if (step == -1){
+      step = algorithm.getSimplex().getStep() + 1;
+    }
     stage = algorithm.getStage();
 
     if (stage == Stage.ART_BASIS){
