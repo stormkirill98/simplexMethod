@@ -64,7 +64,7 @@
                                     <content>
                                         <AnchorPane minHeight="0.0" minWidth="0.0">
                                             <children>
-                                                <HBox fx:id="basisElement" disable="true" />
+                                                <HBox fx:id="basisElementNode" disable="true" />
                                             </children>
                                         </AnchorPane>
                                     </content>

@@ -23,7 +23,7 @@ public class Utilit {
   }
 
   public static boolean isDouble(String str) {
-    return str.matches("[-+]?\\d*[.,]?\\d*");
+    return str.matches("-?\\d*[.,]?\\d*");
   }
 
 
@@ -31,7 +31,7 @@ public class Utilit {
     str = str.replace(",", ".");
 
     if (str.isEmpty()) {
-      return 0.0;
+      return null;
     }
 
     if (str.equals("-")) {

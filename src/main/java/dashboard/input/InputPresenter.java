@@ -4,8 +4,10 @@ import dashboard.input.function.FunctionView;
 import dashboard.input.table.TableView;
 import events.MyEventBus;
 import events.domain.Dimension;
+import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -14,6 +16,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Screen;
 import logic.Function;
+import org.checkerframework.checker.units.qual.A;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -21,11 +24,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import static logic.Utilit.isNatural;
+import static logic.Utilit.*;
 
 @SuppressWarnings("Duplicates")
 public class InputPresenter implements Initializable {
-  private final int fieldHeight = 40;
+  private final int fieldHeight = 35;
+  private final int fieldWidth = 50;
 
   public TextField amountLimits;
   public TextField amountVar;
@@ -34,8 +38,10 @@ public class InputPresenter implements Initializable {
   public Pane functionPane;
 
   public CheckBox setBasisElement;
-  public HBox basisElement;
+  public HBox basisElementNode;
   public ScrollPane scrollPane;
+
+  private List<Double> basisElement = null;
 
   @Inject
   private ArrayList<Object> inputData;
@@ -64,9 +70,10 @@ public class InputPresenter implements Initializable {
 
     setBasisElement.selectedProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue) {
-        basisElement.setDisable(false);
+        basisElementNode.setDisable(false);
+        basisElement = createBasisElement();
       } else {
-        basisElement.setDisable(true);
+        basisElementNode.setDisable(true);
       }
     });
 
@@ -77,29 +84,59 @@ public class InputPresenter implements Initializable {
   }
 
   private void initInputBasisElement() {
-    basisElement.getChildren().clear();
+    basisElementNode.getChildren().clear();
 
     String str = amountVar.getText();
     int countVar = str.isEmpty() ? 0 : Integer.valueOf(str);
 
     Label startBkt = new Label("(");
-    basisElement.getChildren().add(startBkt);
+    basisElementNode.getChildren().add(startBkt);
     for (int i = 0; i < countVar; i++) {
       TextField field = new TextField();
-      field.setPrefWidth(fieldHeight);
+      field.setPrefWidth(fieldWidth);
       field.setText("0");
 
+      field.textProperty().addListener((observable, oldValue, newValue) -> {
+        if (!validateDouble(field, oldValue, newValue)){
+          return;
+        }
 
-      basisElement.getChildren().add(field);
+        if (setBasisElement.isSelected()){
+          basisElement = createBasisElement();
+        } else {
+          basisElement = null;
+        }
+      });
+
+      basisElementNode.getChildren().add(field);
 
       if (i != countVar - 1) {
         Label separator = new Label("; ");
-        basisElement.getChildren().add(separator);
+        basisElementNode.getChildren().add(separator);
       }
     }
 
     Label endBkt = new Label(")");
-    basisElement.getChildren().add(endBkt);
+    basisElementNode.getChildren().add(endBkt);
+  }
+
+  private List<Double> createBasisElement(){
+    List<Double> basisElement = new ArrayList<>();
+    ObservableList<Node> childrens = basisElementNode.getChildren();
+
+    for (int i = 0; i < childrens.size(); i++) {
+      try {
+        TextField field = (TextField) childrens.get(i);
+        Double value = strToDouble(field.getText());
+        if (value == null){
+          return null;
+        }
+
+        basisElement.add(value);
+      } catch (ClassCastException ignored){ }
+    }
+
+    return basisElement;
   }
 
   //TODO:лагает при отменненных изменениях
