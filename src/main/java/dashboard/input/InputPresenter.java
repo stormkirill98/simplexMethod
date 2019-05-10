@@ -2,19 +2,17 @@ package dashboard.input;
 
 import dashboard.input.function.FunctionView;
 import dashboard.input.table.TableView;
-import events.*;
+import events.MyEventBus;
 import events.domain.Dimension;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.Initializable;
-import javafx.scene.Group;
-import javafx.scene.Scene;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.text.Text;
+import javafx.stage.Screen;
 import logic.Function;
 
 import javax.inject.Inject;
@@ -27,6 +25,8 @@ import static logic.Utilit.isNatural;
 
 @SuppressWarnings("Duplicates")
 public class InputPresenter implements Initializable {
+  private final int fieldHeight = 40;
+
   public TextField amountLimits;
   public TextField amountVar;
 
@@ -35,6 +35,7 @@ public class InputPresenter implements Initializable {
 
   public CheckBox setBasisElement;
   public HBox basisElement;
+  public ScrollPane scrollPane;
 
   @Inject
   private ArrayList<Object> inputData;
@@ -45,7 +46,7 @@ public class InputPresenter implements Initializable {
 
     Function function = (Function) inputData.get(0);
     double[][] limits = (double[][]) inputData.get(1);
-    if (limits != null){
+    if (limits != null) {
       amountLimits.setText(String.valueOf(limits.length));
       amountVar.setText(String.valueOf(limits[0].length - 1));
     }
@@ -62,15 +63,20 @@ public class InputPresenter implements Initializable {
     initInputBasisElement();
 
     setBasisElement.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      if (newValue){
+      if (newValue) {
         basisElement.setDisable(false);
       } else {
         basisElement.setDisable(true);
       }
     });
+
+    Rectangle2D screen = Screen.getPrimary().getVisualBounds();
+    double width = screen.getWidth();
+    scrollPane.setPrefViewportWidth(0.215 * width);
+    scrollPane.setPrefViewportHeight(fieldHeight);
   }
 
-  private void initInputBasisElement(){
+  private void initInputBasisElement() {
     basisElement.getChildren().clear();
 
     String str = amountVar.getText();
@@ -80,10 +86,13 @@ public class InputPresenter implements Initializable {
     basisElement.getChildren().add(startBkt);
     for (int i = 0; i < countVar; i++) {
       TextField field = new TextField();
-      field.setPrefWidth(50);
+      field.setPrefWidth(fieldHeight);
+      field.setText("0");
+
+
       basisElement.getChildren().add(field);
 
-      if (i != countVar - 1){
+      if (i != countVar - 1) {
         Label separator = new Label("; ");
         basisElement.getChildren().add(separator);
       }

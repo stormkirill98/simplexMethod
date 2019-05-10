@@ -8,13 +8,13 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dashboard.input.InputPresenter">
     <children>
-        <VBox layoutX="-36.0" layoutY="57.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+        <VBox layoutX="-36.0" layoutY="57.0" spacing="10.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
             <children>
                 <HBox>
                     <children>
                         <VBox spacing="5.0" style="-fx-border-color: black; -fx-border-radius: 5px;">
                             <children>
-                                <HBox alignment="CENTER_LEFT">
+                                <HBox>
                                     <children>
                                         <Label alignment="CENTER" text="Amount limits = " textAlignment="CENTER">
                                             <font>
@@ -31,7 +31,7 @@
                                         <Insets />
                                     </VBox.margin>
                                 </HBox>
-                                <HBox alignment="CENTER_LEFT">
+                                <HBox>
                                     <children>
                                         <Label alignment="CENTER" prefHeight="39.0" prefWidth="161.0" text="Amount var =" textAlignment="CENTER">
                                             <font>
@@ -60,7 +60,15 @@
                                         <Font size="20.0" />
                                     </font>
                                 </CheckBox>
-                                <HBox fx:id="basisElement" disable="true" />
+                                <ScrollPane fx:id="scrollPane" vbarPolicy="NEVER">
+                                    <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0">
+                                            <children>
+                                                <HBox fx:id="basisElement" disable="true" />
+                                            </children>
+                                        </AnchorPane>
+                                    </content>
+                                </ScrollPane>
                             </children>
                             <HBox.margin>
                                 <Insets left="10.0" />
@@ -70,12 +78,15 @@
                             </padding>
                         </VBox>
                     </children>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
                 </HBox>
 
                 <Pane fx:id="functionPane" />
                 <Pane fx:id="tablePane">
                     <VBox.margin>
-                        <Insets top="10.0" />
+                        <Insets />
                     </VBox.margin>
                 </Pane>
             </children>
