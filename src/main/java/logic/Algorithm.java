@@ -18,6 +18,8 @@ public class Algorithm {
 
   private List<Simplex> steps = new ArrayList<>();
 
+  private List<Double> basisElement;
+
   public Algorithm(double[][] limits) {
     if (!checkRank(limits)) {
       stage = Stage.END;
@@ -39,6 +41,10 @@ public class Algorithm {
 
   public void setStage(Stage stage) {
     this.stage = stage;
+  }
+
+  public void setBasisElement(List<Double> basisElement) {
+    this.basisElement = basisElement;
   }
 
   //check Bi and make valid their
@@ -160,4 +166,6 @@ public class Algorithm {
 
     return result.toString();
   }
+
+
 }

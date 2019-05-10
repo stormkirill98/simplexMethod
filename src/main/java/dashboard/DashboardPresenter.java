@@ -80,7 +80,7 @@ public class DashboardPresenter implements Initializable {
     System.setProperties(properties);
   }
 
-  public void setUserDirectory(String filePath){
+  public void setUserDirectory(String filePath) {
     String directory = filePath.substring(0, filePath.lastIndexOf("\\"));
 
     System.setProperty("directory", directory);
@@ -139,6 +139,7 @@ public class DashboardPresenter implements Initializable {
     List<Object> toInput = new ArrayList<>();
     toInput.add(function);
     toInput.add(limits);
+
     input.getChildren().clear();
     InputView inputView = new InputView((f) -> toInput);
     inputView.getViewAsync(input.getChildren()::add);

@@ -28,11 +28,15 @@ import logic.enums.End;
 import logic.enums.Error;
 import logic.enums.Stage;
 import logic.enums.TypeProblem;
+import logic.gauss.Gauss;
+import logic.gauss.LinearSystem;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+
+import static logic.Utilit.isZero;
 
 @SuppressWarnings("ALL")
 public class OutputPresenter implements Initializable {
@@ -87,6 +91,7 @@ public class OutputPresenter implements Initializable {
 
   private void onClickStart() {
     clear();
+
     countSimplexInCurrentRow = 0;
     step = 0;
     end = End.CONTINUE;
@@ -96,6 +101,7 @@ public class OutputPresenter implements Initializable {
     if (tableLimits == null) {
       return;
     }
+
     algorithm = new Algorithm(tableLimits);
     if (algorithm.getStage() == Stage.END) {
       printError(Error.BAD_INPUT);
@@ -112,6 +118,10 @@ public class OutputPresenter implements Initializable {
     }
 
     algorithm.setFunction(function);
+
+    if (basisElement != null){
+      goGauss();
+    }
 
     if (stepByStep.isSelected()) {
       algorithm.createArtBasis();
@@ -275,6 +285,20 @@ public class OutputPresenter implements Initializable {
     }
 
     printAnswer();
+  }
+
+  private void goGauss(){
+    LinearSystem system = new LinearSystem(tableLimits);
+
+    List<Integer> indexesExpressedVars = new ArrayList<>();
+    for (int i = 0; i < basisElement.size(); i++) {
+      double value = basisElement.get(i);
+      if (!isZero(value)){
+        indexesExpressedVars.add(i);
+      }
+    }
+
+    system = Gauss.getExpressedVars(system, indexesExpressedVars);
   }
 
   private void createSimplex(Simplex simplex) {

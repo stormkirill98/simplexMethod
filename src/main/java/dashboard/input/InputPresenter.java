@@ -77,6 +77,7 @@ public class InputPresenter implements Initializable {
         MyEventBus.post(new BasisElement(basisElement));
       } else {
         basisElementNode.setDisable(true);
+        MyEventBus.post(new BasisElement(null));
       }
     });
 
@@ -109,6 +110,7 @@ public class InputPresenter implements Initializable {
           MyEventBus.post(new BasisElement(basisElement));
         } else {
           basisElement = null;
+          MyEventBus.post(new BasisElement(null));
         }
       });
 

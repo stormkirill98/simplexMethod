@@ -11,7 +11,7 @@ import javafx.scene.text.Text;
 import java.text.DecimalFormat;
 
 public class Utilit {
-  static final double TOLERANCE = 1.0E-12;
+  public static final double TOLERANCE = 1.0E-12;
 
   static String format(Double value) {
     DecimalFormat decimalFormat = new DecimalFormat("##.####");
