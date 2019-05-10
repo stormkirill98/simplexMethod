@@ -83,6 +83,8 @@ public class InputPresenter implements Initializable {
         newValue = "0";
       }
 
+      //TODO: проверить на заполненность если это конечно нужно
+      //TODO: ограничить на максимальное число
       int n = Integer.valueOf(amountLimits.getText());
       int m = Integer.valueOf(newValue);
 
@@ -95,7 +97,7 @@ public class InputPresenter implements Initializable {
 
       changeSizeTextField(amountVar);
 
-      MyEventBus.post(new Dimension(n, m));//TODO: проверить на заполненность если это конечно нужно
+      MyEventBus.post(new Dimension(n, m));
     });
   }
 

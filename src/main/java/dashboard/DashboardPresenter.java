@@ -40,7 +40,7 @@ public class DashboardPresenter implements Initializable {
 
   private FileChooser fileChooser = new FileChooser();
 
-  String[] saveToFile = null;
+  private String[] saveToFile = null;
 
   @Override
   public void initialize(URL url, ResourceBundle rb) {
@@ -218,11 +218,13 @@ public class DashboardPresenter implements Initializable {
     FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("help/help.fxml"));
     Parent root = fxmlLoader.load();
     Stage stage = new Stage();
-    stage.initModality(Modality.APPLICATION_MODAL);
-    stage.initStyle(StageStyle.UNDECORATED);
+    stage.initModality(Modality.NONE);
+    stage.initStyle(StageStyle.DECORATED);
     stage.setTitle("Help");
     stage.setScene(new Scene(root));
     stage.show();
+
+    stage.resizableProperty().setValue(Boolean.FALSE);
   }
 
   @Subscribe
