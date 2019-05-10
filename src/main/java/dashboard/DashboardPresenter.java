@@ -1,6 +1,7 @@
 package dashboard;
 
 import com.google.common.eventbus.Subscribe;
+import dashboard.help.HelpView;
 import dashboard.input.InputView;
 import dashboard.output.OutputView;
 import events.MyEventBus;
@@ -8,10 +9,15 @@ import events.domain.Dimension;
 import events.domain.FunctionDao;
 import events.domain.TableLimits;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import logic.Function;
 import logic.enums.TypeProblem;
 
@@ -131,6 +137,7 @@ public class DashboardPresenter implements Initializable {
     int countVar = Integer.valueOf(strings[0].split("x")[1]);
 
     //TODO: иногда почему-то не считывается функция
+    //TODO: иногда записывается нулл, нужно проверять
     String functionString = strings[1];
     Function function = readFunction(functionString, countVar);
 
@@ -207,6 +214,17 @@ public class DashboardPresenter implements Initializable {
     }
   }
 
+  public void showHelp(ActionEvent event) throws IOException {
+    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("help/help.fxml"));
+    Parent root = fxmlLoader.load();
+    Stage stage = new Stage();
+    stage.initModality(Modality.APPLICATION_MODAL);
+    stage.initStyle(StageStyle.UNDECORATED);
+    stage.setTitle("Help");
+    stage.setScene(new Scene(root));
+    stage.show();
+  }
+
   @Subscribe
   public void receiveDimension(Dimension dimension) {
     int n = dimension.getN();
@@ -246,4 +264,6 @@ public class DashboardPresenter implements Initializable {
     }
     saveToFile[1] += "-> " + functionDao.getTypeProblem().toString().toLowerCase();
   }
+
+
 }
