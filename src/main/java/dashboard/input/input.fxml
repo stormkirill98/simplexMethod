@@ -33,7 +33,7 @@
                                 </HBox>
                                 <HBox>
                                     <children>
-                                        <Label alignment="CENTER" prefHeight="39.0" prefWidth="161.0" text="Amount var =" textAlignment="CENTER">
+                                        <Label alignment="CENTER" text="Amount var =" textAlignment="CENTER">
                                             <font>
                                                 <Font size="25.0" />
                                             </font>
