@@ -5,11 +5,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 
-
 class Equation {
   private List<Double> equation = new ArrayList<>();
 
-  public Equation() { }
+  public Equation() {
+  }
 
   public Equation(double[] coefs) {
     for (double coef : coefs) {
@@ -54,10 +54,6 @@ class Equation {
 
   int size() {
     return equation.size();
-  }
-
-  ListIterator<Double> getIterator() {
-    return equation.listIterator();
   }
 
   void print() {

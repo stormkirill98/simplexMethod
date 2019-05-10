@@ -1,5 +1,7 @@
 package logic.gauss;
 
+import logic.Utilit;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,10 +31,6 @@ public class LinearSystem {
     system.add(equation);
   }
 
-  void delete(int i) {
-    system.remove(i);
-  }
-
   Equation getEquation(int i) {
     return system.get(i);
   }
@@ -48,13 +46,13 @@ public class LinearSystem {
       Equation equation = equations.next();
 
       if (Gauss.printActions) {
-        System.out.print(Utility.numToRim(system.indexOf(equation) + 1));
+        System.out.print(Utilit.numToRim(system.indexOf(equation) + 1));
       }
 
       Equation newEq = equation.plusEquation(eq);
 
       if (Gauss.printActions) {
-        System.out.println(" * " + Utility.numToRim(system.indexOf(eq) + 1));
+        System.out.println(" * " + Utilit.numToRim(system.indexOf(eq) + 1));
       }
 
       equations.set(newEq);
@@ -75,13 +73,13 @@ public class LinearSystem {
       Equation equation = equations.previous();
 
       if (Gauss.printActions) {
-        System.out.print(Utility.numToRim(system.indexOf(equation) + 1));
+        System.out.print(Utilit.numToRim(system.indexOf(equation) + 1));
       }
 
       Equation newEq = equation.plusEquation(eq);
 
       if (Gauss.printActions) {
-        System.out.println(" * " + Utility.numToRim(system.indexOf(eq) + 1));
+        System.out.println(" * " + Utilit.numToRim(system.indexOf(eq) + 1));
       }
 
       equations.set(newEq);
@@ -102,28 +100,6 @@ public class LinearSystem {
       System.out.println();
     }
     System.out.println();
-  }
-
-  boolean validate() {
-    for (int i = 0; i < system.size() - 1; i++) {
-      if (system.get(i).size() != system.get(i + 1).size()
-              || system.size() > system.get(i).size()) {
-        return false;
-      }
-    }
-
-    if (system.size() == system.get(0).size()) {
-      return false;
-    }
-
-    for (Equation eq : system) {
-      if (!eq.validate()) {
-        System.out.println("Check equation №" + (system.indexOf(eq) + 1));
-        return false;
-      }
-    }
-
-    return true;
   }
 
   void swap(int i1, int i2) {

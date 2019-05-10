@@ -73,19 +73,6 @@ public class Gauss {
     }
   }
 
-  private static boolean deleteSameEquations(LinearSystem system) {
-    boolean delete = false;
-    for (int i = 0; i < system.size() - 1; i++) {
-      if (system.getEquation(i).equals(system.getEquation(i + 1))) {
-        system.delete(i + 1);
-        i--;
-        delete = true;
-      }
-    }
-
-    return delete;
-  }
-
   private static void printAction(Double coef, int indexEq) {
     System.out.printf("(%s * %.2f)=>\n", Utility.numToRim(indexEq), coef);
   }
