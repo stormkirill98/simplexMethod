@@ -3,6 +3,7 @@ package dashboard.output;
 import com.google.common.eventbus.Subscribe;
 import dashboard.output.simplex.SimplexView;
 import events.MyEventBus;
+import events.domain.BasisElement;
 import events.domain.Dimension;
 import events.domain.FunctionDao;
 import events.domain.TableLimits;
@@ -30,6 +31,7 @@ import logic.enums.TypeProblem;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 @SuppressWarnings("ALL")
@@ -53,12 +55,14 @@ public class OutputPresenter implements Initializable {
 
   private double[][] tableLimits;
   private FunctionDao functionDao;
+  private List<Double> basisElement = null;
 
   private Algorithm algorithm;
   private Function function;
 
   private End end = End.CONTINUE;
   private Stage stage = Stage.ART_BASIS;
+
   private boolean printAnswer = false;
 
   @Override
@@ -394,5 +398,10 @@ public class OutputPresenter implements Initializable {
     this.functionDao = functionDao;
   }
 
+  @Subscribe
+  public void receiveBasisElement(BasisElement basisElement){
+    System.out.println("get basisElement");
+    this.basisElement = basisElement.getCoefs();
+  }
 
 }

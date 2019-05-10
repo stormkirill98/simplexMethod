@@ -3,6 +3,7 @@ package dashboard.input;
 import dashboard.input.function.FunctionView;
 import dashboard.input.table.TableView;
 import events.MyEventBus;
+import events.domain.BasisElement;
 import events.domain.Dimension;
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
@@ -72,6 +73,8 @@ public class InputPresenter implements Initializable {
       if (newValue) {
         basisElementNode.setDisable(false);
         basisElement = createBasisElement();
+
+        MyEventBus.post(new BasisElement(basisElement));
       } else {
         basisElementNode.setDisable(true);
       }
@@ -103,6 +106,7 @@ public class InputPresenter implements Initializable {
 
         if (setBasisElement.isSelected()){
           basisElement = createBasisElement();
+          MyEventBus.post(new BasisElement(basisElement));
         } else {
           basisElement = null;
         }
