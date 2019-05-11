@@ -69,7 +69,7 @@ public class Simplex implements Cloneable {
       //индекс выражаемой переменной
       int indexExpressVar = indexesVarRow.get(i);
       Coefficient functionCoef = function.getCoefficients(indexExpressVar - 1);
-      newValue += functionCoef.getValue() * rows.get(i).get(indexLastCol);
+      newValue -= functionCoef.getValue() * rows.get(i).get(indexLastCol);
     }
 
     lastRow.addValue(newValue);
