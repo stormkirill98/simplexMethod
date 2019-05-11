@@ -51,7 +51,6 @@ public class OutputPresenter implements Initializable {
   public Button back;
 
   private int step = 0;
-  int countSimplexInCurrentRow = 0;
   private double widthPane = 0;
 
   private int n = 3;
@@ -220,10 +219,8 @@ public class OutputPresenter implements Initializable {
       rowsSimplexes.remove(rowsSimplexes.size() - 1);
       //и текущей стркое приваиваем предыдущую
       simplexesRow = (HBox) rowsSimplexes.get(rowsSimplexes.size() - 1);
-      countSimplexInCurrentRow = simplexesRow.getChildren().size();
     } else {
       simplexesInLastRow.remove(simplexesInLastRow.size() - 1);
-      countSimplexInCurrentRow--;
     }
 
     algorithm.backStep();
@@ -269,10 +266,9 @@ public class OutputPresenter implements Initializable {
     ArrayList<Object> dataTo = new ArrayList<>();
     dataTo.add(Gauss.getSystem());
 
+    makeNewRow();
     MatrixView matrixView = new MatrixView((f) -> dataTo);
     matrixView.getViewAsync((simplexesRow.getChildren()::add));
-
-    countSimplexInCurrentRow++;
   }
 
   public void changeStepByStep(boolean newValue) {
@@ -346,11 +342,9 @@ public class OutputPresenter implements Initializable {
     ArrayList<Object> dataTo = new ArrayList<>();
     dataTo.add(system);
 
-    makeNewRow(indexesExpressedVars.size() + 1);
+    makeNewRow();
     MatrixView matrixView = new MatrixView((f) -> dataTo);
     matrixView.getViewAsync((simplexesRow.getChildren()::add));
-
-    countSimplexInCurrentRow++;
 
     //system = Gauss.getExpressedVars(system, indexesExpressedVars);
   }
@@ -363,23 +357,25 @@ public class OutputPresenter implements Initializable {
     dataTo.add(step++);
     dataTo.add(simplex);
 
-    makeNewRow(simplex.getCountCols());
+    makeNewRow();
     SimplexView simplexView = new SimplexView((f) -> dataTo);
     simplexView.getViewAsync(simplexesRow.getChildren()::add);
-
-    countSimplexInCurrentRow++;
   }
 
-  private void makeNewRow(int countSimplexCol) {
-    double simplexWidth = ((countSimplexCol + 2) * 50 + (countSimplexCol + 1) * 3);//TODO: the chances are optimize
+  private void makeNewRow() {
+    double width = 0;
+    int count = simplexesRow.getChildren().size();
+    for(Node node : simplexesRow.getChildren()){
+      width += node.prefWidth(1);
+    }
 
     //is it possible to add simplex in this row
-    if (simplexWidth * (countSimplexInCurrentRow + 1) > widthPane) {
+    width += width / count; // добавляем среднюю ширину элементов в этой строке
+    if (width  > widthPane){
       addSeparator();
 
       simplexesRow = new HBox();
       simplexesVBox.getChildren().add(simplexesRow);
-      countSimplexInCurrentRow = 0;
     }
   }
 
@@ -404,7 +400,6 @@ public class OutputPresenter implements Initializable {
   }
 
   private void resetVars(){
-    countSimplexInCurrentRow = 0;
     step = 0;
     end = End.CONTINUE;
 
@@ -491,5 +486,4 @@ public class OutputPresenter implements Initializable {
     System.out.println("get basisElement");
     this.basisElement = basisElement.getCoefs();
   }
-
 }

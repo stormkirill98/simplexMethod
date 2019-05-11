@@ -93,8 +93,7 @@ public class Gauss {
     }
 
     Equation eq = equationListIterator.previous();
-    action += system.plusEquationsFromEnd(eq, i);
-    i--;
+    action += system.plusEquationsFromEnd(eq, i--);
 
     if (i == 0) {
       return true;//a mojet false
