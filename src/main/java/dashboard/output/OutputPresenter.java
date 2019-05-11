@@ -1,6 +1,7 @@
 package dashboard.output;
 
 import com.google.common.eventbus.Subscribe;
+import dashboard.output.matrix.MatrixView;
 import dashboard.output.simplex.SimplexView;
 import events.MyEventBus;
 import events.domain.BasisElement;
@@ -15,7 +16,6 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -69,6 +69,9 @@ public class OutputPresenter implements Initializable {
 
   private boolean printAnswer = false;
 
+  private boolean noEndDirectGauss = true;
+  private boolean noEndReversGauss = true;
+
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     Rectangle2D screen = Screen.getPrimary().getVisualBounds();
@@ -96,6 +99,9 @@ public class OutputPresenter implements Initializable {
     step = 0;
     end = End.CONTINUE;
 
+    noEndDirectGauss = true;
+    noEndReversGauss = true;
+
     simplexesVBox.getChildren().add(simplexesRow);
 
     if (tableLimits == null) {
@@ -119,8 +125,9 @@ public class OutputPresenter implements Initializable {
 
     algorithm.setFunction(function);
 
-    if (basisElement != null){
+    if (basisElement != null) {
       goGauss();
+      return;
     }
 
     if (stepByStep.isSelected()) {
@@ -136,7 +143,41 @@ public class OutputPresenter implements Initializable {
   }
 
   public void onClickNext() {
-    if (algorithm == null){
+    if (stage == Stage.GAUSS) {
+      if (!noEndDirectGauss && !noEndReversGauss) {
+        stage = Stage.SIMPLEX;
+        //что-то еще делать нужно
+        return;
+      }
+      if (noEndDirectGauss) {
+        noEndDirectGauss = Gauss.makeDirectStep();
+
+        ArrayList<Object> dataTo = new ArrayList<>();
+        dataTo.add(Gauss.getSystem());
+
+        MatrixView matrixView = new MatrixView((f) -> dataTo);
+        matrixView.getViewAsync((simplexesRow.getChildren()::add));
+
+        countSimplexInCurrentRow++;
+        return;
+      }
+      if (noEndReversGauss){
+        noEndReversGauss = Gauss.makeReversStep();
+
+        ArrayList<Object> dataTo = new ArrayList<>();
+        dataTo.add(Gauss.getSystem());
+
+        MatrixView matrixView = new MatrixView((f) -> dataTo);
+        matrixView.getViewAsync((simplexesRow.getChildren()::add));
+
+        countSimplexInCurrentRow++;
+        return;
+      }
+
+      return;
+    }
+
+    if (algorithm == null) {
       return;
     }
     if (end == End.FAILURE) {
@@ -164,19 +205,19 @@ public class OutputPresenter implements Initializable {
   }
 
   public void onClickBack(ActionEvent event) {
-    if (algorithm == null){
+    if (algorithm == null) {
       return;
     }
 
     ObservableList<Node> rowsSimplexes = simplexesVBox.getChildren();
-    if (rowsSimplexes == null || rowsSimplexes.size() == 0){
+    if (rowsSimplexes == null || rowsSimplexes.size() == 0) {
       return;
     }
 
     HBox lastRow = null;
     try {
       lastRow = (HBox) rowsSimplexes.get(rowsSimplexes.size() - 1);
-    } catch (ClassCastException e){
+    } catch (ClassCastException e) {
       //удалить вывод ошибки или ответа вместе с 2 разделителями
       for (int i = 0; i < 3; i++) {
         rowsSimplexes.remove(rowsSimplexes.size() - 1);
@@ -187,13 +228,13 @@ public class OutputPresenter implements Initializable {
     }
 
     ObservableList<Node> simplexesInLastRow = lastRow.getChildren();
-    if (simplexesInLastRow == null){
+    if (simplexesInLastRow == null) {
       return;
     }
 
-    if (simplexesInLastRow.size() == 1){
+    if (simplexesInLastRow.size() == 1) {
       //если осталась одна строка в которой только первоначальный симплекс
-      if (rowsSimplexes.size() == 1){
+      if (rowsSimplexes.size() == 1) {
         return;
       }
       //удаляем последнию строку, в которой один симплекс, и разделитель перед ней
@@ -210,23 +251,23 @@ public class OutputPresenter implements Initializable {
     algorithm.backStep();
     step--;//TODO: двойной раз назад и вперед(не повторяется)
     //если вернулись к искуственному симплексу
-    if (step == -1){
+    if (step == -1) {
       step = algorithm.getSimplex().getStep() + 1;
     }
     stage = algorithm.getStage();
 
-    if (stage == Stage.ART_BASIS){
+    if (stage == Stage.ART_BASIS) {
       end = algorithm.getSimplex().endArtBasis();
       return;
     }
 
-    if (stage == Stage.SIMPLEX){
+    if (stage == Stage.SIMPLEX) {
       end = algorithm.getSimplex().end();
       return;
     }
 
     end = algorithm.getSimplex().endArtBasis();
-    if (end == End.SUCCESS_ART_BASIS){
+    if (end == End.SUCCESS_ART_BASIS) {
       return;
     } else {
       end = algorithm.getSimplex().end();
@@ -287,18 +328,31 @@ public class OutputPresenter implements Initializable {
     printAnswer();
   }
 
-  private void goGauss(){
+  private void goGauss() {
+    stage = Stage.GAUSS;
+
     LinearSystem system = new LinearSystem(tableLimits);
 
     List<Integer> indexesExpressedVars = new ArrayList<>();
     for (int i = 0; i < basisElement.size(); i++) {
       double value = basisElement.get(i);
-      if (!isZero(value)){
+      if (!isZero(value)) {
         indexesExpressedVars.add(i);
       }
     }
 
-    system = Gauss.getExpressedVars(system, indexesExpressedVars);
+    Gauss.setSystem(system);
+
+    ArrayList<Object> dataTo = new ArrayList<>();
+    dataTo.add(system);
+
+    makeNewRow(indexesExpressedVars.size() + 1);
+    MatrixView matrixView = new MatrixView((f) -> dataTo);
+    matrixView.getViewAsync((simplexesRow.getChildren()::add));
+
+    countSimplexInCurrentRow++;
+
+    //system = Gauss.getExpressedVars(system, indexesExpressedVars);
   }
 
   private void createSimplex(Simplex simplex) {
@@ -390,7 +444,7 @@ public class OutputPresenter implements Initializable {
 
     Label value = new Label();
     String functionValue = type == "min" ? String.format("%.4f", -algorithm.getFunctionExtr())
-                                         : String.format("%.4f", algorithm.getFunctionExtr());
+            : String.format("%.4f", algorithm.getFunctionExtr());
     str = "Function " + type + " value = " + functionValue;
     value.setText(str);
     value.setFont(font);
@@ -423,7 +477,7 @@ public class OutputPresenter implements Initializable {
   }
 
   @Subscribe
-  public void receiveBasisElement(BasisElement basisElement){
+  public void receiveBasisElement(BasisElement basisElement) {
     System.out.println("get basisElement");
     this.basisElement = basisElement.getCoefs();
   }

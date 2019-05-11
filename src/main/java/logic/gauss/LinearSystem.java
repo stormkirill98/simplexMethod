@@ -20,7 +20,7 @@ public class LinearSystem {
     }
   }
 
-  void add(Equation equation) {
+  public void add(Equation equation) {
     //инициализируем порядок столбцов
     if (orderColumn.size() == 0){
       for (int i = 0; i < equation.size(); i++) {
@@ -31,12 +31,16 @@ public class LinearSystem {
     system.add(equation);
   }
 
-  Equation getEquation(int i) {
+  public Equation getEquation(int i) {
     return system.get(i);
   }
 
+  public List<Integer> getOrderColumn() {
+    return orderColumn;
+  }
+
   @SuppressWarnings("Duplicates")
-  void plusEquationsFromBegin(Equation eq, int start) {
+  public void plusEquationsFromBegin(Equation eq, int start) {
     if (system.indexOf(eq) == system.size() - 1) {
       return;
     }
@@ -63,7 +67,7 @@ public class LinearSystem {
   }
 
   @SuppressWarnings("Duplicates")
-  void plusEquationsFromEnd(Equation eq, int start) {
+  public void plusEquationsFromEnd(Equation eq, int start) {
     if (system.indexOf(eq) == 0) {
       return;
     }
@@ -90,11 +94,11 @@ public class LinearSystem {
     }
   }
 
-  int size() {
+  public int size() {
     return system.size();
   }
 
-  void print() {
+  public void print() {
     for (Equation eq : system) {
       eq.print();
       System.out.println();
@@ -102,7 +106,7 @@ public class LinearSystem {
     System.out.println();
   }
 
-  void swap(int i1, int i2) {
+  public void swap(int i1, int i2) {
     int countVars = system.get(0).size() - 2;
     if (i1 < 0 || i2 < 0
         || i1 > countVars
@@ -115,7 +119,7 @@ public class LinearSystem {
     });
   }
 
-  void returnOrder(){
+  public void returnOrder(){
     for (int i = 0; i < orderColumn.size(); i++) {
       if (i == orderColumn.get(i)){
         continue;
@@ -125,11 +129,11 @@ public class LinearSystem {
     }
   }
 
-  ListIterator<Equation> getIterator() {
+  public ListIterator<Equation> getIterator() {
     return getIterator(0);
   }
 
-  ListIterator<Equation> getIterator(int start) {
+  public ListIterator<Equation> getIterator(int start) {
     return system.listIterator(start);
   }
 }

@@ -1,11 +1,13 @@
 package logic.gauss;
 
+import logic.Utilit;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 
-class Equation {
+public class Equation {
   private List<Double> equation = new ArrayList<>();
 
   public Equation() {
@@ -17,19 +19,19 @@ class Equation {
     }
   }
 
-  Equation(Equation eq) {
+  public Equation(Equation eq) {
     equation = new ArrayList<>(eq.equation);
   }
 
-  void add(Double num) {
+  public void add(Double num) {
     equation.add(num);
   }
 
-  Double get(int i) {
+  public Double get(int i) {
     return equation.get(i);
   }
 
-  void mult(Double coefficient) {
+  public void mult(Double coefficient) {
     ListIterator<Double> iterator = equation.listIterator();
 
     while (iterator.hasNext()) {
@@ -38,7 +40,7 @@ class Equation {
     }
   }
 
-  Double reduceCoef() {
+  public Double reduceCoef() {
     int i = 0;
     while (equation.get(i) == 0) {
       i++;
@@ -52,18 +54,18 @@ class Equation {
     return coef;
   }
 
-  int size() {
+  public int size() {
     return equation.size();
   }
 
-  void print() {
+  public void print() {
     for (Double num : equation) {
-      String fractionNum = Utility.convertDecimalToFraction(num);
+      String fractionNum = Utilit.convertDecimalToFraction(num);
       System.out.printf("%7s ", fractionNum);
     }
   }
 
-  boolean equals(Equation equation) {
+  public boolean equals(Equation equation) {
     for (int i = 0; i < this.size(); i++) {
       if (!this.equation.get(i).equals(equation.get(i))) {
         return false;
@@ -72,7 +74,7 @@ class Equation {
     return true;
   }
 
-  Equation plusEquation(Equation eqAdded) {
+  public Equation plusEquation(Equation eqAdded) {
     Equation eq = new Equation(eqAdded);
     int indexFirstNotZero = eq.indexFirstNotZero();
     if (indexFirstNotZero < 0) {
@@ -99,7 +101,7 @@ class Equation {
 
   private int indexFirstNotZero() {
     for (int i = 0; i < this.equation.size(); i++) {
-      if (Math.abs(equation.get(i)) > Utility.TOLERANCE) {
+      if (Math.abs(equation.get(i)) > Utilit.TOLERANCE) {
         return i;
       }
     }
@@ -107,17 +109,17 @@ class Equation {
     return -1;
   }
 
-  void swap(int i1, int i2) {
+  public void swap(int i1, int i2) {
     Collections.swap(equation, i1, i2);
   }
 
-  void printExpressVar(int index) {
+  public void printExpressVar(int index) {
     if (index < 0 || index > size() - 1) {
       return;
     }
     StringBuilder str = new StringBuilder("x"
             + (index + 1) + " = "
-            + Utility.convertDecimalToFraction(equation.get(equation.size() - 1)));
+            + Utilit.convertDecimalToFraction(equation.get(equation.size() - 1)));
 
 
     for (int i = 0; i < equation.size() - 1; i++) {
@@ -130,14 +132,14 @@ class Equation {
 
       double num = equation.get(i);
       if (num > 0) {
-        String numStr = Utility.convertDecimalToFraction(num);
+        String numStr = Utilit.convertDecimalToFraction(num);
         if (numStr.equals("1")) {
           str.append(" - x").append(i + 1);
         } else {
           str.append(" - ").append(numStr).append("*x").append(i + 1);
         }
       } else {
-        String numStr = Utility.convertDecimalToFraction(Math.abs(num));
+        String numStr = Utilit.convertDecimalToFraction(Math.abs(num));
         if (numStr.equals("1")) {
           str.append(" + x").append(i + 1);
         } else {
@@ -152,7 +154,7 @@ class Equation {
   public boolean validate() {
     boolean allCoefZero = true;
     for (int i = 0; i < size() - 1; i++) {
-      if (Math.abs(equation.get(i)) > Utility.TOLERANCE) {
+      if (Math.abs(equation.get(i)) > Utilit.TOLERANCE) {
         allCoefZero = false;
       }
     }
