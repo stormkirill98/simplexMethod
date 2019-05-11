@@ -405,7 +405,7 @@ public class OutputPresenter implements Initializable {
 
     noEndDirectGauss = true;
     noEndReversGauss = true;
-    Gauss.revertIndex();
+    Gauss.revertVars();
   }
 
   private void printError(Error error) {

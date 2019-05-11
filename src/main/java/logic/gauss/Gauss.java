@@ -175,7 +175,10 @@ public class Gauss {
     return action;
   }
 
-  public static void revertIndex(){
+  public static void revertVars(){
     i = 1;
+    action = "";
+    equationListIterator = null;
+    system = null;
   }
 }
