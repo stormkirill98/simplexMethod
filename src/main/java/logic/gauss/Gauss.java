@@ -49,6 +49,11 @@ public class Gauss {
     swap = true;
   }
 
+  public static void backSwap(){
+    action = "";
+    system.returnOrder();
+  }
+
   public static boolean makeDirectStep(){
     action = "";
 

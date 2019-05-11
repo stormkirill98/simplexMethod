@@ -139,6 +139,9 @@ public class OutputPresenter implements Initializable {
   public void onClickNext() {
     if (stage == Stage.GAUSS) {
       if (!noEndDirectGauss && !noEndReversGauss) {
+        Gauss.backSwap();
+        createMatrixPane();
+
         stage = Stage.SIMPLEX;
         //TODO:что-то еще делать нужно
         return;
@@ -224,7 +227,7 @@ public class OutputPresenter implements Initializable {
     }
 
     algorithm.backStep();
-    step--;//TODO: двойной раз назад и вперед(не повторяется)
+    step--;
     //если вернулись к искуственному симплексу
     if (step == -1) {
       step = algorithm.getSimplex().getStep() + 1;
