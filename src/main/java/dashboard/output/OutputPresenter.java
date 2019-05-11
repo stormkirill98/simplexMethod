@@ -102,22 +102,21 @@ public class OutputPresenter implements Initializable {
       return;
     }
 
-    algorithm = new Algorithm(tableLimits);
-    if (algorithm.getStage() == Stage.END) {
-      printError(Error.BAD_INPUT);
-      return;
-    }
-
     if (functionDao == null) {
       return;
     }
+
     function = new Function(functionDao.getTypeProblem());
     function.setCoefficients(functionDao.getCoefs());
     if (function.getType() == TypeProblem.MAX) {
       function.reverseType();
     }
 
-    algorithm.setFunction(function);
+    algorithm = new Algorithm(tableLimits, null, 0, function);
+    if (algorithm.getStage() == Stage.END) {
+      printError(Error.BAD_INPUT);
+      return;
+    }
 
     if (basisElement != null) {
       goGauss();
@@ -144,9 +143,16 @@ public class OutputPresenter implements Initializable {
 
         stage = Stage.SIMPLEX;
         //TODO:что-то еще делать нужно
+
+        List<Integer> indexesExpressedVars = getIndexesExpressedVars();
+        double[][] limits = Gauss.getLimits(indexesExpressedVars);
+        algorithm = new Algorithm(limits, indexesExpressedVars, basisElement.size(), function);
+        createSimplex(algorithm.getSimplex());
+
         return;
       }
       if (noEndDirectGauss) {
+        //TODO: не выводить если свапа не было
         makeGaussGirectStep();
         return;
       }

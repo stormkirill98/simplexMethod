@@ -18,9 +18,7 @@ public class Limit {
     }
   }
 
-  public Limit() {
-
-  }
+  public Limit() { }
 
   public void addCoefficient(Coefficient coef) {
     coefficients.add(coef);

@@ -14,6 +14,7 @@ public class Gauss {
   private static ListIterator<Equation> equationListIterator = null;
   private static int i = 1;
   private static String action = "";
+  private static int countVars = 0;
 
   private static boolean swap = false;
 
@@ -170,9 +171,22 @@ public class Gauss {
     }
   }
 
+  public static double[][] getLimits(List<Integer> indexesExpressVars){
+    int countRows = system.size();
+    int countColumn = system.size() - indexesExpressVars.size();
+    double[][] limits = new double[countRows][countColumn];
+
+    for (int i = 0; i < indexesExpressVars.size(); i++) {
+      limits[i] = system.getEquation(i)
+              .expressVar(indexesExpressVars.get(i), indexesExpressVars);
+    }
+
+    return limits;
+  }
 
   public static void setSystem(LinearSystem system) {
     Gauss.system = system;
+    Gauss.countVars = system.getEquation(0).size() - 1;
   }
 
   public static LinearSystem getSystem() {
@@ -189,9 +203,14 @@ public class Gauss {
     equationListIterator = null;
     system = null;
     swap = false;
+    countVars = 0;
   }
 
   public static boolean isSwap() {
     return swap;
+  }
+
+  public static int getCountVars() {
+    return countVars;
   }
 }

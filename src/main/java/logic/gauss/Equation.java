@@ -119,6 +119,37 @@ public class Equation {
     Collections.swap(equation, i1, i2);
   }
 
+  public double[] expressVar(int index, List<Integer> indexesExpressedVars){
+    double[] limit = new double[size() - indexesExpressedVars.size()];
+
+    if (index == -1){
+      return null;
+    }
+
+    int countMissedVar = 0;
+    for (int i = 0; i < equation.size(); i++) {
+      if (Utilit.isExpressedVar(i, indexesExpressedVars)){
+        countMissedVar++;
+        continue;
+      }
+
+      limit[i - countMissedVar] = equation.get(i);
+    }
+
+    return limit;
+  }
+
+  private int getIndexExpressedVar(List<Integer> indexesExpressedVars){
+    for (int i = 0; i < indexesExpressedVars.size(); i++) {
+      int index = indexesExpressedVars.get(i);
+      if (equation.get(index).compareTo(1.0) == 0){
+        return index;
+      }
+    }
+
+    return -1;
+  }
+
   public void printExpressVar(int index) {
     if (index < 0 || index > size() - 1) {
       return;

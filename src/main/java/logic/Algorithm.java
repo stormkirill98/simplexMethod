@@ -20,19 +20,26 @@ public class Algorithm {
 
   private List<Double> basisElement;
 
-  public Algorithm(double[][] limits) {
+  public Algorithm(double[][] limits, List<Integer> indexesExpressedVars, int countVars, Function function) {
+    this.function = function;
+
     if (!checkRank(limits)) {
       stage = Stage.END;
       return;
     }
 
     for (int i = 0; i < limits.length; i++) {
-      Limit limit = new Limit(limits[i]);
+      Limit limit = new Limit(limits[i]);//TODO: нужно задавать для коэффициентов правильные индексы
       this.limits.add(limit);
     }
-    simplex = new Simplex(this.limits);
+    if (indexesExpressedVars != null){
+      simplex = new Simplex(this.limits, countVars,
+                            indexesExpressedVars, function);
+    } else {
+      simplex = new Simplex(this.limits);
+      makeValid();
+    }
 
-    makeValid();
   }
 
   public void setFunction(Function function) {

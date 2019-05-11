@@ -9,6 +9,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
 import java.text.DecimalFormat;
+import java.util.List;
 import java.util.TreeMap;
 
 public class Utilit {
@@ -183,7 +184,25 @@ public class Utilit {
     }
   }
 
-  static double[][] toSquare(double mat[][]) {
+  public static boolean isExpressedVar(int i, List<Integer> indexesExpressedVars){
+    for (int j = 0; j < indexesExpressedVars.size(); j++) {
+      if (i == indexesExpressedVars.get(j)){
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+
+  static double[][] toSquare(double arr[][]) {
+    double[][] mat = new double[arr.length][arr[0].length];
+    for (int i = 0; i < arr.length; i++) {
+      if (arr[i].length >= 0) {
+        System.arraycopy(arr[i], 0, mat[i], 0, arr[i].length);
+      }
+    }
+
     int n = mat.length;
     int m = mat[0].length;
     if (n == m) {

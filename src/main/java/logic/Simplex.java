@@ -6,6 +6,7 @@ import logic.enums.Stage;
 import java.util.ArrayList;
 import java.util.List;
 
+import static logic.Utilit.isExpressedVar;
 import static logic.Utilit.isZero;
 
 public class Simplex implements Cloneable {
@@ -28,9 +29,58 @@ public class Simplex implements Cloneable {
 
   private int indexNoPositiveColumn = -1;
 
+  public Simplex(List<Limit> limits, int countVar, List<Integer> indexesExpressedVars, Function function){
+    for (int i = 0; i < countVar; i++) {
+      if (isExpressedVar(i, indexesExpressedVars)){
+        indexesVarRow.add(i + 1);
+      } else {
+        indexesVarCol.add(i + 1);
+      }
+    }
+
+    for (Limit limit : limits) {
+      rows.add(new Row(limit, 0));
+    }
+
+    //заполняем последнюю строку в симплекс таблице
+    Row lastRow = new Row();
+    for (int j = 0; j < indexesVarCol.size(); j++) {
+      //индекс переменной через которую выражены другие(вверху симплекс таблицы перпеменные)
+      int indexVar = indexesVarCol.get(j);
+
+      double newValue = function.getCoefficients(indexVar - 1).getValue();
+
+      for (int i = 0; i < rows.size(); i++) {
+        //индекс выражаемой переменной
+        int indexExpressVar = indexesVarRow.get(i);
+        Coefficient functionCoef = function.getCoefficients(indexExpressVar - 1);
+        newValue -= functionCoef.getValue() * rows.get(i).get(j);
+      }
+
+      lastRow.addValue(newValue);
+    }
+
+
+    //считаем значение функции(последняя йчейка в таблице)
+    int indexLastCol = indexesVarCol.size();
+
+    double newValue = 0.0;
+    for (int i = 0; i < rows.size(); i++) {
+      //индекс выражаемой переменной
+      int indexExpressVar = indexesVarRow.get(i);
+      Coefficient functionCoef = function.getCoefficients(indexExpressVar - 1);
+      newValue += functionCoef.getValue() * rows.get(i).get(indexLastCol);
+    }
+
+    lastRow.addValue(newValue);
+
+    rows.add(lastRow);
+  }
+
+  //TODO:почему-то при заданной начальное элементе сюда заходит
   public Simplex(List<Limit> limits) {
     //добавляем индексы переменных в столбцах(представляет верхнюю строку симплекс таблицы)
-    Limit firstLimit = limits.get(0);
+      Limit firstLimit = limits.get(0);
     int countCoefs = firstLimit.getCountCoefs();
     for (int i = 0; i < countCoefs - 2; i++) {
       Coefficient coef = firstLimit.getCoefficient(i);
@@ -484,6 +534,8 @@ public class Simplex implements Cloneable {
     this.step = step;
   }
 
+
+
   @Override
   public String toString() {
     StringBuilder result = new StringBuilder("     ");
@@ -531,6 +583,13 @@ class Row implements Cloneable {
   List<Double> row = new ArrayList<>();
 
   public Row() {
+  }
+
+  public Row(Limit limit, int index) {
+    for (int i = 0; i < limit.getCountCoefs(); i++) {
+      Coefficient coef = limit.getCoefficient(i);
+      row.add(coef.getValue());
+    }
   }
 
   public Row(Limit limit) {
