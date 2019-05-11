@@ -96,7 +96,7 @@ public class Gauss {
     action += system.plusEquationsFromEnd(eq, i--);
 
     if (i == 0) {
-      return true;//a mojet false
+      return false;
     }
 
     system.print();
