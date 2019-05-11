@@ -251,6 +251,14 @@ public class OutputPresenter implements Initializable {
   }
 
   private void makeGaussGirectStep(){
+    if (!Gauss.isSwap()){
+      List<Integer> indexesExpressedVars = getIndexesExpressedVars();
+
+      Gauss.swap(indexesExpressedVars);
+      createMatrixPane();
+      return;
+    }
+
     noEndDirectGauss = Gauss.makeDirectStep();
 
     createMatrixPane();
@@ -329,13 +337,7 @@ public class OutputPresenter implements Initializable {
 
     LinearSystem system = new LinearSystem(tableLimits);
 
-    List<Integer> indexesExpressedVars = new ArrayList<>();
-    for (int i = 0; i < basisElement.size(); i++) {
-      double value = basisElement.get(i);
-      if (!isZero(value)) {
-        indexesExpressedVars.add(i);
-      }
-    }
+    List<Integer> indexesExpressedVars = getIndexesExpressedVars();
 
     Gauss.setSystem(system);
 
@@ -348,6 +350,20 @@ public class OutputPresenter implements Initializable {
 
     //system = Gauss.getExpressedVars(system, indexesExpressedVars);
   }
+
+  private List<Integer> getIndexesExpressedVars(){
+    List<Integer> indexesExpressedVars = new ArrayList<>();
+
+    for (int i = 0; i < basisElement.size(); i++) {
+      double value = basisElement.get(i);
+      if (!isZero(value)) {
+        indexesExpressedVars.add(i);
+      }
+    }
+
+    return indexesExpressedVars;
+  }
+
 
   private void createSimplex(Simplex simplex) {
     if (simplex == null) {

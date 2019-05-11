@@ -49,7 +49,7 @@ public class MatrixPresenter implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     system = (LinearSystem) inputData.get(0);
-    orderVars = system.getOrderColumn();
+    orderVars = system.getOrderColumn();//TODO: как-то маркировать свап
 
     n = system.size();
     m = system.getEquation(0).size();
