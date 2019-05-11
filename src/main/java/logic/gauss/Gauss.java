@@ -1,5 +1,6 @@
 package logic.gauss;
 
+import logic.RomanNumber;
 import logic.Utilit;
 
 import java.util.List;
@@ -12,6 +13,7 @@ public class Gauss {
 
   private static ListIterator<Equation> equationListIterator = null;
   private static int i = 1;
+  private static String action = "";
 
   public static LinearSystem getExpressedVars(LinearSystem system, List<Integer> indexesExpressVars) {
     System.out.println("input matrix");
@@ -45,6 +47,8 @@ public class Gauss {
   }
 
   public static boolean makeDirectStep(){
+    action = "";
+
     if (system == null){
       return false;
     }
@@ -59,14 +63,10 @@ public class Gauss {
     Equation eq = equationListIterator.next();
     Double coef = eq.reduceCoef();
 
-    if (printActions) {
-      printAction(coef, i);
-      system.print();
-    }
+    action += printAction(coef, i);
+    system.print();
 
-    system.plusEquationsFromBegin(eq, i);
-
-    i++;
+    action += system.plusEquationsFromBegin(eq, i++);
 
     system.print();
 
@@ -79,6 +79,8 @@ public class Gauss {
   }
 
   public static boolean makeReversStep(){
+    action = "";
+
     if (system == null){
       return false;
     }
@@ -91,7 +93,7 @@ public class Gauss {
     }
 
     Equation eq = equationListIterator.previous();
-    system.plusEquationsFromEnd(eq, i);
+    action += system.plusEquationsFromEnd(eq, i);
     i--;
 
     if (i == 0) {
@@ -139,8 +141,11 @@ public class Gauss {
     }
   }
 
-  private static void printAction(Double coef, int indexEq) {
-    System.out.printf("(%s * %.2f)=>\n", Utilit.numToRim(indexEq), coef);
+  private static String printAction(Double coef, int indexEq) {
+    String action = String.format("%s * %.2f\n", RomanNumber.toRoman(indexEq), coef);
+    System.out.print(action);
+
+    return action;
   }
 
   private static void printExpressVars(LinearSystem system, List<Integer> indexes) {
@@ -165,5 +170,13 @@ public class Gauss {
 
   public static LinearSystem getSystem() {
     return system;
+  }
+
+  public static String getAction(){
+    return action;
+  }
+
+  public static void revertIndex(){
+    i = 1;
   }
 }

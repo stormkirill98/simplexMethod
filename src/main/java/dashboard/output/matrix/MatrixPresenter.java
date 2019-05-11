@@ -11,12 +11,12 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.*;
+import javafx.scene.text.Font;
 import logic.Utilit;
 import logic.enums.End;
 import logic.enums.Stage;
+import logic.gauss.Gauss;
 import logic.gauss.LinearSystem;
 
 import javax.inject.Inject;
@@ -33,6 +33,7 @@ public class MatrixPresenter implements Initializable {
   final private int cellHeight = 35;
 
   public AnchorPane pane;
+  public HBox box;
 
   private int n = 0;
   private int m = 0;
@@ -52,6 +53,8 @@ public class MatrixPresenter implements Initializable {
 
     n = system.size();
     m = system.getEquation(0).size();
+
+    createActionPane(Gauss.getAction());
 
     createMatrixPane();
   }
@@ -83,7 +86,7 @@ public class MatrixPresenter implements Initializable {
       }
     }
 
-    pane.getChildren().add(table);
+    box.getChildren().add(table);
   }
 
   private Label createLabel(int index){
@@ -92,8 +95,9 @@ public class MatrixPresenter implements Initializable {
     label.setAlignment(Pos.CENTER);
     label.setPrefWidth(cellWidth);
     label.setPrefHeight(cellHeight);
+    label.setFont(new Font(25));
 
-    String name = "X" + Utilit.subscript(String.valueOf(index));
+    String name = "X" + Utilit.subscript(String.valueOf(index + 1));
 
     label.setText(name);
 
@@ -111,6 +115,32 @@ public class MatrixPresenter implements Initializable {
     listenerToFields(textField);
 
     return textField;
+  }
+
+  private void createActionPane(String action){
+    if (action.isEmpty()){
+      return;
+    }
+
+    VBox vBox = new VBox();
+    HBox.setMargin(vBox, new Insets(cellHeight,0,0,0));
+    vBox.setStyle("-fx-border-color: black; -fx-border-radius: 5px;");
+    vBox.setPadding(new Insets(5));
+
+    for (String str : action.split("\n")){
+      if (str.isEmpty()){
+        continue;
+      }
+
+      Label label = new Label(str);
+
+      label.setAlignment(Pos.CENTER);
+      label.setFont(new Font(20));
+
+      vBox.getChildren().add(label);
+    }
+
+    box.getChildren().add(vBox);
   }
 
   private void listenerToFields(TextField field){

@@ -9,6 +9,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
 import java.text.DecimalFormat;
+import java.util.TreeMap;
 
 public class Utilit {
   public static final double TOLERANCE = 1.0E-12;
@@ -74,33 +75,6 @@ public class Utilit {
     }
 
     return "(" + (int) h1 + "/" + (int) k1 + ")";
-  }
-
-  public static String numToRim(int num) {
-    switch (num) {
-      case 1:
-        return "I";
-      case 2:
-        return "II";
-      case 3:
-        return "III";
-      case 4:
-        return "IV";
-      case 5:
-        return "V";
-      case 6:
-        return "VI";
-      case 7:
-        return "VII";
-      case 8:
-        return "VIII";
-      case 9:
-        return "IX";
-      case 10:
-        return "X";
-      default:
-        return String.valueOf(num);
-    }
   }
 
   //переводит число в надстрочный вид
@@ -291,3 +265,4 @@ public class Utilit {
     return rank;
   }
 }
+

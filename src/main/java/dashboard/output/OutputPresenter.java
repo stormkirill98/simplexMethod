@@ -95,12 +95,7 @@ public class OutputPresenter implements Initializable {
   private void onClickStart() {
     clear();
 
-    countSimplexInCurrentRow = 0;
-    step = 0;
-    end = End.CONTINUE;
-
-    noEndDirectGauss = true;
-    noEndReversGauss = true;
+    resetVars();
 
     simplexesVBox.getChildren().add(simplexesRow);
 
@@ -146,35 +141,19 @@ public class OutputPresenter implements Initializable {
     if (stage == Stage.GAUSS) {
       if (!noEndDirectGauss && !noEndReversGauss) {
         stage = Stage.SIMPLEX;
-        //что-то еще делать нужно
+        //TODO:что-то еще делать нужно
         return;
       }
       if (noEndDirectGauss) {
-        noEndDirectGauss = Gauss.makeDirectStep();
-
-        ArrayList<Object> dataTo = new ArrayList<>();
-        dataTo.add(Gauss.getSystem());
-
-        MatrixView matrixView = new MatrixView((f) -> dataTo);
-        matrixView.getViewAsync((simplexesRow.getChildren()::add));
-
-        countSimplexInCurrentRow++;
+        makeGaussGirectStep();
         return;
       }
       if (noEndReversGauss){
-        noEndReversGauss = Gauss.makeReversStep();
-
-        ArrayList<Object> dataTo = new ArrayList<>();
-        dataTo.add(Gauss.getSystem());
-
-        MatrixView matrixView = new MatrixView((f) -> dataTo);
-        matrixView.getViewAsync((simplexesRow.getChildren()::add));
-
-        countSimplexInCurrentRow++;
+        //TODO: еделается лишний последний шаг
+        //TODO: можно подсвечивать единичный минор
+        makeGaussReversStep();
         return;
       }
-
-      return;
     }
 
     if (algorithm == null) {
@@ -191,7 +170,6 @@ public class OutputPresenter implements Initializable {
     if (end == End.SUCCESS_ART_BASIS) {
       algorithm.setStage(Stage.SIMPLEX);
       step = 0;
-
 
       algorithm.recountLastRow();
 
@@ -273,6 +251,28 @@ public class OutputPresenter implements Initializable {
       end = algorithm.getSimplex().end();
     }
 
+  }
+
+  private void makeGaussGirectStep(){
+    noEndDirectGauss = Gauss.makeDirectStep();
+
+    createMatrixPane();
+  }
+
+  private void makeGaussReversStep(){
+    noEndReversGauss = Gauss.makeReversStep();
+
+    createMatrixPane();
+  }
+
+  private void createMatrixPane(){
+    ArrayList<Object> dataTo = new ArrayList<>();
+    dataTo.add(Gauss.getSystem());
+
+    MatrixView matrixView = new MatrixView((f) -> dataTo);
+    matrixView.getViewAsync((simplexesRow.getChildren()::add));
+
+    countSimplexInCurrentRow++;
   }
 
   public void changeStepByStep(boolean newValue) {
@@ -401,6 +401,16 @@ public class OutputPresenter implements Initializable {
     }
 
     simplexesVBox.getChildren().clear();
+  }
+
+  private void resetVars(){
+    countSimplexInCurrentRow = 0;
+    step = 0;
+    end = End.CONTINUE;
+
+    noEndDirectGauss = true;
+    noEndReversGauss = true;
+    Gauss.revertIndex();
   }
 
   private void printError(Error error) {

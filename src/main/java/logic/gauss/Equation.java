@@ -10,6 +10,8 @@ import java.util.ListIterator;
 public class Equation {
   private List<Double> equation = new ArrayList<>();
 
+  private String action = "";
+
   public Equation() {
   }
 
@@ -75,6 +77,8 @@ public class Equation {
   }
 
   public Equation plusEquation(Equation eqAdded) {
+    action = "";
+
     Equation eq = new Equation(eqAdded);
     int indexFirstNotZero = eq.indexFirstNotZero();
     if (indexFirstNotZero < 0) {
@@ -85,9 +89,11 @@ public class Equation {
 
     if (Gauss.printActions) {
       if (coef > 0) {
-        System.out.printf(" + %.2f", coef);
+        action = String.format(" + %.2f", coef);
+        System.out.print(action);
       } else {
-        System.out.printf(" - %.2f", Math.abs(coef));
+        action = String.format(" - %.2f", Math.abs(coef));
+        System.out.print(action);
       }
     }
 
@@ -160,6 +166,10 @@ public class Equation {
     }
 
     return !allCoefZero;
+  }
+
+  public String getAction(){
+    return action;
   }
 
 }

@@ -1,6 +1,6 @@
 package logic.gauss;
 
-import logic.Utilit;
+import logic.RomanNumber;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,7 +13,7 @@ public class LinearSystem {
 
   private List<Integer> orderColumn = new ArrayList<>();
 
-  public LinearSystem(double[][] limits){
+  public LinearSystem(double[][] limits) {
     for (double[] limit : limits) {
       Equation equation = new Equation(limit);
       add(equation);
@@ -22,7 +22,7 @@ public class LinearSystem {
 
   public void add(Equation equation) {
     //инициализируем порядок столбцов
-    if (orderColumn.size() == 0){
+    if (orderColumn.size() == 0) {
       for (int i = 0; i < equation.size(); i++) {
         orderColumn.add(i);
       }
@@ -40,58 +40,60 @@ public class LinearSystem {
   }
 
   @SuppressWarnings("Duplicates")
-  public void plusEquationsFromBegin(Equation eq, int start) {
+  public String plusEquationsFromBegin(Equation eq, int start) {
+    String action = "";
+
     if (system.indexOf(eq) == system.size() - 1) {
-      return;
+      return "";
     }
 
     ListIterator<Equation> equations = system.listIterator(start);
     while (equations.hasNext()) {
       Equation equation = equations.next();
 
-      if (Gauss.printActions) {
-        System.out.print(Utilit.numToRim(system.indexOf(equation) + 1));
-      }
-
       Equation newEq = equation.plusEquation(eq);
 
-      if (Gauss.printActions) {
-        System.out.println(" * " + Utilit.numToRim(system.indexOf(eq) + 1));
-      }
+      action +=  RomanNumber.toRoman(system.indexOf(equation) + 1)
+              + equation.getAction() + " * "
+              + RomanNumber.toRoman(system.indexOf(eq) + 1) + "\n";
 
       equations.set(newEq);
     }
     if (Gauss.printActions) {
+      System.out.println(action);
       System.out.println("        ⇓");
     }
+
+    return action;
   }
 
   @SuppressWarnings("Duplicates")
-  public void plusEquationsFromEnd(Equation eq, int start) {
+  public String plusEquationsFromEnd(Equation eq, int start) {
+    String action = "";
+
     if (system.indexOf(eq) == 0) {
-      return;
+      return "";
     }
 
     ListIterator<Equation> equations = system.listIterator(start);
     while (equations.hasPrevious()) {
       Equation equation = equations.previous();
 
-      if (Gauss.printActions) {
-        System.out.print(Utilit.numToRim(system.indexOf(equation) + 1));
-      }
-
       Equation newEq = equation.plusEquation(eq);
 
-      if (Gauss.printActions) {
-        System.out.println(" * " + Utilit.numToRim(system.indexOf(eq) + 1));
-      }
+      action +=  RomanNumber.toRoman(system.indexOf(equation) + 1)
+              + equation.getAction() + " * "
+              + RomanNumber.toRoman(system.indexOf(eq) + 1) + "\n";
 
       equations.set(newEq);
     }
 
     if (Gauss.printActions) {
+      System.out.println(action);
       System.out.println("        ⇓");
     }
+
+    return action;
   }
 
   public int size() {
@@ -109,8 +111,8 @@ public class LinearSystem {
   public void swap(int i1, int i2) {
     int countVars = system.get(0).size() - 2;
     if (i1 < 0 || i2 < 0
-        || i1 > countVars
-        || i2 > countVars) {
+            || i1 > countVars
+            || i2 > countVars) {
       return;
     }
     Collections.swap(orderColumn, i1, i2);
@@ -119,9 +121,9 @@ public class LinearSystem {
     });
   }
 
-  public void returnOrder(){
+  public void returnOrder() {
     for (int i = 0; i < orderColumn.size(); i++) {
-      if (i == orderColumn.get(i)){
+      if (i == orderColumn.get(i)) {
         continue;
       }
 
