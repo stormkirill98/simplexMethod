@@ -151,6 +151,12 @@ public class OutputPresenter implements Initializable {
           createMatrixPane();
         }
 
+        try {
+          Thread.sleep(150);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+
         stage = Stage.SIMPLEX;
 
         List<Integer> indexesExpressedVars = Gauss.getIndexesExpressVars();
