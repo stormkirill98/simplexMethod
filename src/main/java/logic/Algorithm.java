@@ -28,6 +28,7 @@ public class Algorithm {
       return;
     }
 
+
     for (int i = 0; i < limits.length; i++) {
       Limit limit = new Limit(limits[i]);//TODO: нужно задавать для коэффициентов правильные индексы
       this.limits.add(limit);
@@ -35,6 +36,7 @@ public class Algorithm {
     if (indexesExpressedVars != null){
       simplex = new Simplex(this.limits, countVars,
                             indexesExpressedVars, function);
+      stage = Stage.SIMPLEX;
     } else {
       simplex = new Simplex(this.limits);
       makeValid();

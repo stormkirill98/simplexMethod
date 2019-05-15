@@ -142,7 +142,6 @@ public class OutputPresenter implements Initializable {
         createMatrixPane();
 
         stage = Stage.SIMPLEX;
-        //TODO:что-то еще делать нужно
 
         List<Integer> indexesExpressedVars = getIndexesExpressedVars();
         double[][] limits = Gauss.getLimits(indexesExpressedVars);

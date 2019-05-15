@@ -22,7 +22,7 @@ public class Simplex implements Cloneable {
   private int step = 0;
 
   //число переменных, которые были в задаче с самого начала, без тех которые добавили мы
-  private int countOurVar;
+  private int countOurVar = 0;
 
   private int[] indexesBaseElement;
   private boolean manuallySetBaseElement = false;
@@ -445,6 +445,10 @@ public class Simplex implements Cloneable {
   public List<Double> getPointExtr() {
     if (stage != Stage.END) {
       return null;
+    }
+
+    if (countOurVar == 0){
+      countOurVar = indexesVarCol.size() + indexesVarRow.size();
     }
 
     //ооздаем лист размером с кол-вом первоночальных переменных
