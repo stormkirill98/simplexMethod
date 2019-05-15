@@ -16,7 +16,7 @@ public class Gauss {
   private static String action = "";
   private static int countVars = 0;
 
-  private static boolean swap = false;
+  private static Boolean swap = null;
 
   public static LinearSystem getExpressedVars(LinearSystem system, List<Integer> indexesExpressVars) {
     System.out.println("input matrix");
@@ -44,15 +44,39 @@ public class Gauss {
   }
 
   public static void swap(List<Integer> indexes) {
-    for (int i = 0; i < indexes.size(); i++) {
-      system.swap(i, indexes.get(i));
+    boolean inOrder = false;
+    if (indexes.get(0) == 0){
+      inOrder = true;
     }
-    swap = true;
+
+    for (int i = 1; i < indexes.size(); i++) {
+      if (!inOrder){
+        break;
+      }
+
+      if (indexes.get(i - 1) > indexes.get(i)){
+        inOrder = false;
+        break;
+      }
+    }
+
+    if (!inOrder){
+      for (int i = 0; i < indexes.size(); i++) {
+        system.swap(i, indexes.get(i));
+      }
+
+      swap = true;
+      return;
+    }
+
+    swap = false;
   }
 
   public static void backSwap(){
-    action = "";
-    system.returnOrder();
+    if (swap){
+      action = "";
+      system.returnOrder();
+    }
   }
 
   public static boolean makeDirectStep(){
@@ -202,11 +226,11 @@ public class Gauss {
     action = "";
     equationListIterator = null;
     system = null;
-    swap = false;
+    swap = null;
     countVars = 0;
   }
 
-  public static boolean isSwap() {
+  public static Boolean isSwap() {
     return swap;
   }
 

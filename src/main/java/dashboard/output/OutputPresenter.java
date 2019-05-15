@@ -151,12 +151,10 @@ public class OutputPresenter implements Initializable {
         return;
       }
       if (noEndDirectGauss) {
-        //TODO: не выводить если свапа не было
         makeGaussGirectStep();
         return;
       }
       if (noEndReversGauss){
-        //TODO: еделается лишний последний шаг
         //TODO: можно подсвечивать единичный минор
         makeGaussReversStep();
         return;
@@ -255,16 +253,17 @@ public class OutputPresenter implements Initializable {
     } else {
       end = algorithm.getSimplex().end();
     }
-
   }
 
   private void makeGaussGirectStep(){
-    if (!Gauss.isSwap()){
+    if (Gauss.isSwap() == null){
       List<Integer> indexesExpressedVars = getIndexesExpressedVars();
 
       Gauss.swap(indexesExpressedVars);
-      createMatrixPane();
-      return;
+      if (Gauss.isSwap()){
+        createMatrixPane();
+        return;
+      }
     }
 
     noEndDirectGauss = Gauss.makeDirectStep();
@@ -373,6 +372,7 @@ public class OutputPresenter implements Initializable {
   }
 
 
+  //TODO:после гаусса создается симплекс с ПОДСВЕЧЕННОЙ красным последней строкой
   private void createSimplex(Simplex simplex) {
     if (simplex == null) {
       return;
@@ -404,8 +404,8 @@ public class OutputPresenter implements Initializable {
   }
 
   private void addSeparator() {
-    Separator separator = new Separator();//TODO: не на всю ширину
-    separator.setPrefWidth(widthPane);
+    Separator separator = new Separator();
+    separator.setPrefWidth(widthPane + 50);
     separator.setOrientation(Orientation.HORIZONTAL);
     separator.setPadding(new Insets(10, 0, 5, 0));
     simplexesVBox.getChildren().add(separator);

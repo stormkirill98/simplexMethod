@@ -69,7 +69,6 @@ public class InputPresenter implements Initializable {
 
     initInputBasisElement();
 
-    //TODO: добавить проверку на нулевой элемент
     setBasisElement.selectedProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue) {
         basisElementNode.setDisable(false);
@@ -159,6 +158,7 @@ public class InputPresenter implements Initializable {
   }
 
   //TODO:лагает при отменненных изменениях
+  //TODO:ограничить размерность, чтобы не зависала программа
   private void initInputDimension() {
     amountLimits.textProperty().addListener((observable, oldValue, newValue) -> {
       if (!isNatural(newValue)) {
@@ -219,6 +219,4 @@ public class InputPresenter implements Initializable {
     functionPane.getChildren().clear();
     functionView.getViewAsync(functionPane.getChildren()::add);
   }
-
-  //TODO:ограничить размерность, чтобы не зависала программа
 }
