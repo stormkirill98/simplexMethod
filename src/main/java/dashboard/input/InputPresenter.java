@@ -131,6 +131,10 @@ public class InputPresenter implements Initializable {
     List<Double> basisElement = new ArrayList<>();
     ObservableList<Node> childrens = basisElementNode.getChildren();
 
+    int countLimits = Integer.valueOf(amountLimits.getText());
+
+    int countNoNullCoef = 0;
+
     for (int i = 0; i < childrens.size(); i++) {
       try {
         TextField field = (TextField) childrens.get(i);
@@ -139,8 +143,16 @@ public class InputPresenter implements Initializable {
           return null;
         }
 
+        if (!isZero(value)) {
+          countNoNullCoef++;
+        }
+
         basisElement.add(value);
       } catch (ClassCastException ignored){ }
+    }
+
+    if (countLimits < countNoNullCoef){
+      return null;
     }
 
     return basisElement;

@@ -284,7 +284,7 @@ public class OutputPresenter implements Initializable {
 
     makeNewRow();
     MatrixView matrixView = new MatrixView((f) -> dataTo);
-    matrixView.getViewAsync((simplexesRow.getChildren()::add));
+    matrixView.getView((simplexesRow.getChildren()::add));
   }
 
   public void changeStepByStep(boolean newValue) {
