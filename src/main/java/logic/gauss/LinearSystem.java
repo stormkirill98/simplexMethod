@@ -131,6 +131,16 @@ public class LinearSystem {
     }
   }
 
+  public List<Integer> getIndexesExpressedVars(){
+    List<Integer> indexesExpressedVars = new ArrayList<>();
+
+    for (int i = 0; i < size(); i++) {
+      indexesExpressedVars.add(orderColumn.get(i));
+    }
+
+    return indexesExpressedVars;
+  }
+
   public ListIterator<Equation> getIterator() {
     return getIterator(0);
   }

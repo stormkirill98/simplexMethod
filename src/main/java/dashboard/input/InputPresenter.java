@@ -150,7 +150,11 @@ public class InputPresenter implements Initializable {
       } catch (ClassCastException ignored){ }
     }
 
-    if (countLimits < countNoNullCoef){
+    if (countNoNullCoef > countLimits){
+      return null;
+    }
+
+    if (countNoNullCoef == 0){
       return null;
     }
 

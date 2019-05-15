@@ -18,6 +18,8 @@ public class Gauss {
 
   private static Boolean swap = null;
 
+  private static List<Integer> indexesExpressVars = null;
+
   public static LinearSystem getExpressedVars(LinearSystem system, List<Integer> indexesExpressVars) {
     System.out.println("input matrix");
     system.print();
@@ -54,7 +56,7 @@ public class Gauss {
         break;
       }
 
-      if (indexes.get(i - 1) > indexes.get(i)){
+      if (indexes.get(i - 1) != indexes.get(i) - 1){
         inOrder = false;
         break;
       }
@@ -72,7 +74,9 @@ public class Gauss {
     swap = false;
   }
 
-  public static void backSwap(){
+  public static void  backSwap(){
+    indexesExpressVars = system.getIndexesExpressedVars();
+
     if (swap){
       action = "";
       system.returnOrder();
@@ -195,9 +199,10 @@ public class Gauss {
     }
   }
 
-  public static double[][] getLimits(List<Integer> indexesExpressVars){
+  public static double[][] getLimits(){
+
     int countRows = system.size();
-    int countColumn = system.size() - indexesExpressVars.size();
+    int countColumn = system.size();
     double[][] limits = new double[countRows][countColumn];
 
     for (int i = 0; i < indexesExpressVars.size(); i++) {
@@ -232,6 +237,10 @@ public class Gauss {
 
   public static Boolean isSwap() {
     return swap;
+  }
+
+  public static List<Integer> getIndexesExpressVars() {
+    return indexesExpressVars;
   }
 
   public static int getCountVars() {

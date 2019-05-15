@@ -118,59 +118,69 @@ public class OutputPresenter implements Initializable {
       return;
     }
 
-    if (basisElement != null) {
-      goGauss();
-      return;
-    }
+
 
     if (stepByStep.isSelected()) {
+      if (basisElement != null) {
+        startGauss();
+        return;
+      }
+
       algorithm.createArtBasis();
       createSimplex(algorithm.getSimplex());
     } else {
       try {
-        goAlgorithm();
+        if (basisElement != null) {
+          goGauss();
+        } else {
+          goAlgorithm();
+        }
       } catch (InterruptedException e) {
         e.printStackTrace();
       }
     }
   }
 
-  public void onClickNext() {
+  //TODO: шаг назад не работает при гауссе
+  public boolean onClickNext() {
     if (stage == Stage.GAUSS) {
       if (!noEndDirectGauss && !noEndReversGauss) {
+
         Gauss.backSwap();
-        createMatrixPane();
+        if (Gauss.isSwap()) {
+          createMatrixPane();
+        }
 
         stage = Stage.SIMPLEX;
 
-        List<Integer> indexesExpressedVars = getIndexesExpressedVars();
-        double[][] limits = Gauss.getLimits(indexesExpressedVars);
+        List<Integer> indexesExpressedVars = Gauss.getIndexesExpressVars();
+        double[][] limits = Gauss.getLimits();
         algorithm = new Algorithm(limits, indexesExpressedVars, basisElement.size(), function);
         createSimplex(algorithm.getSimplex());
 
-        return;
+        return true;
       }
       if (noEndDirectGauss) {
         makeGaussGirectStep();
-        return;
+        return true;
       }
-      if (noEndReversGauss){
+      if (noEndReversGauss) {
         //TODO: можно подсвечивать единичный минор
         makeGaussReversStep();
-        return;
+        return true;
       }
     }
 
     if (algorithm == null) {
-      return;
+      return false;
     }
     if (end == End.FAILURE) {
       printError(Error.NOT_LIMITED);
-      return;
+      return false;
     }
     if (end == End.SUCCESS_ALL) {
       printAnswer();
-      return;
+      return false;
     }
     if (end == End.SUCCESS_ART_BASIS) {
       algorithm.setStage(Stage.SIMPLEX);
@@ -180,11 +190,13 @@ public class OutputPresenter implements Initializable {
 
       createSimplex(algorithm.getSimplex());
       end = algorithm.getSimplex().end();
-      return;
+      return true;
     }
 
     end = algorithm.makeStep();
     createSimplex(algorithm.getSimplex());
+
+    return true;
   }
 
   public void onClickBack(ActionEvent event) {
@@ -255,12 +267,12 @@ public class OutputPresenter implements Initializable {
     }
   }
 
-  private void makeGaussGirectStep(){
-    if (Gauss.isSwap() == null){
+  private void makeGaussGirectStep() {
+    if (Gauss.isSwap() == null) {
       List<Integer> indexesExpressedVars = getIndexesExpressedVars();
 
       Gauss.swap(indexesExpressedVars);
-      if (Gauss.isSwap()){
+      if (Gauss.isSwap()) {
         createMatrixPane();
         return;
       }
@@ -271,19 +283,19 @@ public class OutputPresenter implements Initializable {
     createMatrixPane();
   }
 
-  private void makeGaussReversStep(){
+  private void makeGaussReversStep() {
     noEndReversGauss = Gauss.makeReversStep();
 
     createMatrixPane();
   }
 
-  private void createMatrixPane(){
+  private void createMatrixPane() {
     ArrayList<Object> dataTo = new ArrayList<>();
     dataTo.add(Gauss.getSystem());
 
     makeNewRow();
     MatrixView matrixView = new MatrixView((f) -> dataTo);
-    matrixView.getView((simplexesRow.getChildren()::add));
+    matrixView.getViewAsync((simplexesRow.getChildren()::add));
   }
 
   public void changeStepByStep(boolean newValue) {
@@ -339,7 +351,7 @@ public class OutputPresenter implements Initializable {
     printAnswer();
   }
 
-  private void goGauss() {
+  private void startGauss() {
     stage = Stage.GAUSS;
 
     LinearSystem system = new LinearSystem(tableLimits);
@@ -354,11 +366,21 @@ public class OutputPresenter implements Initializable {
     makeNewRow();
     MatrixView matrixView = new MatrixView((f) -> dataTo);
     matrixView.getViewAsync((simplexesRow.getChildren()::add));
-
-    //system = Gauss.getExpressedVars(system, indexesExpressedVars);
   }
 
-  private List<Integer> getIndexesExpressedVars(){
+  private void goGauss() {
+    startGauss();
+    try {
+      Thread.sleep(150);
+      while (onClickNext()) {
+        Thread.sleep(150);
+      }
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+  }
+
+  private List<Integer> getIndexesExpressedVars() {
     List<Integer> indexesExpressedVars = new ArrayList<>();
 
     for (int i = 0; i < basisElement.size(); i++) {
@@ -389,13 +411,13 @@ public class OutputPresenter implements Initializable {
   private void makeNewRow() {
     double width = 0;
     int count = simplexesRow.getChildren().size();
-    for(Node node : simplexesRow.getChildren()){
+    for (Node node : simplexesRow.getChildren()) {
       width += node.prefWidth(1);
     }
 
     //is it possible to add simplex in this row
     width += width / count; // добавляем среднюю ширину элементов в этой строке
-    if (width  > widthPane){
+    if (width > widthPane) {
       addSeparator();
 
       simplexesRow = new HBox();
@@ -423,7 +445,7 @@ public class OutputPresenter implements Initializable {
     simplexesVBox.getChildren().clear();
   }
 
-  private void resetVars(){
+  private void resetVars() {
     step = 0;
     end = End.CONTINUE;
 
