@@ -64,7 +64,7 @@ public class OutputPresenter implements Initializable {
   private Function function;
 
   private End end = End.CONTINUE;
-  private Stage stage = Stage.ART_BASIS;
+  private Stage stage;
 
   private boolean printAnswer = false;
 
@@ -415,20 +415,26 @@ public class OutputPresenter implements Initializable {
   }
 
   private void makeNewRow() {
-    double width = 0;
-    int count = simplexesRow.getChildren().size();
-    for (Node node : simplexesRow.getChildren()) {
-      width += node.prefWidth(1);
+    if (stepByStep.isSelected()) {
+      double width = 0;
+      int count = simplexesRow.getChildren().size();
+      for (Node node : simplexesRow.getChildren()) {
+        width += node.prefWidth(1);
+      }
+
+      //is it possible to add simplex in this row
+      width += width / count; // добавляем среднюю ширину элементов в этой строке
+
+      if (width > widthPane) {
+        addSeparator();
+
+        simplexesRow = new HBox();
+        simplexesVBox.getChildren().add(simplexesRow);
+      }
+    } else {
+
     }
 
-    //is it possible to add simplex in this row
-    width += width / count; // добавляем среднюю ширину элементов в этой строке
-    if (width > widthPane) {
-      addSeparator();
-
-      simplexesRow = new HBox();
-      simplexesVBox.getChildren().add(simplexesRow);
-    }
   }
 
   private void addSeparator() {
