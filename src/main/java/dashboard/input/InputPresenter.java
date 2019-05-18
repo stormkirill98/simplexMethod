@@ -17,7 +17,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Screen;
 import logic.Function;
-import org.checkerframework.checker.units.qual.A;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -101,11 +100,11 @@ public class InputPresenter implements Initializable {
       field.setText("0");
 
       field.textProperty().addListener((observable, oldValue, newValue) -> {
-        if (!validateDouble(field, oldValue, newValue)){
+        if (!validateDouble(field, oldValue, newValue)) {
           return;
         }
 
-        if (setBasisElement.isSelected()){
+        if (setBasisElement.isSelected()) {
           basisElement = createBasisElement();
           MyEventBus.post(new BasisElement(basisElement));
         } else {
@@ -126,7 +125,7 @@ public class InputPresenter implements Initializable {
     basisElementNode.getChildren().add(endBkt);
   }
 
-  private List<Double> createBasisElement(){
+  private List<Double> createBasisElement() {
     List<Double> basisElement = new ArrayList<>();
     ObservableList<Node> childrens = basisElementNode.getChildren();
 
@@ -134,11 +133,11 @@ public class InputPresenter implements Initializable {
 
     int countNoNullCoef = 0;
 
-    for (int i = 0; i < childrens.size(); i++) {
+    for (Node children : childrens) {
       try {
-        TextField field = (TextField) childrens.get(i);
+        TextField field = (TextField) children;
         Double value = strToDouble(field.getText());
-        if (value == null){
+        if (value == null) {
           return null;
         }
 
@@ -147,22 +146,21 @@ public class InputPresenter implements Initializable {
         }
 
         basisElement.add(value);
-      } catch (ClassCastException ignored){ }
+      } catch (ClassCastException ignored) {
+      }
     }
 
-    if (countNoNullCoef > countLimits){
+    if (countNoNullCoef > countLimits) {
       return null;
     }
 
-    if (countNoNullCoef == 0){
+    if (countNoNullCoef == 0) {
       return null;
     }
 
     return basisElement;
   }
 
-  //TODO:лагает при отменненных изменениях
-  //TODO:ограничить размерность, чтобы не зависала программа
   private void initInputDimension() {
     amountLimits.textProperty().addListener((observable, oldValue, newValue) -> {
       if (!isNatural(newValue)) {
@@ -221,7 +219,7 @@ public class InputPresenter implements Initializable {
       toFunctionPane.add(null);
       createFunctionPane(toFunctionPane);
 
-      MyEventBus.post(new Dimension(n, m));//TODO: проверить на заполненность если это конечно нужно
+      MyEventBus.post(new Dimension(n, m));
     });
   }
 

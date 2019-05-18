@@ -114,7 +114,6 @@ public class Algorithm {
 
     //удаляем столбец, если это искственный базис
     if (stage == Stage.ART_BASIS) {
-      //TODO: проверить удаляемую переменную
       simplex.removeColumn(indexes[1]);
     }
 

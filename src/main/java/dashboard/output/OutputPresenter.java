@@ -499,11 +499,18 @@ public class OutputPresenter implements Initializable {
     } else {
       type = function.getType().toString().toLowerCase();
     }
-    Label point = new Label();
-    String str = "Point " + type + " = " + algorithm.getPointExtr();
-    point.setText(str);
-    point.setFont(font);
-    point.setAlignment(Pos.CENTER);
+    Label pointLabel = new Label();
+    
+    List<Double> point = algorithm.getPointExtr();
+    String str = "Point " + type + " = (";
+    for (Double num : point) {
+      str += String.format("%.2f; ", num);
+    }
+    str = str.substring(0, str.length() - 2) + ")";
+
+    pointLabel.setText(str);
+    pointLabel.setFont(font);
+    pointLabel.setAlignment(Pos.CENTER);
 
     Label value = new Label();
     String functionValue = type == "min" ? String.format("%.4f", -algorithm.getFunctionExtr())
@@ -513,7 +520,7 @@ public class OutputPresenter implements Initializable {
     value.setFont(font);
     value.setAlignment(Pos.CENTER);
 
-    vBox.getChildren().add(point);
+    vBox.getChildren().add(pointLabel);
     vBox.getChildren().add(value);
     this.simplexesVBox.getChildren().add(vBox);
 
