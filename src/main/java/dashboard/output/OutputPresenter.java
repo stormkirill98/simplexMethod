@@ -444,7 +444,9 @@ public class OutputPresenter implements Initializable {
           return;
         }
 
-        newRow();
+        if (countVars > 7) {
+          newRow();
+        }
       } else {
         if (countVars < 4 && countInRow == 5) {
           newRow();
@@ -454,8 +456,10 @@ public class OutputPresenter implements Initializable {
           newRow();
           return;
         }
+        if (countVars > 6) {
+          newRow();
+        }
 
-        newRow();
       }
     }
   }

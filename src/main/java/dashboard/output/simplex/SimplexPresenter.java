@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static logic.Utilit.convertDecimalToFraction;
 import static logic.Utilit.subscript;
 
 @SuppressWarnings("Duplicates")
@@ -201,7 +202,7 @@ public class SimplexPresenter implements Initializable {
   }
 
   private TextField createTextField(Double value){
-    TextField textField = new TextField(String.format("%.2f", value));
+    TextField textField = new TextField(convertDecimalToFraction(value));
 
     textField.setPadding(new Insets(5));
     textField.setPrefWidth(cellWidth);
