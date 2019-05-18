@@ -67,7 +67,7 @@ public class Utilit {
       return String.valueOf((int) h1);
     }
 
-    return "(" + (int) h1 + "/" + (int) k1 + ")";
+    return (int) h1 + "/" + (int) k1;
   }
 
   //переводит число в надстрочный вид

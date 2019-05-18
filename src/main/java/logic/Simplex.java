@@ -29,7 +29,8 @@ public class Simplex implements Cloneable {
 
   private int indexNoPositiveColumn = -1;
 
-  public Simplex(List<Limit> limits, int countVar, List<Integer> indexesExpressedVars, Function function){
+  public Simplex(List<Limit> limits, int countVar,
+                 List<Integer> indexesExpressedVars, Function function){
     for (int i = 0; i < countVar; i++) {
       if (isExpressedVar(i, indexesExpressedVars)){
         indexesVarRow.add(i + 1);
@@ -524,10 +525,6 @@ public class Simplex implements Cloneable {
 
   public boolean isManuallySetBaseElement() {
     return manuallySetBaseElement;
-  }
-
-  public void setManuallySetBaseElement(boolean manuallySetBaseElement) {
-    this.manuallySetBaseElement = manuallySetBaseElement;
   }
 
   public int getStep() {

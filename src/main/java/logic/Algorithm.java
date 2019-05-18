@@ -18,8 +18,6 @@ public class Algorithm {
 
   private List<Simplex> steps = new ArrayList<>();
 
-  private List<Double> basisElement;
-
   public Algorithm(double[][] limits, List<Integer> indexesExpressedVars, int countVars, Function function) {
     this.function = function;
 
@@ -30,7 +28,7 @@ public class Algorithm {
 
 
     for (int i = 0; i < limits.length; i++) {
-      Limit limit = new Limit(limits[i]);//TODO: нужно задавать для коэффициентов правильные индексы
+      Limit limit = new Limit(limits[i]);
       this.limits.add(limit);
     }
     if (indexesExpressedVars != null){
@@ -53,7 +51,6 @@ public class Algorithm {
   }
 
   public void setBasisElement(List<Double> basisElement) {
-    this.basisElement = basisElement;
   }
 
   //check Bi and make valid their

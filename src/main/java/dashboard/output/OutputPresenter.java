@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static logic.Utilit.convertDecimalToFraction;
 import static logic.Utilit.isZero;
 
 @SuppressWarnings("ALL")
@@ -51,6 +52,7 @@ public class OutputPresenter implements Initializable {
   public Button back;
 
   private int step = 0;
+  private int countInRow = 0;
   private double widthPane = 0;
 
   private int n = 3;
@@ -399,7 +401,6 @@ public class OutputPresenter implements Initializable {
     return indexesExpressedVars;
   }
 
-
   //TODO:после гаусса создается симплекс с ПОДСВЕЧЕННОЙ красным последней строкой
   private void createSimplex(Simplex simplex) {
     if (simplex == null) {
@@ -415,6 +416,8 @@ public class OutputPresenter implements Initializable {
   }
 
   private void makeNewRow() {
+    countInRow++;
+
     if (stepByStep.isSelected()) {
       double width = 0;
       int count = simplexesRow.getChildren().size();
@@ -424,17 +427,45 @@ public class OutputPresenter implements Initializable {
 
       //is it possible to add simplex in this row
       width += width / count; // добавляем среднюю ширину элементов в этой строке
-
       if (width > widthPane) {
-        addSeparator();
-
-        simplexesRow = new HBox();
-        simplexesVBox.getChildren().add(simplexesRow);
+        newRow();
       }
     } else {
+      int countVars = tableLimits[0].length - 1;
 
+      if (stage == Stage.GAUSS) {
+        if (countVars < 4 && countInRow == 4) {
+          newRow();
+          return;
+        }
+
+        if (countVars < 8 && countInRow == 2) {
+          newRow();
+          return;
+        }
+
+        newRow();
+      } else {
+        if (countVars < 4 && countInRow == 5) {
+          newRow();
+          return;
+        }
+        if (countVars < 7 && countInRow == 3) {
+          newRow();
+          return;
+        }
+
+        newRow();
+      }
     }
+  }
 
+  private void newRow(){
+    countInRow = 0;
+
+    addSeparator();
+    simplexesRow = new HBox();
+    simplexesVBox.getChildren().add(simplexesRow);
   }
 
   private void addSeparator() {
@@ -459,6 +490,7 @@ public class OutputPresenter implements Initializable {
 
   private void resetVars() {
     step = 0;
+    countInRow = 0;
     end = End.CONTINUE;
 
     noEndDirectGauss = true;
@@ -500,11 +532,12 @@ public class OutputPresenter implements Initializable {
       type = function.getType().toString().toLowerCase();
     }
     Label pointLabel = new Label();
-    
+
     List<Double> point = algorithm.getPointExtr();
     String str = "Point " + type + " = (";
     for (Double num : point) {
-      str += String.format("%.2f; ", num);
+      //str += String.format("%.2f; ", num).replaceAll(",", ".");
+      str += convertDecimalToFraction(num) + "; ";
     }
     str = str.substring(0, str.length() - 2) + ")";
 
@@ -513,8 +546,8 @@ public class OutputPresenter implements Initializable {
     pointLabel.setAlignment(Pos.CENTER);
 
     Label value = new Label();
-    String functionValue = type == "min" ? String.format("%.4f", -algorithm.getFunctionExtr())
-            : String.format("%.4f", algorithm.getFunctionExtr());
+    String functionValue = type == "min" ? convertDecimalToFraction(-algorithm.getFunctionExtr())
+            : convertDecimalToFraction(algorithm.getFunctionExtr());
     str = "Function " + type + " value = " + functionValue;
     value.setText(str);
     value.setFont(font);
