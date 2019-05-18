@@ -177,9 +177,18 @@ public class InputPresenter implements Initializable {
       int n = Integer.valueOf(newValue);
       int m = Integer.valueOf(amountVar.getText());
 
+      if (n < 2) {
+        amountLimits.setText("2");
+        return;
+      }
+      if (n > 16) {
+        amountLimits.setText("16");
+        return;
+      }
+
       createTablePane(n, m, null);
 
-      MyEventBus.post(new Dimension(n, m));//TODO: проверить на заполненность если это конечно нужно
+      MyEventBus.post(new Dimension(n, m));
     });
 
     amountVar.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -194,6 +203,15 @@ public class InputPresenter implements Initializable {
 
       int n = Integer.valueOf(amountLimits.getText());
       int m = Integer.valueOf(newValue);
+
+      if (m < 3) {
+        amountVar.setText("3");
+        return;
+      }
+      if (m > 16) {
+        amountVar.setText("16");
+        return;
+      }
 
       createTablePane(n, m, null);
       initInputBasisElement();

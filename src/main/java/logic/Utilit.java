@@ -8,17 +8,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
-import java.text.DecimalFormat;
 import java.util.List;
-import java.util.TreeMap;
 
 public class Utilit {
   public static final double TOLERANCE = 1.0E-12;
-
-  static String format(Double value) {
-    DecimalFormat decimalFormat = new DecimalFormat("##.####");
-    return decimalFormat.format((value));
-  }
 
   public static boolean isZero(Double value) {
     return Math.abs(value) < TOLERANCE;
@@ -27,7 +20,6 @@ public class Utilit {
   public static boolean isDouble(String str) {
     return str.matches("-?\\d*[.,]?\\d*");
   }
-
 
   public static Double strToDouble(String str) {
     str = str.replace(",", ".");
@@ -184,9 +176,9 @@ public class Utilit {
     }
   }
 
-  public static boolean isExpressedVar(int i, List<Integer> indexesExpressedVars){
+  public static boolean isExpressedVar(int i, List<Integer> indexesExpressedVars) {
     for (int j = 0; j < indexesExpressedVars.size(); j++) {
-      if (i == indexesExpressedVars.get(j)){
+      if (i == indexesExpressedVars.get(j)) {
         return true;
       }
     }
