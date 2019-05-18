@@ -139,68 +139,7 @@ public class Equation {
     return limit;
   }
 
-  private int getIndexExpressedVar(List<Integer> indexesExpressedVars){
-    for (int i = 0; i < indexesExpressedVars.size(); i++) {
-      int index = indexesExpressedVars.get(i);
-      if (equation.get(index).compareTo(1.0) == 0){
-        return index;
-      }
-    }
-
-    return -1;
-  }
-
-  public void printExpressVar(int index) {
-    if (index < 0 || index > size() - 1) {
-      return;
-    }
-    StringBuilder str = new StringBuilder("x"
-            + (index + 1) + " = "
-            + Utilit.convertDecimalToFraction(equation.get(equation.size() - 1)));
-
-
-    for (int i = 0; i < equation.size() - 1; i++) {
-      if (i == index) {
-        continue;
-      }
-      if (equation.get(i) == 0) {
-        continue;
-      }
-
-      double num = equation.get(i);
-      if (num > 0) {
-        String numStr = Utilit.convertDecimalToFraction(num);
-        if (numStr.equals("1")) {
-          str.append(" - x").append(i + 1);
-        } else {
-          str.append(" - ").append(numStr).append("*x").append(i + 1);
-        }
-      } else {
-        String numStr = Utilit.convertDecimalToFraction(Math.abs(num));
-        if (numStr.equals("1")) {
-          str.append(" + x").append(i + 1);
-        } else {
-          str.append(" + ").append(numStr).append("*x").append(i + 1);
-        }
-      }
-    }
-
-    System.out.println(str);
-  }
-
-  public boolean validate() {
-    boolean allCoefZero = true;
-    for (int i = 0; i < size() - 1; i++) {
-      if (Math.abs(equation.get(i)) > Utilit.TOLERANCE) {
-        allCoefZero = false;
-      }
-    }
-
-    return !allCoefZero;
-  }
-
   public String getAction(){
     return action;
   }
-
 }

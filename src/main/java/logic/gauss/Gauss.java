@@ -20,31 +20,6 @@ public class Gauss {
 
   private static List<Integer> indexesExpressVars = null;
 
-  public static LinearSystem getExpressedVars(LinearSystem system, List<Integer> indexesExpressVars) {
-    System.out.println("input matrix");
-    system.print();
-
-    swap(indexesExpressVars);
-    System.out.println("after swap");
-    system.print();
-
-    directCourse(system);
-    System.out.println("after direct");
-    system.print();
-
-    reversCourse(system);
-    System.out.println("after revers");
-    system.print();
-
-    system.returnOrder();
-    System.out.println("after returned order vars");
-    system.print();
-
-    printExpressVars(system, indexesExpressVars);
-
-    return system;
-  }
-
   public static void swap(List<Integer> indexes) {
     boolean inOrder = false;
     if (indexes.get(0) == 0){
@@ -141,62 +116,11 @@ public class Gauss {
     return equationListIterator.hasPrevious();
   }
 
-  private static void directCourse(LinearSystem system) {
-    ListIterator<Equation> equationListIterator = system.getIterator();
-    int i = 1;
-    while (equationListIterator.hasNext()) {
-      Equation eq = equationListIterator.next();
-      Double coef = eq.reduceCoef();
-
-      if (printActions) {
-        printAction(coef, i);
-        system.print();
-      }
-
-      system.plusEquationsFromBegin(eq, i);
-
-      i++;
-
-      system.print();
-    }
-  }
-
-  private static void reversCourse(LinearSystem system) {
-    ListIterator<Equation> equationListIterator = system.getIterator(system.size());
-    int i = system.size() - 1;
-    while (equationListIterator.hasPrevious()) {
-      Equation eq = equationListIterator.previous();
-      system.plusEquationsFromEnd(eq, i);
-      i--;
-
-      if (i == 0) {
-        return;
-      }
-
-      system.print();
-    }
-  }
-
   private static String printAction(Double coef, int indexEq) {
     String action = String.format("%s * %.2f\n", RomanNumber.toRoman(indexEq), coef);
     System.out.print(action);
 
     return action;
-  }
-
-  private static void printExpressVars(LinearSystem system, List<Integer> indexes) {
-    System.out.println("Expressed vars:");
-
-    ListIterator<Equation> equationListIterator = system.getIterator();
-    int i = 0;
-    while (equationListIterator.hasNext()) {
-      Equation eq = equationListIterator.next();
-      try {
-        eq.printExpressVar(indexes.get(i++));
-      } catch (IndexOutOfBoundsException e){
-        break;
-      }
-    }
   }
 
   public static double[][] getLimits(){
@@ -241,9 +165,5 @@ public class Gauss {
 
   public static List<Integer> getIndexesExpressVars() {
     return indexesExpressVars;
-  }
-
-  public static int getCountVars() {
-    return countVars;
   }
 }
