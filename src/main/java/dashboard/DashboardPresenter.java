@@ -1,6 +1,7 @@
 package dashboard;
 
 import com.google.common.eventbus.Subscribe;
+import dashboard.help.HelpView;
 import dashboard.input.InputView;
 import dashboard.output.OutputView;
 import events.MyEventBus;
@@ -9,10 +10,15 @@ import events.domain.Dimension;
 import events.domain.FunctionDao;
 import events.domain.TableLimits;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import logic.Function;
 import logic.enums.TypeProblem;
 
@@ -35,7 +41,7 @@ public class DashboardPresenter implements Initializable {
 
   private FileChooser fileChooser = new FileChooser();
 
-  String[] saveToFile = null;
+  private String[] saveToFile = null;
 
   @Override
   public void initialize(URL url, ResourceBundle rb) {
@@ -229,6 +235,19 @@ public class DashboardPresenter implements Initializable {
       writer.close();
     } catch (IOException ignored) {
     }
+  }
+
+  public void showHelp(ActionEvent event) throws IOException {
+    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("help/help.fxml"));
+    Parent root = fxmlLoader.load();
+    Stage stage = new Stage();
+    stage.initModality(Modality.NONE);
+    stage.initStyle(StageStyle.DECORATED);
+    stage.setTitle("Help");
+    stage.setScene(new Scene(root));
+    stage.show();
+
+    stage.resizableProperty().setValue(Boolean.FALSE);
   }
 
   @Subscribe

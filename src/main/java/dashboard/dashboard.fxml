@@ -1,27 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import java.lang.*?>
 <?import javafx.scene.layout.*?>
-
-<AnchorPane id="AnchorPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dashboard.DashboardPresenter">
+<AnchorPane id="AnchorPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="dashboard.DashboardPresenter">
     <children>
-      <MenuBar layoutX="-51.0" layoutY="-12.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
-        <menus>
-          <Menu mnemonicParsing="false" text="File">
-            <items>
-                  <MenuItem mnemonicParsing="false" onAction="#openFile" text="Open" />
-                  <MenuItem mnemonicParsing="false" onAction="#save" text="Save" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Help">
-            <items>
-              <MenuItem mnemonicParsing="false" text="About" />
-            </items>
-          </Menu>
-        </menus>
-      </MenuBar>
-        <Pane fx:id="input" layoutX="14.0" layoutY="10.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="30.0" />
-      <Pane fx:id="output" layoutX="24.0" layoutY="20.0" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
+        <MenuBar layoutX="-51.0" layoutY="-12.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <menus>
+                <Menu mnemonicParsing="false" text="File">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#openFile" text="Open"/>
+                        <MenuItem mnemonicParsing="false" onAction="#save" text="Save"/>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#showHelp" text="Help"/>
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+        <Pane fx:id="input" layoutX="14.0" layoutY="10.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0"
+              AnchorPane.topAnchor="30.0"/>
+        <Pane fx:id="output" layoutX="24.0" layoutY="20.0" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="5.0"
+              AnchorPane.topAnchor="5.0"/>
     </children>
 </AnchorPane>
