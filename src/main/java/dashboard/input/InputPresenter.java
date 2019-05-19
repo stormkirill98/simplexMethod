@@ -52,6 +52,8 @@ public class InputPresenter implements Initializable {
 
     Function function = (Function) inputData.get(0);
     double[][] limits = (double[][]) inputData.get(1);
+    List<Double> inputBasisElement = (List<Double>) inputData.get(2);
+
     if (limits != null) {
       amountLimits.setText(String.valueOf(limits.length));
       amountVar.setText(String.valueOf(limits[0].length - 1));
@@ -80,10 +82,31 @@ public class InputPresenter implements Initializable {
       }
     });
 
+    fillBasisElement(inputBasisElement);
+
     Rectangle2D screen = Screen.getPrimary().getVisualBounds();
     double width = screen.getWidth();
     scrollPane.setPrefViewportWidth(0.215 * width);
     scrollPane.setPrefViewportHeight(fieldHeight);
+  }
+
+  private void fillBasisElement(List<Double> basisElement){
+    if (basisElement == null){
+      return;
+    }
+
+    setBasisElement.setSelected(true);
+
+    ObservableList<Node> childrens = basisElementNode.getChildren();
+
+    int index = 0;
+    for (Node children : childrens) {
+      try {
+        TextField field = (TextField) children;
+
+        field.setText(String.valueOf(basisElement.get(index++)));
+      } catch (ClassCastException ignored) {}
+    }
   }
 
   private void initInputBasisElement() {

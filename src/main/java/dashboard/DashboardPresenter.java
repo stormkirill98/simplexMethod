@@ -4,6 +4,7 @@ import com.google.common.eventbus.Subscribe;
 import dashboard.input.InputView;
 import dashboard.output.OutputView;
 import events.MyEventBus;
+import events.domain.BasisElement;
 import events.domain.Dimension;
 import events.domain.FunctionDao;
 import events.domain.TableLimits;
@@ -39,6 +40,7 @@ public class DashboardPresenter implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle rb) {
     List<Object> toInput = new ArrayList<>();
+    toInput.add(null);
     toInput.add(null);
     toInput.add(null);
 
@@ -130,15 +132,16 @@ public class DashboardPresenter implements Initializable {
     int countLimits = Integer.valueOf(strings[0].split("x")[0]);
     int countVar = Integer.valueOf(strings[0].split("x")[1]);
 
-    //TODO: иногда почему-то не считывается функция
+    //TODO: иногда почему-то не заполняются какие-то поля(возможно с синхронизацией что-то)
     String functionString = strings[1];
     Function function = readFunction(functionString, countVar);
-
+    List<Double> basisElement = readBasisElement(strings[2], countVar);
     double[][] limits = readLimits(strings, countLimits, countVar);
 
     List<Object> toInput = new ArrayList<>();
     toInput.add(function);
     toInput.add(limits);
+    toInput.add(basisElement);
 
     input.getChildren().clear();
     InputView inputView = new InputView((f) -> toInput);
@@ -170,15 +173,35 @@ public class DashboardPresenter implements Initializable {
     return function;
   }
 
+  public List<Double> readBasisElement(String str, int countVar){
+    List<Double> basisElement = new ArrayList<>();
+
+    if (str.length() < 4) {
+      return null;
+    }
+
+    str = str.substring(3);
+
+    for (String s : str.split(" ")) {
+      basisElement.add(Double.valueOf(s));
+    }
+
+    if (basisElement.size() != countVar) {
+      return null;
+    }
+
+    return basisElement;
+  }
+
   public double[][] readLimits(String[] strings, int countLimits, int countVar) {
     double[][] limits = new double[countLimits][countVar + 1];
 
-    for (int i = 2; i < strings.length; i++) {
+    for (int i = 3; i < strings.length; i++) {
       String str = strings[i];
 
       int j = 0;
       for (String num : str.split(" ")) {
-        limits[i - 2][j++] = Double.valueOf(num);
+        limits[i - 3][j++] = Double.valueOf(num);
       }
     }
 
@@ -213,7 +236,7 @@ public class DashboardPresenter implements Initializable {
     int n = dimension.getN();
     int m = dimension.getM();
 
-    saveToFile = new String[n + 2];
+    saveToFile = new String[n + 3];
 
     saveToFile[0] = n + "x" + m;
   }
@@ -226,9 +249,9 @@ public class DashboardPresenter implements Initializable {
 
     double[][] limits = tableLimits.getTable();
     for (int i = 0; i < limits.length; i++) {
-      saveToFile[i + 2] = "";
+      saveToFile[i + 3] = "";
       for (int j = 0; j < limits[i].length; j++) {
-        saveToFile[i + 2] += String.format("%.2f", limits[i][j]) + " ";
+        saveToFile[i + 3] += String.format("%.2f", limits[i][j]) + " ";
       }
     }
   }
@@ -246,5 +269,21 @@ public class DashboardPresenter implements Initializable {
       saveToFile[1] += String.format("%.2f", coef) + " ";
     }
     saveToFile[1] += "-> " + functionDao.getTypeProblem().toString().toLowerCase();
+  }
+
+  @Subscribe
+  public void receiveBasisElement(BasisElement basisElement) {
+    if (saveToFile == null) {
+      return;
+    }
+
+    saveToFile[2] = "be ";
+    if (basisElement.getCoefs() == null) {
+      return;
+    }
+
+    for (Double coef : basisElement.getCoefs()) {
+      saveToFile[2] += String.format("%.2f", coef) + " ";
+    }
   }
 }
