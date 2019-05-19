@@ -24,10 +24,8 @@ import javafx.stage.Screen;
 import logic.Algorithm;
 import logic.Function;
 import logic.Simplex;
-import logic.enums.End;
+import logic.enums.*;
 import logic.enums.Error;
-import logic.enums.Stage;
-import logic.enums.TypeProblem;
 import logic.gauss.Gauss;
 import logic.gauss.LinearSystem;
 
@@ -70,8 +68,7 @@ public class OutputPresenter implements Initializable {
 
   private boolean printAnswer = false;
 
-  private boolean noEndDirectGauss = true;
-  private boolean noEndReversGauss = true;
+  private EndGauss endGauss;
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
@@ -146,7 +143,7 @@ public class OutputPresenter implements Initializable {
   //TODO: шаг назад не работает при гауссе
   public boolean onClickNext() {
     if (stage == Stage.GAUSS) {
-      if (!noEndDirectGauss && !noEndReversGauss) {
+      if (endGauss == EndGauss.END_REVERSE_GAUSS) {
 
         Gauss.backSwap();
         if (Gauss.isSwap()) {
@@ -168,11 +165,11 @@ public class OutputPresenter implements Initializable {
 
         return true;
       }
-      if (noEndDirectGauss) {
+      if (endGauss == EndGauss.CONTINUE_DIRECT_GAUSS) {
         makeGaussGirectStep();
         return true;
       }
-      if (noEndReversGauss) {
+      if (endGauss == EndGauss.CONTINUE_REVERSE_GAUSS) {
         //TODO: можно подсвечивать единичный минор
         makeGaussReversStep();
         return true;
@@ -212,44 +209,22 @@ public class OutputPresenter implements Initializable {
       return;
     }
 
-    ObservableList<Node> rowsSimplexes = simplexesVBox.getChildren();
-    if (rowsSimplexes == null || rowsSimplexes.size() == 0) {
+    if (!removeLastOutputElement()) {
+      //вернулись к первому шагу
+      System.out.println("return to first step");
       return;
     }
 
-    HBox lastRow = null;
-    try {
-      lastRow = (HBox) rowsSimplexes.get(rowsSimplexes.size() - 1);
-    } catch (ClassCastException e) {
-      //удалить вывод ошибки или ответа вместе с 2 разделителями
-      for (int i = 0; i < 3; i++) {
-        rowsSimplexes.remove(rowsSimplexes.size() - 1);
-      }
-    }
-    if (lastRow == null) {
+    boolean result = algorithm.backStep();
+    if (!result){
+      System.out.println("return to gauss");
+      //вернулись к гауссу
+      stage = Stage.GAUSS;
+
+      endGauss = Gauss.backStep();
+
       return;
     }
-
-    ObservableList<Node> simplexesInLastRow = lastRow.getChildren();
-    if (simplexesInLastRow == null) {
-      return;
-    }
-
-    if (simplexesInLastRow.size() == 1) {
-      //если осталась одна строка в которой только первоначальный симплекс
-      if (rowsSimplexes.size() == 1) {
-        return;
-      }
-      //удаляем последнию строку, в которой один симплекс, и разделитель перед ней
-      rowsSimplexes.remove(rowsSimplexes.size() - 1);
-      rowsSimplexes.remove(rowsSimplexes.size() - 1);
-      //и текущей стркое приваиваем предыдущую
-      simplexesRow = (HBox) rowsSimplexes.get(rowsSimplexes.size() - 1);
-    } else {
-      simplexesInLastRow.remove(simplexesInLastRow.size() - 1);
-    }
-
-    algorithm.backStep();
     step--;
     //если вернулись к искуственному симплексу
     if (step == -1) {
@@ -275,6 +250,47 @@ public class OutputPresenter implements Initializable {
     }
   }
 
+  private boolean removeLastOutputElement(){
+    ObservableList<Node> rowsSimplexes = simplexesVBox.getChildren();
+    if (rowsSimplexes == null || rowsSimplexes.size() == 0) {
+      return false;
+    }
+
+    HBox lastRow = null;
+    try {
+      lastRow = (HBox) rowsSimplexes.get(rowsSimplexes.size() - 1);
+    } catch (ClassCastException e) {
+      //удалить вывод ошибки или ответа вместе с 2 разделителями
+      for (int i = 0; i < 3; i++) {
+        rowsSimplexes.remove(rowsSimplexes.size() - 1);
+      }
+    }
+    if (lastRow == null) {
+      return false;
+    }
+
+    ObservableList<Node> simplexesInLastRow = lastRow.getChildren();
+    if (simplexesInLastRow == null) {
+      return false;
+    }
+
+    if (simplexesInLastRow.size() == 1) {
+      //если осталась одна строка в которой только первоначальный симплекс
+      if (rowsSimplexes.size() == 1) {
+        return false;
+      }
+      //удаляем последнию строку, в которой один симплекс, и разделитель перед ней
+      rowsSimplexes.remove(rowsSimplexes.size() - 1);
+      rowsSimplexes.remove(rowsSimplexes.size() - 1);
+      //и текущей стркое приваиваем предыдущую
+      simplexesRow = (HBox) rowsSimplexes.get(rowsSimplexes.size() - 1);
+    } else {
+      simplexesInLastRow.remove(simplexesInLastRow.size() - 1);
+    }
+
+    return true;
+  }
+
   private void makeGaussGirectStep() {
     if (Gauss.isSwap() == null) {
       List<Integer> indexesExpressedVars = getIndexesExpressedVars();
@@ -286,13 +302,17 @@ public class OutputPresenter implements Initializable {
       }
     }
 
-    noEndDirectGauss = Gauss.makeDirectStep();
+    endGauss = Gauss.makeDirectStep();
 
     createMatrixPane();
+
+    if (endGauss == EndGauss.END_DIRECT_GAUSS){
+      endGauss = EndGauss.CONTINUE_REVERSE_GAUSS;
+    }
   }
 
   private void makeGaussReversStep() {
-    noEndReversGauss = Gauss.makeReversStep();
+    endGauss = Gauss.makeReversStep();
 
     createMatrixPane();
   }
@@ -497,8 +517,7 @@ public class OutputPresenter implements Initializable {
     countInRow = 0;
     end = End.CONTINUE;
 
-    noEndDirectGauss = true;
-    noEndReversGauss = true;
+    endGauss = EndGauss.CONTINUE_DIRECT_GAUSS;
     Gauss.revertVars();
   }
 

@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 
-public class LinearSystem {
+public class LinearSystem implements Cloneable{
 
   private List<Equation> system = new ArrayList<>();
 
@@ -147,5 +147,22 @@ public class LinearSystem {
 
   public ListIterator<Equation> getIterator(int start) {
     return system.listIterator(start);
+  }
+
+  @Override
+  protected LinearSystem clone(){
+    LinearSystem system = null;
+    try {
+      system = (LinearSystem) super.clone();
+
+      system.orderColumn = new ArrayList<>(this.orderColumn);
+
+      system.system = new ArrayList<>(this.system.size());
+      for (Equation equation : this.system) {
+        system.system.add(equation.clone());
+      }
+    } catch (CloneNotSupportedException ignored){}
+
+    return system;
   }
 }

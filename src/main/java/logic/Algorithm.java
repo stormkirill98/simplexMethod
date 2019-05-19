@@ -126,11 +126,16 @@ public class Algorithm {
     return simplex.end();
   }
 
-  public void backStep(){
+  public boolean backStep(){
+    if (steps.size() == 0){
+      return false;
+    }
+
     step--;
     simplex = steps.get(steps.size() - 1);
     steps.remove(steps.size() - 1);
     stage = simplex.getStage();
+    return true;
   }
 
   //создаем искусственный базис

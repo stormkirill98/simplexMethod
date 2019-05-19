@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 
-public class Equation {
+public class Equation implements Cloneable{
   private List<Double> equation = new ArrayList<>();
 
   private String action = "";
@@ -141,5 +141,13 @@ public class Equation {
 
   public String getAction(){
     return action;
+  }
+
+  @Override
+  protected Equation clone() throws CloneNotSupportedException {
+    Equation equation = (Equation) super.clone();
+    equation.equation = new ArrayList<>(this.equation);
+
+    return equation;
   }
 }
