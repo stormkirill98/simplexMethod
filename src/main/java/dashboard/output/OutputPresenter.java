@@ -204,6 +204,10 @@ public class OutputPresenter implements Initializable {
   }
 
   public void onClickBack(ActionEvent event) {
+    if (basisElement != null) {//TODO: убрать когда будет нормально работать шаг назад при гауссе
+      return;
+    }
+
     if (algorithm == null) {
       return;
     }
@@ -274,20 +278,18 @@ public class OutputPresenter implements Initializable {
       return false;
     }
 
-    if (basisElement == null) {//TODO: убрать когда будет нормально работать шаг назад при гауссе
-      if (simplexesInLastRow.size() == 1) {
-        //если осталась одна строка в которой только первоначальный симплекс
-        if (rowsSimplexes.size() == 1) {
-          return false;
-        }
-        //удаляем последнию строку, в которой один симплекс, и разделитель перед ней
-        rowsSimplexes.remove(rowsSimplexes.size() - 1);
-        rowsSimplexes.remove(rowsSimplexes.size() - 1);
-        //и текущей стркое приваиваем предыдущую
-        simplexesRow = (HBox) rowsSimplexes.get(rowsSimplexes.size() - 1);
-      } else {
-        simplexesInLastRow.remove(simplexesInLastRow.size() - 1);
+    if (simplexesInLastRow.size() == 1) {
+      //если осталась одна строка в которой только первоначальный симплекс
+      if (rowsSimplexes.size() == 1) {
+        return false;
       }
+      //удаляем последнию строку, в которой один симплекс, и разделитель перед ней
+      rowsSimplexes.remove(rowsSimplexes.size() - 1);
+      rowsSimplexes.remove(rowsSimplexes.size() - 1);
+      //и текущей стркое приваиваем предыдущую
+      simplexesRow = (HBox) rowsSimplexes.get(rowsSimplexes.size() - 1);
+    } else {
+      simplexesInLastRow.remove(simplexesInLastRow.size() - 1);
     }
 
     return true;

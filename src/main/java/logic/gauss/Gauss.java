@@ -57,7 +57,11 @@ public class Gauss {
 
       steps.add(system.clone());
       actions.add("");
-      indexesItr.add(equationListIterator.previousIndex() + 1);
+      if (equationListIterator != null) {
+        indexesItr.add(equationListIterator.previousIndex() + 1);
+      } else {
+        indexesItr.add(-1);
+      }
       indexes.add(i);
       ends.add(end);
 
