@@ -33,7 +33,7 @@ public class MatrixPresenter implements Initializable {
   final private int cellWidth = 50;
   final private int cellHeight = 35;
 
-  public AnchorPane pane;
+  public AnchorPane matrixPane;
   public HBox box;
 
   private int n = 0;

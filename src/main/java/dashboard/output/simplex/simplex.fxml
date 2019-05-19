@@ -2,5 +2,5 @@
 
 
 <?import javafx.scene.layout.AnchorPane?>
-<AnchorPane fx:id="pane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="dashboard.output.simplex.SimplexPresenter"/>
+<AnchorPane fx:id="simplexPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="dashboard.output.simplex.SimplexPresenter" id="simplexPane"/>

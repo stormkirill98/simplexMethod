@@ -33,7 +33,7 @@ public class SimplexPresenter implements Initializable {
   final private int cellWidth = 50;
   final private int cellHeight = 35;
 
-  public AnchorPane pane;
+  public AnchorPane simplexPane;
 
   @Inject
   private ArrayList<Object> inputData;
@@ -156,7 +156,7 @@ public class SimplexPresenter implements Initializable {
       }
     }
 
-    pane.getChildren().add(table);
+    simplexPane.getChildren().add(table);
   }
 
   private Label createLabel(int numberStep){

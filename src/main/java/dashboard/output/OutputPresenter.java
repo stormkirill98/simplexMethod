@@ -24,8 +24,8 @@ import javafx.stage.Screen;
 import logic.Algorithm;
 import logic.Function;
 import logic.Simplex;
-import logic.enums.*;
 import logic.enums.Error;
+import logic.enums.*;
 import logic.gauss.Gauss;
 import logic.gauss.LinearSystem;
 
@@ -116,7 +116,6 @@ public class OutputPresenter implements Initializable {
       printError(Error.BAD_INPUT);
       return;
     }
-
 
 
     if (stepByStep.isSelected()) {
@@ -216,12 +215,13 @@ public class OutputPresenter implements Initializable {
     }
 
     boolean result = algorithm.backStep();
-    if (!result){
+    if (!result) {
       System.out.println("return to gauss");
+      //TODO:хреново работает шаг назад при гауссе( в частности большую пробелму вызывает возврат к прямому ходу из обратного)
       //вернулись к гауссу
-      stage = Stage.GAUSS;
+      //stage = Stage.GAUSS;
 
-      endGauss = Gauss.backStep();
+      //endGauss = Gauss.backStep();
 
       return;
     }
@@ -250,7 +250,7 @@ public class OutputPresenter implements Initializable {
     }
   }
 
-  private boolean removeLastOutputElement(){
+  private boolean removeLastOutputElement() {
     ObservableList<Node> rowsSimplexes = simplexesVBox.getChildren();
     if (rowsSimplexes == null || rowsSimplexes.size() == 0) {
       return false;
@@ -274,18 +274,20 @@ public class OutputPresenter implements Initializable {
       return false;
     }
 
-    if (simplexesInLastRow.size() == 1) {
-      //если осталась одна строка в которой только первоначальный симплекс
-      if (rowsSimplexes.size() == 1) {
-        return false;
+    if (basisElement == null) {//TODO: убрать когда будет нормально работать шаг назад при гауссе
+      if (simplexesInLastRow.size() == 1) {
+        //если осталась одна строка в которой только первоначальный симплекс
+        if (rowsSimplexes.size() == 1) {
+          return false;
+        }
+        //удаляем последнию строку, в которой один симплекс, и разделитель перед ней
+        rowsSimplexes.remove(rowsSimplexes.size() - 1);
+        rowsSimplexes.remove(rowsSimplexes.size() - 1);
+        //и текущей стркое приваиваем предыдущую
+        simplexesRow = (HBox) rowsSimplexes.get(rowsSimplexes.size() - 1);
+      } else {
+        simplexesInLastRow.remove(simplexesInLastRow.size() - 1);
       }
-      //удаляем последнию строку, в которой один симплекс, и разделитель перед ней
-      rowsSimplexes.remove(rowsSimplexes.size() - 1);
-      rowsSimplexes.remove(rowsSimplexes.size() - 1);
-      //и текущей стркое приваиваем предыдущую
-      simplexesRow = (HBox) rowsSimplexes.get(rowsSimplexes.size() - 1);
-    } else {
-      simplexesInLastRow.remove(simplexesInLastRow.size() - 1);
     }
 
     return true;
@@ -306,7 +308,7 @@ public class OutputPresenter implements Initializable {
 
     createMatrixPane();
 
-    if (endGauss == EndGauss.END_DIRECT_GAUSS){
+    if (endGauss == EndGauss.END_DIRECT_GAUSS) {
       endGauss = EndGauss.CONTINUE_REVERSE_GAUSS;
     }
   }
@@ -484,7 +486,7 @@ public class OutputPresenter implements Initializable {
     }
   }
 
-  private void newRow(){
+  private void newRow() {
     countInRow = 0;
 
     addSeparator();
