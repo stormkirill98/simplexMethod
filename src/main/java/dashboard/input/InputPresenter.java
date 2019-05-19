@@ -59,10 +59,7 @@ public class InputPresenter implements Initializable {
       amountVar.setText(String.valueOf(limits[0].length - 1));
     }
 
-    List<Object> toFunctionPane = new ArrayList<>();
-    toFunctionPane.add(Integer.valueOf(amountVar.getText()));
-    toFunctionPane.add(function);
-    createFunctionPane(toFunctionPane);
+    createFunctionPane(Integer.valueOf(amountVar.getText()), function);
 
     createTablePane(Integer.valueOf(amountLimits.getText()),
             Integer.valueOf(amountVar.getText()),
@@ -114,6 +111,10 @@ public class InputPresenter implements Initializable {
 
     String str = amountVar.getText();
     int countVar = str.isEmpty() ? 0 : Integer.valueOf(str);
+    if (countVar < 3) {
+      basisElementNode.getChildren().clear();
+      return;
+    }
 
     Label startBkt = new Label("(");
     basisElementNode.getChildren().add(startBkt);
@@ -196,18 +197,16 @@ public class InputPresenter implements Initializable {
       }
 
       int n = Integer.valueOf(newValue);
-      int m = Integer.valueOf(amountVar.getText());
+      String str = amountVar.getText();
+      int m = str.isEmpty() ? 0 : Integer.valueOf(str);
 
-      if (n < 2) {
-        amountLimits.setText("2");
-        return;
-      }
       if (n > 16) {
         amountLimits.setText("16");
         return;
       }
 
       createTablePane(n, m, null);
+      initInputBasisElement();
 
       MyEventBus.post(new Dimension(n, m));
     });
@@ -222,15 +221,10 @@ public class InputPresenter implements Initializable {
         newValue = "0";
       }
 
-      //TODO: проверить на заполненность если это конечно нужно
-      //TODO: ограничить на максимальное число
-      int n = Integer.valueOf(amountLimits.getText());
+      String str = amountLimits.getText();
+      int n = str.isEmpty() ? 0 : Integer.valueOf(str);
       int m = Integer.valueOf(newValue);
 
-      if (m < 3) {
-        amountVar.setText("3");
-        return;
-      }
       if (m > 16) {
         amountVar.setText("16");
         return;
@@ -238,17 +232,28 @@ public class InputPresenter implements Initializable {
 
       createTablePane(n, m, null);
       initInputBasisElement();
-
-      List<Object> toFunctionPane = new ArrayList<>();
-      toFunctionPane.add(Integer.valueOf(amountVar.getText()));
-      toFunctionPane.add(null);
-      createFunctionPane(toFunctionPane);
+      createFunctionPane(m, null);
 
       MyEventBus.post(new Dimension(n, m));
     });
   }
 
   private void createTablePane(int amountLimits, int amountVar, double[][] limits) {
+    if (amountLimits < 2){
+      tablePane.getChildren().clear();
+      this.amountLimits.setId("text-field-empty");
+      return;
+    }
+    if (amountVar < 3){
+      tablePane.getChildren().clear();
+      this.amountVar.setId("text-field-empty");
+      return;
+    }
+    this.amountLimits.setId("");
+    this.amountVar.setId("");
+
+
+
     ArrayList<Object> list = new ArrayList<>();
     list.add(amountLimits);
     list.add(amountVar);
@@ -259,7 +264,18 @@ public class InputPresenter implements Initializable {
     tableView.getViewAsync(tablePane.getChildren()::add);
   }
 
-  private void createFunctionPane(List<Object> data) {
+  private void createFunctionPane(int amountVar, Function function) {
+    if (amountVar < 3){
+      functionPane.getChildren().clear();
+      this.amountVar.setId("text-field-empty");
+      return;
+    }
+    this.amountVar.setId("");
+
+    List<Object> data = new ArrayList<>();
+    data.add(amountVar);
+    data.add(function);
+
     FunctionView functionView = new FunctionView((f) -> data);
     functionPane.getChildren().clear();
     functionView.getViewAsync(functionPane.getChildren()::add);
