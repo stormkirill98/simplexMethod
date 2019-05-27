@@ -21,6 +21,8 @@ public class Utilit {
     return str.matches("-?\\d*[.,]?\\d*");
   }
 
+  public static boolean isFraction(String str) {return  str.matches("-?\\d+/\\d*"); }
+
   public static Double strToDouble(String str) {
     str = str.replace(",", ".");
 
@@ -33,6 +35,17 @@ public class Utilit {
     }
 
     return Double.valueOf(str);
+  }
+
+  public static Double fractionToDouble(String str) {
+    String[] nums = str.split("/");
+    int numerator = Integer.valueOf(nums[0]);
+    if (nums.length == 1 || nums[1].isEmpty()) {
+      return (double)numerator;
+    }
+    int denominator = Integer.valueOf(nums[1]);
+
+    return  (double)numerator / denominator;
   }
 
   public static boolean isNatural(String str) {
@@ -100,31 +113,8 @@ public class Utilit {
     return str;
   }
 
-  public static void changeSizeTextField(TextField textField) {
-    if (textField == null) {
-      return;
-    }
-
-    Text text = new Text(textField.getText());
-    text.setFont(textField.getFont());
-    new Scene(new Group(text));
-    text.applyCss();
-
-    double lengthText = text.getLayoutBounds().getWidth() + 20;
-
-    if (lengthText < textField.getMinWidth()) {
-      lengthText = textField.getMinWidth();
-    }
-
-    if (lengthText > textField.getMaxWidth()) {
-      lengthText = textField.getMaxWidth();
-    }
-
-    textField.setPrefWidth(lengthText);
-  }
-
   public static boolean validateDouble(TextField textField, String oldValue, String newValue) {
-    if (!isDouble(newValue)) {
+    if (!isDouble(newValue) && !isFraction(newValue)) {
       textField.setText(oldValue);
       return false;
     }

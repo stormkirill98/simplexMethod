@@ -96,7 +96,15 @@ public class TablePresenter implements Initializable {
             return;
           }
 
-          Double value = strToDouble(newValue);
+          Double value = null;
+          String text = textField.getText();
+          if (isDouble(text)) {
+            value = strToDouble(text);
+          }
+          if (isFraction(text)) {
+            value = fractionToDouble(text);
+          }
+
           table[finalI][finalJ] = value;
 
           if (isFilled(tablePane)) {

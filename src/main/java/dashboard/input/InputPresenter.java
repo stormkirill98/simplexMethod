@@ -160,7 +160,16 @@ public class InputPresenter implements Initializable {
     for (Node children : childrens) {
       try {
         TextField field = (TextField) children;
-        Double value = strToDouble(field.getText());
+
+        Double value = null;
+        String text = field.getText();
+        if (isDouble(text)) {
+          value = strToDouble(text);
+        }
+        if (isFraction(text)) {
+          value = fractionToDouble(text);
+        }
+
         if (value == null) {
           return null;
         }

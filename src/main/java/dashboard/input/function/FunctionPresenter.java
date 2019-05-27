@@ -27,6 +27,7 @@ import java.util.ResourceBundle;
 
 import static logic.Utilit.*;
 
+@SuppressWarnings("Duplicates")
 public class FunctionPresenter implements Initializable {
   final private int cellWidth = 50;
   final private int cellHeight = 35;
@@ -98,7 +99,15 @@ public class FunctionPresenter implements Initializable {
           return;
         }
 
-        Double value = strToDouble(newValue);
+        Double value = null;
+        String text = textField.getText();
+        if (isDouble(text)) {
+          value = strToDouble(text);
+        }
+        if (isFraction(text)) {
+          value = fractionToDouble(text);
+        }
+
         funcCoefs[finalI] = value;
 
         if (isFilled(box)){
