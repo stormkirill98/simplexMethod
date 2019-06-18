@@ -440,7 +440,7 @@ public class Simplex implements Cloneable {
     }
 
     Row row = rows.get(rows.size() - 1);
-    return -row.get(row.getSize() - 1);
+    return row.get(row.getSize() - 1);
   }
 
   public List<Double> getPointExtr() {

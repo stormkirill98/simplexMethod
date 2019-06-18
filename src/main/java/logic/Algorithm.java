@@ -2,6 +2,7 @@ package logic;
 
 import logic.enums.End;
 import logic.enums.Stage;
+import logic.enums.TypeProblem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +68,12 @@ public class Algorithm {
   }
 
   public double getFunctionExtr() {
-    return simplex.getFunctionExtr();
+    Double value = simplex.getFunctionExtr();
+    if (function.getType() == TypeProblem.MIN) {
+      return -value;
+    } else {
+      return value;
+    }
   }
 
   public List<Double> getPointExtr() {

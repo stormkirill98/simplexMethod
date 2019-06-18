@@ -20,6 +20,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import logic.Function;
+import logic.Utilit;
 import logic.enums.TypeProblem;
 
 import javax.inject.Inject;
@@ -30,6 +31,8 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+
+import static logic.Utilit.fractionToDouble;
 
 public class DashboardPresenter implements Initializable {
 
@@ -171,7 +174,11 @@ public class DashboardPresenter implements Initializable {
 
     int i = 0;
     for (String s : coefsStr.split(" ")) {
-      coefs[i++] = Double.valueOf(s);
+      if (s.contains("/")) {
+        coefs[i++] = fractionToDouble(s);
+      } else {
+        coefs[i++] = Double.valueOf(s);
+      }
     }
 
     function.setCoefficients(coefs);
@@ -189,7 +196,11 @@ public class DashboardPresenter implements Initializable {
     str = str.substring(3);
 
     for (String s : str.split(" ")) {
-      basisElement.add(Double.valueOf(s));
+      if (s.contains("/")) {
+        basisElement.add(fractionToDouble(s));
+      } else {
+        basisElement.add(Double.valueOf(s));
+      }
     }
 
     if (basisElement.size() != countVar) {
@@ -207,7 +218,11 @@ public class DashboardPresenter implements Initializable {
 
       int j = 0;
       for (String num : str.split(" ")) {
-        limits[i - 3][j++] = Double.valueOf(num);
+        if (num.contains("/")) {
+          limits[i - 3][j++] =fractionToDouble(num);
+        } else {
+          limits[i - 3][j++] = Double.valueOf(num);
+        }
       }
     }
 
